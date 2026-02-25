@@ -28,19 +28,5 @@ public class Entity {
     public final int getY() {
         return y;
     }
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
+    
 }
