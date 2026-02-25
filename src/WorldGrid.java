@@ -3,6 +3,7 @@
 public class WorldGrid {
     private final WorldObject[][] objects;
     private final Terrain[][] terrain;
+    // [type][row][column]
     private final Pheromones[][][] pheromones;
 
     private final int width;
