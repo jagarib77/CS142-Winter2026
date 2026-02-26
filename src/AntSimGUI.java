@@ -1,7 +1,7 @@
-// AntSimGUI.java
+kyle// AntSimGUI.java
 
 // Creates an interactive GUI and displays an animation of a world of ants.
-// I don't really know much about JFrame, so feel free to change anything.
+// I don't really know much about JFrame, so feel free to change anything. - Kyle Hamasaki
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
