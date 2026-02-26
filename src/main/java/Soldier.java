@@ -1,3 +1,5 @@
+//Soldier.java
+
 package src.main.java;
 
 public class Soldier extends Human{
