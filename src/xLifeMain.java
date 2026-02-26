@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.TimerTask;
 
 public class xLifeMain {
     public static void main(String[] args) throws FileNotFoundException {
@@ -31,14 +32,17 @@ public class xLifeMain {
         JButton stickButton = new JButton("Stick");
         JButton closeButton = new JButton("Close");
 
-        // 2.2.1. Create the Timer
-        Timer gameTimer = new Timer(50, e -> {
-            myGrid.update();
-            myGrid.repaint();
-        });
 
-        // 2.2.2 Create Listener
-        ActionListener listener = new MyActionListener(myGrid, gameTimer);
+
+        // 2.2.1 Create Listener
+        MyActionListener listener = new MyActionListener(myGrid);
+
+        // 2.2.2. Create the Timer
+        // Create the timer and pass the handler into it
+        Timer gameTimer = new Timer(50,listener);
+        listener.setTimer(gameTimer);
+        gameTimer.setActionCommand("Timer");
+
 
         // 2.2.3 Add behavior to the button
         stickButton.addActionListener(listener);
@@ -48,6 +52,7 @@ public class xLifeMain {
         // 2.3  Create 2 panel, top for grid and bottom for buttons
         JPanel topPanel = new JPanel();
         topPanel.add(myGrid);
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(animateButton);
         bottomPanel.add(stickButton);
@@ -90,13 +95,18 @@ public class xLifeMain {
         }
         return myGrid;
     }
+
+    // Nested classes
+
     // Listener
     private static class MyActionListener implements ActionListener {
         private xLifeModel myGrid;
         private Timer gameTimer; // Added so the listener can control the timer
 
-        public MyActionListener(xLifeModel model, Timer timer) {
+        public MyActionListener(xLifeModel model) {
             this.myGrid = model;
+        }
+        public void setTimer(Timer timer) {
             this.gameTimer = timer;
         }
         public void actionPerformed(ActionEvent event) {
@@ -107,12 +117,13 @@ public class xLifeMain {
                 } else {
                     gameTimer.start();
                 }
-            } else if(buttonText.equals("Stick")) {
+            } else if(buttonText.equals("Stick") || buttonText.equals("Timer")) {
                 myGrid.update(); // Update the grid
                 myGrid.repaint();  // Redraw the screen
             } else if(buttonText.equals("Close")) {
                 System.exit(0);
             }
+
         }
     }
 }
