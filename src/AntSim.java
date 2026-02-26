@@ -24,6 +24,13 @@ public class AntSim {
         setupAnts();
     }
 
+    // Prints the introduction - kyle
+    public static void printIntro() {
+        System.out.println("Welcome to the Ant Colony Simulator!");
+        System.out.println("This program creates a world with ant colonies and simulates ants'");
+        System.out.println("behaviors like foraging, fighting, and procreating.")
+    }
+
     public WorldGrid getWorld() { return world; }
 
     public List<Ant> getAnts() { return ants; }
@@ -81,6 +88,7 @@ public class AntSim {
     // create the world sim then pass that world to AntSimGUI.java to run the
     // GUI so we can see what happens
     public static void main(String[] args) {
+        printIntro();
         AntSim sim = new AntSim(50, 50);
         new AntSimGUI(sim);
     }
