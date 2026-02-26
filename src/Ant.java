@@ -91,6 +91,8 @@ public abstract class Ant {
         return true;
     }
 
+    public boolean isHungry(){ return currentEnergy < 50; }
+
     public Direction pathFind(Point target){
         //TODO: complete pathfinding
         return Direction.CENTER;
