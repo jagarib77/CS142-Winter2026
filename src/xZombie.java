@@ -1,3 +1,6 @@
+// Zombie Method by Leehuot Lay
+
+
 public class xZombie{
     char[][] grid;
     private int rows, cols, humanX, humanY;
@@ -8,8 +11,6 @@ public class xZombie{
         this.cols = c;
         this.grid = grid;
         boolean humanFound = search(r, c);
-
-
     }
         // searching for human
         public boolean search ( int r, int c){

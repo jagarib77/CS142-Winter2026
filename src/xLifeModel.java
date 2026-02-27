@@ -70,6 +70,11 @@ public class xLifeModel extends JPanel {
                     g.setColor(Color.CYAN);
                     g.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
                 }
+                // Zombies
+                if (grid[r][c]=='Z') {
+                    g.setColor(Color.RED);
+                    g.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+                }
                 g.setColor(Color.LIGHT_GRAY);
                 g.drawRect(c * cellSize, r * cellSize, cellSize, cellSize);
             }
