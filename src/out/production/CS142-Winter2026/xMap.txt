@@ -1,0 +1,14 @@
+11
+13
+---W---------
+XXX----------
+X-----X---XXX
+X-----X----WX
+X-----X-----X
+X-----X-----X
+-----XX-----X
+--------OOOOX
+XW-----WOOOOX
+XXXXXX-XOOOOX
+-------XXXXXX
+
