@@ -85,6 +85,7 @@ public class xLifeModel extends JPanel {
                     g.setColor(Color.BLUE);
                     g.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
                 }
+
                 g.setColor(Color.LIGHT_GRAY);
                 g.drawRect(c * cellSize, r * cellSize, cellSize, cellSize);
             }
