@@ -1,21 +1,37 @@
+import ZombieSim.Entities.Zombie;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class xLifeModel extends JPanel {
     private char[][] grid;
     private int rows;
     private int cols;
     private int cellSize = 20;
-    xZombie zombie = new xZombie(rows,cols,grid);
+    private xZombie zombie;
 
-    public xLifeModel(int r, int c) {
-        this.rows = r;
-        this.cols = c;
-        this.grid = new char[r][c];
-        // Initialize with empty cells
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) { grid[i][j] = '-'; }
+    public xLifeModel(String fileName) throws FileNotFoundException {
+
+        Scanner input = new Scanner(new File(fileName));
+        this.rows = input.nextInt();
+        this.cols = input.nextInt();
+        grid = new char[rows][cols];
+
+        int i = 0;
+        while (input.hasNextLine() && i <= rows ) {
+            String line = input.nextLine();
+            if(!line.isEmpty() && line.charAt(0)!='#'){
+                for(int j = 0; j< cols;j++){
+                    grid[i][j] = line.charAt(j);
+                }
+                i++;
+            }
         }
+
+        //this.zombie = new xZombie(rows,cols,grid);
         this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
     }
     public void setCell(int r, int c, char value) { grid[r][c] = value; }
@@ -29,7 +45,7 @@ public class xLifeModel extends JPanel {
 
                 // Zombies
                 if (grid[i][j] == 'Z') {
-                    zombie.search(i,j);
+                    //zombie.search(i,j);
                 }
             }
         }

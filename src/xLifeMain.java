@@ -12,7 +12,7 @@ public class xLifeMain {
 
         // For those of you who are running your GUI on OSX, you may want to include
         // the following try/catch. Otherwise, you will not be able to see the result
-        // of se    tting any background colors.
+        // of setting any background colors.
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
@@ -20,7 +20,7 @@ public class xLifeMain {
         }
 
         // 1. Read Map from file
-        xLifeModel myGrid =  getDataFromFile("xMap.txt");
+        xLifeModel myGrid =  new xLifeModel("xMap.txt");
 
         // 2. Setup GUI
         // 2.1. Setup Screen
@@ -74,27 +74,6 @@ public class xLifeMain {
         //System.out.print(myGrid.toString());
     }
 
-    // 2. Read the input file
-    public static xLifeModel getDataFromFile(String fileName)throws FileNotFoundException {
-        Scanner input = new Scanner(new File(fileName));
-        int width = input.nextInt();
-        int height = input.nextInt();
-        xLifeModel myGrid = new xLifeModel(width, height);
-        int[][] data = new int[height][width];
-        int i = 0;
-        while (input.hasNextLine() && i <= width ) {
-            String line = input.nextLine();
-            if(!line.isEmpty() && line.charAt(0)!='#'){
-            for(int j = 0; j< height;j++){
-                if(line.charAt(j)!='-'){
-                    myGrid.setCell(i, j, line.charAt(j));
-                }
-            }
-            i++;
-            }
-        }
-        return myGrid;
-    }
 
     // Nested classes
 
