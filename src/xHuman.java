@@ -1,49 +1,54 @@
-// CS 142 xHuman
-// ----------------------------------------------------------------------------
-// xHuman objects
-// Color  : GREEN
-// Move   : random direction(N,E,S,W)
-// ----------------------------------------------------------------------------
-
 import java.awt.*;
 import java.util.Random;
 
-// For reusing all methods, states of xEntity, need to be extends xEntity
 public class xHuman extends xEntity {
-	// State / Field of xSoldier
-    private Direction currDir;
-    //private int hunger; // the maximum number of food
-    private boolean isprotect;
 
-    // -----------------------OVERRIDE METHODS---------------------------------
-    // 0. Constructor not inheritance from xEntity
-    public xHuman(int x, int y){
-        super();
-        isprotect = false;
-        setX(x);
-        setY(y);
-    }
+    private boolean acted = false;
+    private Random rand = new Random();
+    private boolean inSafeZone = false;
 
-    // 1. Color: BLUE
-    public Color getColor() {
-        return Color.GREEN;
-    }
-
-    // 2. Move random direction(N,E,S,W),
     public Direction move() {
-        // Update currDir for 6 steps
-        Random rand = new Random();
-        int randomInt = rand.nextInt(4);
-        if(randomInt == 0){
-            currDir = Direction.NORTH;
-        } else if (randomInt == 1) {
-            currDir = Direction.EAST;
-        } else if (randomInt == 2) {
-            currDir = Direction.SOUTH;
-        } else {
-            currDir = Direction.WEST;
+        // Human can only act once per turn
+        if (acted) {
+            return Direction.CENTER;
         }
-        return currDir;
+
+        acted = true;
+        // Human don't move when is SafeZone
+        if (inSafeZone) {
+            return Direction.CENTER;
+        }
+        // Random movement
+        int r = rand.nextInt(4);
+        switch (r) {
+            case 0: return Direction.NORTH;
+            case 1: return Direction.SOUTH;
+            case 2: return Direction.EAST;
+            case 3: return Direction.WEST;
+        }
+        return Direction.CENTER;
     }
-    // ----------------------- END OVERRIDE METHODS ---------------------------
+    public
+    // this is when the human steps onto a safe zone tile
+    public void enterSafeZone() {
+        inSafeZone = true;
+    }
+
+    public Color getColor() {
+        return Color.BLUE;   // Human color
+    }
+
+
+    public boolean hasActed() {
+        return acted;
+    }
+
+    // Reset each simulation step
+    public void resetActed() {
+        acted = false;
+    }
+
+    public String toString() {
+        return "H";
+    }
 }
