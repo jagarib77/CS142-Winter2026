@@ -1,5 +1,12 @@
 // Pheromones.java
+// Stores and updates pheromone concentrations across the grid for multiple pheromone types.
+// Group Project: Ant Colony Simulator
+// Authors: Harrison Butler
 
+/**
+ * Stores pheromone concentrations as a 3D array indexed by type, x and y.
+ * Supports reading, adding, setting, decay and spreading of pheromones each tick.
+ */
 public class Pheromones {
     private final int width;
     private final int height;
@@ -8,6 +15,12 @@ public class Pheromones {
     // the double held in the location is the amount of the pheromone
     private final double[][][] grid;
 
+    /**
+     * Creates the pheromone grid for a given world size.
+     *
+     * @param width world width in tiles
+     * @param height world height in tiles
+     */
     public Pheromones(int width, int height) {
         this.width = width;
         this.height = height;
@@ -26,7 +39,11 @@ public class Pheromones {
         grid[type.type][p.x][p.y] = value;
     }
 
-    // 1-2% loss per tick
+    /**
+     * Applies multiplicative decay to all pheromone values.
+     *
+     * @param decayRate multiplier applied to each cell (example: 0.99 for 1% loss)
+     */
     public void decay(double decayRate){
         for (int t=0; t<PheromoneType.values().length; ++t) {
             for (int x=0; x<width; ++x) {
@@ -43,7 +60,12 @@ public class Pheromones {
                 p.y >= 0  && p.y < height;
     }
 
-    // 1-2% loss per tick
+    /**
+     * Spreads a fraction of each cell's pheromone value to its cardinal neighbors.
+     * The total pheromone is conserved per type during spreading.
+     *
+     * @param spreadRate fraction moved out of each cell (example: 0.01 for 1% spread)
+     */
     public void spread(double spreadRate) {
         for (int t=0; t<grid.length; ++t) {
             double[][] next = new double[width][height];

@@ -1,12 +1,27 @@
 // QueenAnt.java
+// Colony queen role that can spawn new worker and guard ants.
+// Group Project: Ant Colony Simulator
+// Authors: Harrison Butler
 
 import java.util.Random;
 
+/**
+ * Queen ant role. Intended to remain in the nest and spawn new colony ants.
+ * Spawning costs energy and requires adjacent walkable tiles.
+ */
 public class QueenAnt extends ColonyAnt {
+    /**
+     * Creates a queen ant with a home location.
+     */
     public QueenAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
         super(world, rng, pos, maxEnergy, home);
     }
 
+    /**
+     * Convenience factory used to construct a QueenAnt.
+     *
+     * @return newly created QueenAnt instance
+     */
     public static QueenAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
         return new QueenAnt(world, rng, pos, maxEnergy, home);
     }
@@ -16,7 +31,12 @@ public class QueenAnt extends ColonyAnt {
         return 'Q';
     }
 
-    // Returns a newly created ant, or null if no adjacent spawn space exists.
+    /**
+     * Attempts to spawn a new ant in an adjacent walkable tile.
+     * Spawning costs energy and returns null if no valid space exists or energy is too low.
+     *
+     * @return a newly created ant, or null if spawning failed
+     */
     public Ant spawnAnt() {
         if (getEnergy() < 50) return null; // avoids killing the queen ant to quickly
         int type = rng().nextInt(2);

@@ -1,11 +1,16 @@
+// AntSimGUI.java
 // Creates an interactive GUI and displays an animation of a world of ants.
-// By Kyle Hamasaki
-// Edited by Harrison Butler
+// Group Project: Ant Colony Simulator
+// Authors: Harrison Butler and Kyle Hamasaki
 
 import java.awt.*;
 import javax.swing.*;
 import java.util.List; // don't import util.* as that creates timer conflicts
 
+/**
+ * Swing GUI for visualizing the ant simulation.
+ * Owns a timer that advances the simulation and repaints the world at a target tick rate.
+ */
 public class AntSimGUI extends JFrame {
     private final AntSim sim;
     private final Timer timer;
@@ -15,8 +20,13 @@ public class AntSimGUI extends JFrame {
 
     private final WorldPanel worldPanel;
 
-    // since AntSimGUI is an extension of JFrame a new frame doesn't need to be created
-    // AntSimGUI is a JFrame with extended functionally
+    /**
+     * Builds the GUI window, creates drawing and button panels and starts the simulation timer.
+     * UI layout:
+     * - CENTER: world drawing panel
+     * - SOUTH: control buttons (speed up, slow down, pause/resume and step)
+     * @param sim simulation model to display and advance (non-null)
+     */
     public AntSimGUI(AntSim sim) {
         super("Ant Simulation"); // makes JFrame, everything after is custom functionally
         if (sim == null) throw new IllegalArgumentException("sim");
@@ -84,22 +94,34 @@ public class AntSimGUI extends JFrame {
         setVisible(true); // displays the panel
     }
 
-    // dedicated panel for swing to draw the screen
+    /**
+     * Dedicated JPanel used for painting the world.
+     * Swing calls paintComponent during repaint and we delegate to drawWorld.
+     */
     private class WorldPanel extends JPanel {
+        /**
+         * Configures panel defaults for smoother rendering.
+         * Double buffering reduces flicker during frequent repaints.
+         */
         public WorldPanel() {
             setBackground(Color.WHITE);
             setDoubleBuffered(true); // prevents flickering
         }
 
-        // just adds drawWorld() functionality, correctly draws the world
-        // during the sequence of rendering
+        /**
+         * Swing paint callback. Always calls super first, then draws the simulation state.
+         * @param g graphics context provided by Swing
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             drawWorld(g);
         }
 
-        // adjust preferredSize so pack() functions correctly
+        /**
+         * Provides a preferred size so pack() can size the frame to fit the grid.
+         * @return preferred pixel size of the drawing area
+         */
         @Override
         public Dimension getPreferredSize(){
             int width = TILE_SIZE*sim.getWorld().getWidth();
@@ -108,7 +130,12 @@ public class AntSimGUI extends JFrame {
         }
     }
 
-    // Updates the WorldGrid and draws a new picture of the WorldGrid.
+    /**
+     * Draws a full frame of the simulation including terrain, objects and ants.
+     * Rendering is separated into helper methods for clarity.
+     *
+     * @param g graphics context
+     */
     private void drawWorld(Graphics g) {
         WorldGrid w = sim.getWorld();
         drawTerrain(g, w);
@@ -116,6 +143,12 @@ public class AntSimGUI extends JFrame {
         drawAnts(g);
     }
 
+    /**
+     * Draws terrain tiles as colored rectangles and grid lines.
+     *
+     * @param g graphics context
+     * @param w world grid being rendered
+     */
     private void drawTerrain(Graphics g, WorldGrid w){
         for (int y=0; y<w.getHeight(); ++y){
             for (int x=0; x<w.getWidth(); ++x){
@@ -145,6 +178,12 @@ public class AntSimGUI extends JFrame {
         }
     }
 
+    /**
+     * Draws world objects (resources, items, etc.) on top of terrain.
+     *
+     * @param g graphics context
+     * @param w world grid being rendered
+     */
     private void drawObjects(Graphics g, WorldGrid w){
         for (int y=0; y<w.getHeight(); ++y){
             for (int x=0; x<w.getWidth(); ++x){
@@ -165,7 +204,12 @@ public class AntSimGUI extends JFrame {
         }
     }
 
-    // ants store their own data so they don't need WorldGrid
+    /**
+     * Draws all living ants from the simulation list.
+     * Ant type controls rendering color and symbol.
+     *
+     * @param g graphics context
+     */
     private void drawAnts(Graphics g){
         List<Ant> ants = sim.getAnts();
 

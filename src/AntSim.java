@@ -1,18 +1,40 @@
 // AntSim.java
+// Simulation driver that owns the world grid, RNG and list of ants.
+// Advances the simulation in discrete ticks and performs global updates.
+// Group Project: Ant Colony Simulator
+// Authors: Harrison Butler and Kyle Hamasaki
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Main simulation model for the ant colony project.
+ * Owns world state and the list of ants, and advances the simulation each tick.
+ */
 public class AntSim {
     private final WorldGrid world;
     private final Random rng;
     private final List<Ant> ants;
 
+    /**
+     * Creates a simulation with the given grid size and a default Random generator.
+     *
+     * @param width world width in tiles
+     * @param height world height in tiles
+     */
     public AntSim(int width, int height) {
         this(width, height, new Random());
     }
 
+    /**
+     * Creates a simulation with the given grid size and Random generator.
+     * Sets up terrain and initial ants.
+     *
+     * @param width world width in tiles
+     * @param height world height in tiles
+     * @param rng random generator used for world setup and behaviors (non-null)
+     */
     public AntSim(int width, int height, Random rng) {
         if (rng == null) throw new IllegalArgumentException("rng");
 
@@ -24,7 +46,10 @@ public class AntSim {
         setupAnts();
     }
 
-    // Prints the introduction - kyle
+    /**
+     * Prints a short introduction to the console.
+     * Written by Kyle.
+     */
     public static void printIntro() {
         System.out.println("Welcome to the Ant Colony Simulator!");
         System.out.println("This program creates a world with ant colonies and simulates ants'");
@@ -35,7 +60,14 @@ public class AntSim {
 
     public List<Ant> getAnts() { return ants; }
 
-    // simulation tick
+    /**
+     * Advances the simulation by one tick.
+     * Intended responsibilities:
+     * - update ant behaviors (movement, actions, combat, etc.)
+     * - spawn new ants from queens
+     * - remove dead ants
+     * - update pheromones (spread and decay)
+     */
     public void step() {
         //TODO: implement queen spawning other ants loop through all Ants in ants
         // and check if ant is queenAnt then use queenAnt.spawnAnt(); to create
@@ -52,7 +84,10 @@ public class AntSim {
         world.decayPheromones(.99); // 1% loss per tick
     }
 
-    // setup helpers
+    /**
+     * Initializes world terrain layout (nest area, surface air area and obstacles).
+     * This method is called once during construction.
+     */
     private void setupWorld() {
         int width = world.getWidth();
         int height = world.getHeight();
@@ -66,7 +101,7 @@ public class AntSim {
 
         // carve a rectangular room of air for the surface world
         for (int y=0; y<=5; ++y) {
-            for (int x=0; x<=width; ++x) {
+            for (int x=0; x<width; ++x) {
                 world.setTerrain(new Point(x, y), new Air());
             }
         }
@@ -80,13 +115,20 @@ public class AntSim {
         }
     }
 
+    /**
+     * Spawns the initial ants for the simulation (at minimum, a queen).
+     * This method is called once during construction.
+     */
     private void setupAnts() {
         //TODO: need to spawn the first ants in the sim (at least a queen)
+        Point home = new Point(world.getWidth()/2, world.getHeight()/2);
+        ants.add(QueenAnt.spawn(world, rng, home, 200, home));
     }
 
-    // main file - runs the program
-    // create the world sim then pass that world to AntSimGUI.java to run the
-    // GUI so we can see what happens
+    /**
+     * Program entry point. Creates the simulation and launches the GUI.
+     * @param args unused
+     */
     public static void main(String[] args) {
         printIntro();
         AntSim sim = new AntSim(50, 50);
