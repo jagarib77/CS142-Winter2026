@@ -25,4 +25,11 @@ public class ColonyAnt extends Ant {
         //TODO: handle logic when foodStore is null better
         return pathFind(foodStore);
     }
+
+    //TODO: logic for eating when hungry
+    // should go to foodstore first then go outside and look for food
+    // except for the queen, she is not allowed to leave the nest
+    public Direction findFood(){
+        return null;
+    }
 }

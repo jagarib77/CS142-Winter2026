@@ -7,5 +7,7 @@ public enum PheromoneType {
 
     public final int type;
 
-    PheromoneType(int type){ this.type = type; }
+    PheromoneType(int type){
+        this.type = type;
+    }
 }

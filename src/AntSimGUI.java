@@ -26,7 +26,7 @@ public class AntSimGUI extends JFrame {
         setLayout(new BorderLayout());
 
         // world drawing panel (CENTER)
-        worldPanel = new WorldPanel();
+        worldPanel = new WorldPanel(); // JPanel extension
         add(worldPanel, BorderLayout.CENTER);
 
         // buttons (SOUTH)
@@ -51,14 +51,14 @@ public class AntSimGUI extends JFrame {
         timer.start();
 
         speedUpButton.addActionListener(e -> {
-            if (TICKS_PER_SECOND == 1) return; // don't make tick rate 0
             TICKS_PER_SECOND += 1;
             timer.setDelay(1000/TICKS_PER_SECOND);
         });
 
         slowDownButton.addActionListener(e -> {
+            if (TICKS_PER_SECOND == 1) return; // don't make tick rate 0
             TICKS_PER_SECOND -= 1;
-            timer.setDelay(1000 / TICKS_PER_SECOND);
+            timer.setDelay(1000/TICKS_PER_SECOND);
         });
 
         pauseButton.addActionListener(e -> {
@@ -79,12 +79,6 @@ public class AntSimGUI extends JFrame {
             worldPanel.repaint();
         });
 
-        // size window based on world size and tile size
-        WorldGrid w = sim.getWorld();
-        int worldW = w.getWidth()*TILE_SIZE;
-        int worldH = w.getHeight()*TILE_SIZE;
-        worldPanel.setPreferredSize(new Dimension(worldW, worldH));
-
         pack(); // fits border to grid size
         setLocationRelativeTo(null); // centers canvas
         setVisible(true); // displays the panel
@@ -94,7 +88,7 @@ public class AntSimGUI extends JFrame {
     private class WorldPanel extends JPanel {
         public WorldPanel() {
             setBackground(Color.WHITE);
-            setDoubleBuffered(true);
+            setDoubleBuffered(true); // prevents flickering
         }
 
         // just adds drawWorld() functionality, correctly draws the world
@@ -103,6 +97,14 @@ public class AntSimGUI extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             drawWorld(g);
+        }
+
+        // adjust preferredSize so pack() functions correctly
+        @Override
+        public Dimension getPreferredSize(){
+            int width = TILE_SIZE*sim.getWorld().getWidth();
+            int height = TILE_SIZE*sim.getWorld().getHeight();
+            return new Dimension(width, height);
         }
     }
 

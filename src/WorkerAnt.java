@@ -15,4 +15,9 @@ public class WorkerAnt extends ColonyAnt {
     public char getSymbol() {
         return 'W';
     }
+
+    // TODO: add logic for ants to expand the nest
+    public void digTunnel(){
+        return;
+    }
 }

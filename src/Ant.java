@@ -3,8 +3,6 @@
 import java.util.Random;
 
 public abstract class Ant {
-    protected static final int DEFAULT_MAX_ENERGY = 50;
-
     private final WorldGrid world;
     private final Random rng;
 
@@ -46,11 +44,12 @@ public abstract class Ant {
     protected final void changeEnergy(int delta) {
         currentEnergy += delta;
         if (currentEnergy <= 0) kill();
+        if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
     }
 
     public final void kill(){
         if (!alive) return;
-        if (heldItem != null) dropItem();
+        if (heldItem != null) dropItem(); // attempts to drop item, no guarantees though
         alive = false;
     }
 
@@ -90,6 +89,8 @@ public abstract class Ant {
         heldItem = null;
         return true;
     }
+
+    public boolean isHungry(){ return currentEnergy < 50; }
 
     public Direction pathFind(Point target){
         //TODO: complete pathfinding

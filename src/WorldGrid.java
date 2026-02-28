@@ -62,10 +62,9 @@ public class WorldGrid {
         return objects[pos.y][pos.x];
     }
 
-    public boolean setObjectAt(Point pos, WorldObject obj){
-        if (!inBounds(pos)) return false;
+    public void setObjectAt(Point pos, WorldObject obj){
+        if (!inBounds(pos)) return;
         objects[pos.y][pos.x] = obj;
-        return true;
     }
 
     public WorldObject takeObject(Point pos){
