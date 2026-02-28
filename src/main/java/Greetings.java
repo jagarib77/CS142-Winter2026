@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,7 @@ public final class Greetings {
         // students add exactly one line each:
         // MESSAGES.add("Hola — Alice P.");
         MESSAGES.add("Hello-DarionP.");
+        MESSAGES.add("Hello - Harrison B.");
     }
 
     /** Returns an unmodifiable view of the greetings list. */
