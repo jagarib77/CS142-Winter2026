@@ -1,6 +1,3 @@
-import ZombieSim.Entities.Soldier;
-import ZombieSim.Entities.Zombie;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Point;
@@ -14,11 +11,11 @@ public class xLifeModel extends JPanel {
     private int rows;
     private int cols;
     private int cellSize = 20;
-    private char[][] safeZone;
-
+    private int safeCount = 0;
     private ArrayList<xSoldier> soldierList = new ArrayList<>();
     private ArrayList<xZombie> zombieList = new ArrayList<>();
     private ArrayList<xHuman> humanList = new ArrayList<>();
+    private ArrayList<Point> safeZone= new ArrayList<>();
 
     // for read from file we just take
     public xLifeModel(String fileName) throws FileNotFoundException {
@@ -33,12 +30,12 @@ public class xLifeModel extends JPanel {
                 for(int j = 0; j< cols;j++){
                     if(line.charAt(j) == 'S'){
                         soldierList.add(new xSoldier(i,j)) ;
-                    }
-                    if(line.charAt(j) == 'H'){
+                    }else if(line.charAt(j) == 'H'){
                         humanList.add(new xHuman(i,j)) ;
-                    }
-                    if(line.charAt(j) == 'Z'){
+                    } else if(line.charAt(j) == 'Z'){
                         zombieList.add(new xZombie(i,j)) ;
+                    } else if(line.charAt(j) == 'O') {
+                        safeZone.add(new Point(i, j));
                     }
                     grid[i][j] = line.charAt(j);
                 }
@@ -50,12 +47,8 @@ public class xLifeModel extends JPanel {
         this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
     }
     public void setCell(int r, int c, char value) { grid[r][c] = value; }
-
     public void updateMap(int x, int y, char bef, char aft){
-
     }
-
-
     private int countNeighbors(int r, int c) {
         int count = 0;
         for (int i = r - 1; i <= r + 1; i++) {
@@ -68,7 +61,7 @@ public class xLifeModel extends JPanel {
         return count;
     }
 
-    public boolean canMove(int x, int y){
+    public boolean checkMoveValid(int x, int y){
         //System.out.println(x + " - " + y);
         if(y >= cols || y < 0){ return false; }
         if(x < 0 || x >= rows){ return false; }
@@ -94,11 +87,19 @@ public class xLifeModel extends JPanel {
             } else if (nextDir.equals(xEntity.Direction.WEST)) {
                 x1 = x;
                 y1 = y-1;
-            } else {
+            } else if (nextDir.equals(xEntity.Direction.EAST)){
                 x1 = x;
                 y1 = y+1;
+            }else{
+                x1 = x;
+                y1 = y;
             }
-            isMove = canMove(x1,y1);
+            isMove = checkMoveValid(x1,y1);
+
+            // ZOMBIE MUST ADD PROCESS THAT ZOMBIE CAN NOT GO TO SAFEZONE
+            // if(target instanceof xZombie){
+            //
+            // }
         }
         return new Point(x1,y1);
     }
@@ -111,10 +112,18 @@ public class xLifeModel extends JPanel {
             // Remove current position from map
             grid[x][y] = '-';
             Point newPos = getNewPosition(target,x,y);
-            grid[newPos.x][newPos.y] = 'S';
-            // update arraylist
-            soldierList.get(i).setX(newPos.x);
-            soldierList.get(i).setY(newPos.y);
+            if(isProtect(newPos)){
+
+                newPos = safeZone.get(safeZone.size()-1-safeCount);
+
+                grid[newPos.x][newPos.y] = 'P';
+                soldierList.remove(target);
+                safeCount++;
+            }else {
+                grid[newPos.x][newPos.y] = 'S';
+                soldierList.get(i).setX(newPos.x);
+                soldierList.get(i).setY(newPos.y);
+            }
         }
     }
 
@@ -126,7 +135,8 @@ public class xLifeModel extends JPanel {
             // Remove current position from map
             grid[x][y] = '-';
             Point newPos = getNewPosition(target,x,y);
-            grid[newPos.x][newPos.y] = 'Z';
+            //grid[newPos.x][newPos.y] = 'Z'; // NEED TO CHANGE -  COLLSION CHECK
+
             // update arraylist
             zombieList.get(i).setX(newPos.x);
             zombieList.get(i).setY(newPos.y);
@@ -141,18 +151,36 @@ public class xLifeModel extends JPanel {
             // Remove current position from map
             grid[x][y] = '-';
             Point newPos = getNewPosition(target,x,y);
-            grid[newPos.x][newPos.y] = 'H';
+            //grid[newPos.x][newPos.y] = 'H'; // NEED TO CHANGE - COLLSION CHECK
             // update arraylist
             humanList.get(i).setX(newPos.x);
             humanList.get(i).setY(newPos.y);
         }
     }
-    // Using update
+
+
+    public boolean isProtect(Point pos){
+        for(int i = 0; i< safeZone.size();i++){
+            if(pos.x==safeZone.get(i).x && pos.y==safeZone.get(i).y){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Using ANIMATION HERE
     public void update() {
         // get new move of all soldiers
         updateSoldierMove();
-        updateZombieMove();
-        updateHumanMove();
+        // NEED TO IMPLEMENT HERE
+        //updateZombieMove();  // NEED TO CHANGE - COLLSION CHECK
+        //updateHumanMove();   // NEED TO CHANGE - COLLSION CHECK
+
+        // AFTER MOVE
+        // HUMAN CHECK GET WEAPON
+        // SOLDIER SHOOTING - IF NO BULLET - SOLDIER CHANGE TO HUMAN
+        // ZOOMBIE TAG HUMAN
+
         /*
         char[][] nextGen = new char[rows][cols];
         for (int i = 0; i < rows; i++) {
@@ -225,7 +253,6 @@ public class xLifeModel extends JPanel {
                     g.setColor(Color.PINK);
                     g.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
                 }
-
                 g.setColor(Color.LIGHT_GRAY);
                 g.drawRect(c * cellSize, r * cellSize, cellSize, cellSize);
             }
