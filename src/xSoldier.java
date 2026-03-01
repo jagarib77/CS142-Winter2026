@@ -12,18 +12,27 @@ import java.util.Random;
 public class xSoldier extends xHuman {
 	// State / Field of xSoldier
     private Direction currDir;
-    //private int hunger; // the maximum number of food
-    private boolean isprotect;
+    private int bullets; // the maximum number of food
 
     // -----------------------OVERRIDE METHODS---------------------------------
     // 0. Constructor not inheritance from xEntity
     public xSoldier(int x, int y){
-       super(x,y);
+        super(x,y);
+        bullets = 1;
     }
 
     // 1. Color: BLUE
     public Color getColor() {
         return Color.BLUE;
+    }
+
+
+    public void updateBullets() {
+        this.bullets -= 1;
+    }
+
+    public int getBullets() {
+        return bullets;
     }
     /*
     // 2. Move random direction(N,E,S,W),

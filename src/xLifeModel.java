@@ -1,3 +1,5 @@
+import ZombieSim.Entities.Soldier;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Point;
@@ -19,46 +21,9 @@ public class xLifeModel extends JPanel {
 
     // for read from file we just take
     public xLifeModel(String fileName) throws FileNotFoundException {
-        Scanner input = new Scanner(new File(fileName));
-        this.rows = input.nextInt();
-        this.cols = input.nextInt();
-        grid = new char[rows][cols];
-        int i = 0;
-        while (input.hasNextLine() && i <= rows ) {
-            String line = input.nextLine();
-            if(!line.isEmpty() && line.charAt(0)!='#'){
-                for(int j = 0; j< cols;j++){
-                    if(line.charAt(j) == 'S'){
-                        soldierList.add(new xSoldier(i,j)) ;
-                    }else if(line.charAt(j) == 'H'){
-                        humanList.add(new xHuman(i,j)) ;
-                    } else if(line.charAt(j) == 'Z'){
-                        zombieList.add(new xZombie(i,j)) ;
-                    } else if(line.charAt(j) == 'O') {
-                        safeZone.add(new Point(i, j));
-                    }
-                    grid[i][j] = line.charAt(j);
-                }
-                i++;
-            }
-        }
-
+        loadFile(fileName);
         //this.zombie = new xZombie(rows,cols,grid);
         this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
-    }
-    public void setCell(int r, int c, char value) { grid[r][c] = value; }
-    public void updateMap(int x, int y, char bef, char aft){
-    }
-    private int countNeighbors(int r, int c) {
-        int count = 0;
-        for (int i = r - 1; i <= r + 1; i++) {
-            for (int j = c - 1; j <= c + 1; j++) {
-                if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c)) {
-                    if (grid[i][j] == 'X') count++;
-                }
-            }
-        }
-        return count;
     }
 
     public boolean checkMoveValid(int x, int y){
@@ -70,11 +35,12 @@ public class xLifeModel extends JPanel {
     }
 
     // Can use for all object to get move
+    // Base on what return from method move of target object, update and check it valid on grid
     public Point getNewPosition(xEntity target,int x, int y){
         int x1 = 0;
         int y1 = 0;
         boolean isMove = false;
-        // Check bound + wall
+        // get new move until it valid
         while (!isMove) {
             xEntity.Direction nextDir = target.move();
             // Calculate
@@ -97,11 +63,22 @@ public class xLifeModel extends JPanel {
             isMove = checkMoveValid(x1,y1);
 
             // ZOMBIE MUST ADD PROCESS THAT ZOMBIE CAN NOT GO TO SAFEZONE
-            // if(target instanceof xZombie){
-            //
-            // }
+            if(target instanceof xZombie){
+                if(isProtect(new Point(x1,y1))){
+                    isMove = false;
+                }
+            }
         }
         return new Point(x1,y1);
+    }
+
+    public boolean isProtect(Point pos){
+        for(int i = 0; i< safeZone.size();i++){
+            if(pos.x==safeZone.get(i).x && pos.y==safeZone.get(i).y){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateSoldierMove(){
@@ -113,9 +90,7 @@ public class xLifeModel extends JPanel {
             grid[x][y] = '-';
             Point newPos = getNewPosition(target,x,y);
             if(isProtect(newPos)){
-
                 newPos = safeZone.get(safeZone.size()-1-safeCount);
-
                 grid[newPos.x][newPos.y] = 'P';
                 soldierList.remove(target);
                 safeCount++;
@@ -126,7 +101,47 @@ public class xLifeModel extends JPanel {
             }
         }
     }
-
+    public int searchZombie(int x, int y){
+        for(int i = 0;i< zombieList.size();i++){
+            if(x==zombieList.get(i).getX() && y==zombieList.get(i).getY()){
+                return i;
+            }
+        }
+        return -1;
+    }
+    // like check neighbor on Project num 5
+    // JUST CHECK 1 RANGE
+    private boolean isShooting(xSoldier target) {
+        int count = 0;
+        int r = target.getX();
+        int c = target.getY();
+        for (int i = r - 1; i <= r + 1; i++) {
+            for (int j = c - 1; j <= c + 1; j++) {
+                if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c)) {
+                    int pos = searchZombie(i,j);
+                    if (pos != -1){
+                        // Kill Zoombie
+                        zombieList.remove(pos);
+                        grid[i][j] = '-';
+                        target.updateBullets();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public void updateSoldierShooting(){
+        for(int i = 0; i < soldierList.size();i++ ){
+            xSoldier s = soldierList.get(i);
+            if(isShooting(s) && s.getBullets()==0){
+                grid[s.getX()][s.getY()]='H';
+                humanList.add(new xHuman(s.getX(),s.getY()));
+                soldierList.remove(i);
+                i--;
+            }
+        }
+    }
     public void updateZombieMove(){
         for (int i = 0; i< zombieList.size();i++){
             xZombie target = zombieList.get(i);
@@ -159,14 +174,6 @@ public class xLifeModel extends JPanel {
     }
 
 
-    public boolean isProtect(Point pos){
-        for(int i = 0; i< safeZone.size();i++){
-            if(pos.x==safeZone.get(i).x && pos.y==safeZone.get(i).y){
-                return true;
-            }
-        }
-        return false;
-    }
 
     // Using ANIMATION HERE
     public void update() {
@@ -175,7 +182,8 @@ public class xLifeModel extends JPanel {
         // NEED TO IMPLEMENT HERE
         //updateZombieMove();  // NEED TO CHANGE - COLLSION CHECK
         //updateHumanMove();   // NEED TO CHANGE - COLLSION CHECK
-
+        paintImmediately(0, 0, getWidth(), getHeight()); // just  for debug
+        updateSoldierShooting();
         // AFTER MOVE
         // HUMAN CHECK GET WEAPON
         // SOLDIER SHOOTING - IF NO BULLET - SOLDIER CHANGE TO HUMAN
@@ -213,6 +221,50 @@ public class xLifeModel extends JPanel {
         }
         return retStr;
     }
+
+    public void reset(String fileName) throws FileNotFoundException {
+        zombieList.clear();
+        humanList.clear();
+        soldierList.clear();
+        safeZone.clear();
+
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                grid[r][c] = '.';
+            }
+        }
+        loadFile(fileName);
+    }
+
+    private void loadFile(String fileName) throws FileNotFoundException {
+        Scanner input = new Scanner(new File(fileName));
+        this.rows = input.nextInt();
+        this.cols = input.nextInt();
+        grid = new char[rows][cols];
+        int i = 0;
+        while (input.hasNextLine() && i <= rows ) {
+            String line = input.nextLine();
+            if(!line.isEmpty() && line.charAt(0)!='#'){
+                for(int j = 0; j< cols;j++){
+                    if(line.charAt(j) == 'S'){
+                        soldierList.add(new xSoldier(i,j)) ;
+                    }else if(line.charAt(j) == 'H'){
+                        humanList.add(new xHuman(i,j)) ;
+                    } else if(line.charAt(j) == 'Z'){
+                        zombieList.add(new xZombie(i,j)) ;
+                    } else if(line.charAt(j) == 'O') {
+                        safeZone.add(new Point(i, j));
+                    }
+                    grid[i][j] = line.charAt(j);
+                }
+                i++;
+            }
+        }
+
+    }
+
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -256,6 +308,24 @@ public class xLifeModel extends JPanel {
                 g.setColor(Color.LIGHT_GRAY);
                 g.drawRect(c * cellSize, r * cellSize, cellSize, cellSize);
             }
+
         }
+
+        /*
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        FontMetrics fm = g.getFontMetrics();
+        String text = "Game Over";
+        int x = (getWidth() - fm.stringWidth(text)) / 2;
+        int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+        g.drawString(text, x, y);
+
+        //g.drawString("Game Over", 150, 200);
+
+        g.setColor(new Color(0,0,0,150));
+        g.fillRect(0,0,getWidth(),getHeight());
+
+         */
+
     }
 }

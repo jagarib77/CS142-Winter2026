@@ -7,13 +7,15 @@ public class xHuman extends xEntity {
     private Random rand = new Random();
     private boolean inSafeZone = false;
 
-    public Direction move() {
-        // Human can only act once per turn
-        if (acted) {
-            return Direction.CENTER;
-        }
+    // 0. Constructor not inheritance from xEntity
+    public xHuman(int x, int y){
+        super();
+        setX(x);
+        setY(y);
+    }
 
-        acted = true;
+    public Direction move() {
+
         // Human don't move when is SafeZone
         if (inSafeZone) {
             return Direction.CENTER;
@@ -28,7 +30,7 @@ public class xHuman extends xEntity {
         }
         return Direction.CENTER;
     }
-    public
+
     // this is when the human steps onto a safe zone tile
     public void enterSafeZone() {
         inSafeZone = true;

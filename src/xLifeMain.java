@@ -31,8 +31,8 @@ public class xLifeMain {
         JButton animateButton = new JButton("Animate");
         JButton stickButton = new JButton("Stick");
         JButton closeButton = new JButton("Close");
-
-
+        JButton resetButton = new JButton("Reset");
+        //JButton saveButton = new JButton("Save");
 
         // 2.2.1 Create Listener
         MyActionListener listener = new MyActionListener(myGrid);
@@ -48,6 +48,7 @@ public class xLifeMain {
         stickButton.addActionListener(listener);
         closeButton.addActionListener(listener);
         animateButton.addActionListener(listener);
+        resetButton.addActionListener(listener);
 
         // 2.3  Create 2 panel, top for grid and bottom for buttons
         JPanel topPanel = new JPanel();
@@ -56,7 +57,10 @@ public class xLifeMain {
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(animateButton);
         bottomPanel.add(stickButton);
+        bottomPanel.add(resetButton);
         bottomPanel.add(closeButton);
+
+        //bottomPanel.add(saveButton);
 
         // 2.4 Add Panel to Window
         window.add(topPanel,BorderLayout.NORTH);
@@ -74,9 +78,7 @@ public class xLifeMain {
         //System.out.print(myGrid.toString());
     }
 
-
     // Nested classes
-
     // Listener
     private static class MyActionListener implements ActionListener {
         private xLifeModel myGrid;
@@ -96,11 +98,26 @@ public class xLifeMain {
                 } else {
                     gameTimer.start();
                 }
-            } else if(buttonText.equals("Stick") || buttonText.equals("Timer")) {
+            } else if(buttonText.equals("Stick")) {
+                gameTimer.stop();
+                myGrid.update(); // Update the grid
+                myGrid.repaint();  // Redraw the screen
+            } else if(buttonText.equals("Timer")) {
                 myGrid.update(); // Update the grid
                 myGrid.repaint();  // Redraw the screen
             } else if(buttonText.equals("Close")) {
                 System.exit(0);
+            }else if(buttonText.equals("Reset")) {
+                try {
+                    gameTimer.stop();
+                    myGrid.reset("xMap.txt");
+                    myGrid.repaint();
+
+                    //myGrid.paintImmediately(0, 0, myGrid.getWidth(), myGrid.getHeight());
+
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         }
