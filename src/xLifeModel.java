@@ -1,5 +1,3 @@
-import ZombieSim.Entities.Soldier;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Point;
@@ -17,13 +15,41 @@ public class xLifeModel extends JPanel {
     private ArrayList<xSoldier> soldierList = new ArrayList<>();
     private ArrayList<xZombie> zombieList = new ArrayList<>();
     private ArrayList<xHuman> humanList = new ArrayList<>();
-    private ArrayList<Point> safeZone= new ArrayList<>();
+    private ArrayList<Point> safeZoneList = new ArrayList<>();
+    private ArrayList<Point> weaponList = new ArrayList<>();
+
 
     // for read from file we just take
     public xLifeModel(String fileName) throws FileNotFoundException {
         loadFile(fileName);
-        //this.zombie = new xZombie(rows,cols,grid);
         this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
+    }
+    private void loadFile(String fileName) throws FileNotFoundException {
+        Scanner input = new Scanner(new File(fileName));
+        this.rows = input.nextInt();
+        this.cols = input.nextInt();
+        grid = new char[rows][cols];
+        int i = 0;
+        while (input.hasNextLine() && i <= rows ) {
+            String line = input.nextLine();
+            if(!line.isEmpty() && line.charAt(0)!='#'){
+                for(int j = 0; j< cols;j++){
+                    if(line.charAt(j) == 'S'){
+                        soldierList.add(new xSoldier(i,j)) ;
+                    }else if(line.charAt(j) == 'H'){
+                        humanList.add(new xHuman(i,j)) ;
+                    } else if(line.charAt(j) == 'Z'){
+                        zombieList.add(new xZombie(i,j)) ;
+                    } else if(line.charAt(j) == 'O') {
+                        safeZoneList.add(new Point(i, j));
+                    } else  if(line.charAt(j) == 'W'){
+                        weaponList.add(new Point(i,j));
+                    }
+                    grid[i][j] = line.charAt(j);
+                }
+                i++;
+            }
+        }
     }
 
     public boolean checkMoveValid(int x, int y){
@@ -57,11 +83,11 @@ public class xLifeModel extends JPanel {
                 x1 = x;
                 y1 = y+1;
             }else{
+                // CENTER
                 x1 = x;
                 y1 = y;
             }
             isMove = checkMoveValid(x1,y1);
-
             // ZOMBIE MUST ADD PROCESS THAT ZOMBIE CAN NOT GO TO SAFEZONE
             if(target instanceof xZombie){
                 if(isProtect(new Point(x1,y1))){
@@ -73,8 +99,8 @@ public class xLifeModel extends JPanel {
     }
 
     public boolean isProtect(Point pos){
-        for(int i = 0; i< safeZone.size();i++){
-            if(pos.x==safeZone.get(i).x && pos.y==safeZone.get(i).y){
+        for(int i = 0; i< safeZoneList.size(); i++){
+            if(pos.x== safeZoneList.get(i).x && pos.y== safeZoneList.get(i).y){
                 return true;
             }
         }
@@ -89,15 +115,117 @@ public class xLifeModel extends JPanel {
             // Remove current position from map
             grid[x][y] = '-';
             Point newPos = getNewPosition(target,x,y);
-            if(isProtect(newPos)){
-                newPos = safeZone.get(safeZone.size()-1-safeCount);
+            soldierList.get(i).setX(newPos.x);
+            soldierList.get(i).setY(newPos.y);
+            /*if(isProtect(newPos)){
+                newPos = safeZoneList.get(safeZoneList.size()-1-safeCount);
                 grid[newPos.x][newPos.y] = 'P';
                 soldierList.remove(target);
                 safeCount++;
             }else {
+                // Soldier can kill
                 grid[newPos.x][newPos.y] = 'S';
                 soldierList.get(i).setX(newPos.x);
                 soldierList.get(i).setY(newPos.y);
+            }*/
+        }
+    }
+
+
+
+
+    public void updateZombieMove(){
+        for (int i = 0; i< zombieList.size();i++){
+            xZombie target = zombieList.get(i);
+            int x = target.getX(); // rows
+            int y = target.getY(); // cols
+            // Remove current position from map
+            grid[x][y] = '-';
+            Point newPos = getNewPosition(target,x,y);
+            zombieList.get(i).setX(newPos.x);
+            zombieList.get(i).setY(newPos.y);
+        }
+    }
+
+    public void updateHumanMove(){
+        for (int i = 0; i< humanList.size();i++){
+            xHuman target = humanList.get(i);
+            int x = target.getX(); // rows
+            int y = target.getY(); // cols
+            // Remove current position from map
+            grid[x][y] = '-';
+            Point newPos = getNewPosition(target,x,y);
+            humanList.get(i).setX(newPos.x);
+            humanList.get(i).setY(newPos.y);
+            //grid[newPos.x][newPos.y] = 'H'; // YOON you need to change it
+        }
+    }
+
+    void updateCheckSafeZoneAction(){
+        for(int i = 0; i < soldierList.size();i++){
+            xSoldier target = soldierList.get(i);
+            int x = target.getX();
+            int y = target.getY();
+            if(isProtect(new Point(x,y))){
+                Point safePos = safeZoneList.get(safeZoneList.size()-1-safeCount);
+                grid[safePos.x][safePos.y] = 'P';
+                soldierList.remove(target);
+                safeCount++;
+                i--;
+            }
+        }
+
+        for(int i = 0; i < humanList.size();i++){
+            xHuman target = humanList.get(i);
+            int x = target.getX();
+            int y = target.getY();
+            if(isProtect(new Point(x,y))){
+                Point safePos = safeZoneList.get(safeZoneList.size()-1-safeCount);
+                grid[safePos.x][safePos.y] = 'P';
+                humanList.remove(target);
+                safeCount++;
+                i--;
+            }
+            else{
+
+            }
+        }
+    }
+
+    private boolean hasWeapon(Point pos){
+        for(int i = 0; i< weaponList.size(); i++){
+            if(pos.x== weaponList.get(i).x && pos.y== weaponList.get(i).y){
+                return true;
+            }
+        }
+        return false;
+    }
+    void updateWeaponAction() {
+        for (int i = 0; i < humanList.size(); i++) {
+            xHuman target = humanList.get(i);
+            int x = target.getX();
+            int y = target.getY();
+            if (hasWeapon(new Point(x, y))) {
+                grid[x][y] = 'S';
+                soldierList.add(new xSoldier(x,y));
+                humanList.remove(target);
+                i--;
+            }else{
+                grid[x][y] = 'H';
+            }
+        }
+    }
+    // ----------------------- SOLDIER PROCESS START--------------------------------
+    public void updateSoldierAction(){
+        for(int i = 0; i < soldierList.size();i++ ){
+            xSoldier s = soldierList.get(i);
+            if(isShooting(s) && s.getBullets()==0){
+                grid[s.getX()][s.getY()]='H';
+                humanList.add(new xHuman(s.getX(),s.getY()));
+                soldierList.remove(i);
+                i--;
+            }else{
+                grid[s.getX()][s.getY()]='S';
             }
         }
     }
@@ -109,8 +237,7 @@ public class xLifeModel extends JPanel {
         }
         return -1;
     }
-    // like check neighbor on Project num 5
-    // JUST CHECK 1 RANGE
+    // like check neighbor on Project num 5 - JUST CHECK 1 RANGE (-1) to (1)
     private boolean isShooting(xSoldier target) {
         int count = 0;
         int r = target.getX();
@@ -131,80 +258,41 @@ public class xLifeModel extends JPanel {
         }
         return false;
     }
-    public void updateSoldierShooting(){
-        for(int i = 0; i < soldierList.size();i++ ){
-            xSoldier s = soldierList.get(i);
-            if(isShooting(s) && s.getBullets()==0){
-                grid[s.getX()][s.getY()]='H';
-                humanList.add(new xHuman(s.getX(),s.getY()));
-                soldierList.remove(i);
-                i--;
-            }
-        }
+    // ----------------------- SOLDIER PROCESS END ------------------------------
+
+    private void checkEndGame(){
+
     }
-    public void updateZombieMove(){
-        for (int i = 0; i< zombieList.size();i++){
-            xZombie target = zombieList.get(i);
-            int x = target.getX(); // rows
-            int y = target.getY(); // cols
-            // Remove current position from map
-            grid[x][y] = '-';
-            Point newPos = getNewPosition(target,x,y);
-            //grid[newPos.x][newPos.y] = 'Z'; // NEED TO CHANGE -  COLLSION CHECK
-
-            // update arraylist
-            zombieList.get(i).setX(newPos.x);
-            zombieList.get(i).setY(newPos.y);
-        }
-    }
-
-    public void updateHumanMove(){
-        for (int i = 0; i< humanList.size();i++){
-            xHuman target = humanList.get(i);
-            int x = target.getX(); // rows
-            int y = target.getY(); // cols
-            // Remove current position from map
-            grid[x][y] = '-';
-            Point newPos = getNewPosition(target,x,y);
-            //grid[newPos.x][newPos.y] = 'H'; // NEED TO CHANGE - COLLSION CHECK
-            // update arraylist
-            humanList.get(i).setX(newPos.x);
-            humanList.get(i).setY(newPos.y);
-        }
-    }
-
-
 
     // Using ANIMATION HERE
     public void update() {
+        // ******************************  MOVE *******************************
+        // 1. Update all move of all Human Object
         // get new move of all soldiers
         updateSoldierMove();
-        // NEED TO IMPLEMENT HERE
-        //updateZombieMove();  // NEED TO CHANGE - COLLSION CHECK
-        //updateHumanMove();   // NEED TO CHANGE - COLLSION CHECK
-        paintImmediately(0, 0, getWidth(), getHeight()); // just  for debug
-        updateSoldierShooting();
-        // AFTER MOVE
-        // HUMAN CHECK GET WEAPON
-        // SOLDIER SHOOTING - IF NO BULLET - SOLDIER CHANGE TO HUMAN
-        // ZOOMBIE TAG HUMAN
+        //updateZombieMove();
+        updateHumanMove();
+        // paintImmediately(0, 0, getWidth(), getHeight()); // just  for debug mode
 
-        /*
-        char[][] nextGen = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                // Need to check move all object
-                // Then update nextGen
+        // ************************** AFTER MOVE ******************************
+        // 2. Check who win()
+        // Q1. What happen when Zoombie, human move to the weapon cell? Zoombie win or Human win?
+        // Q2. What if human and soldier move to the same cell?
+        // Q3. What if a lot of Zombie around soldier?
+        // order: Human and Soldier in safeZone > Human promote Soldier > Soldier shoot zombie > Zombie tag Human
 
-                // Zombies
-                if (grid[i][j] == 'Z') {
-                    //zombie.search(i,j);
-                }
-            }
-        }
+        // Human and Soldier are in safeZone
+        updateCheckSafeZoneAction();
 
-        grid = nextGen;
-        */
+        // Human promote Soldier (get weapon), also update Human on map
+        updateWeaponAction();
+
+        // Soldier shoot zombie
+        updateSoldierAction();
+
+        // Zombie tag human - WAITING for LEE :)
+
+        checkEndGame();
 
     }
 
@@ -226,8 +314,8 @@ public class xLifeModel extends JPanel {
         zombieList.clear();
         humanList.clear();
         soldierList.clear();
-        safeZone.clear();
-
+        safeZoneList.clear();
+        safeCount = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
                 grid[r][c] = '.';
@@ -235,35 +323,6 @@ public class xLifeModel extends JPanel {
         }
         loadFile(fileName);
     }
-
-    private void loadFile(String fileName) throws FileNotFoundException {
-        Scanner input = new Scanner(new File(fileName));
-        this.rows = input.nextInt();
-        this.cols = input.nextInt();
-        grid = new char[rows][cols];
-        int i = 0;
-        while (input.hasNextLine() && i <= rows ) {
-            String line = input.nextLine();
-            if(!line.isEmpty() && line.charAt(0)!='#'){
-                for(int j = 0; j< cols;j++){
-                    if(line.charAt(j) == 'S'){
-                        soldierList.add(new xSoldier(i,j)) ;
-                    }else if(line.charAt(j) == 'H'){
-                        humanList.add(new xHuman(i,j)) ;
-                    } else if(line.charAt(j) == 'Z'){
-                        zombieList.add(new xZombie(i,j)) ;
-                    } else if(line.charAt(j) == 'O') {
-                        safeZone.add(new Point(i, j));
-                    }
-                    grid[i][j] = line.charAt(j);
-                }
-                i++;
-            }
-        }
-
-    }
-
-
 
     @Override
     protected void paintComponent(Graphics g) {
