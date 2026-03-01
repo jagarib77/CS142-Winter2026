@@ -32,14 +32,14 @@ public class WorldGrid {
     public int getWidth(){ return width; }
     public int getHeight(){ return height; }
 
-    //TODO: set terrain at Point to Terrain
+    // Sets terrain at Point to Terrain - Kyle
     public void setTerrain(Point pos, Terrain type){
-
+        terrain[pos.y][pos.x] = type;
     }
 
-    //TODO: return the kind of Terrain at pos
+    // Returns the kind of Terrain at Point - Kyle
     public Terrain getTerrainAt(Point pos){
-        return null;
+        return terrain[pos.y][pos.x];
     }
 
     // returns true if dirt was dug
