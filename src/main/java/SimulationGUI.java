@@ -37,6 +37,7 @@ public class SimulationGUI extends JPanel{
         timer=new Timer(turn, listener);
     }
     
+    // a button to control
     public void startSimulation(){
         timer.start();
     }
