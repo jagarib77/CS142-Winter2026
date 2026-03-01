@@ -192,23 +192,25 @@ public class xLifeModel extends JPanel {
         }
     }
 
-    private boolean hasWeapon(Point pos){
+    private int hasWeapon(Point pos){
         for(int i = 0; i< weaponList.size(); i++){
             if(pos.x== weaponList.get(i).x && pos.y== weaponList.get(i).y){
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
     void updateWeaponAction() {
         for (int i = 0; i < humanList.size(); i++) {
             xHuman target = humanList.get(i);
             int x = target.getX();
             int y = target.getY();
-            if (hasWeapon(new Point(x, y))) {
+            int pos = hasWeapon(new Point(x, y));
+            if (pos!=-1) {
                 grid[x][y] = 'S';
                 soldierList.add(new xSoldier(x,y));
                 humanList.remove(target);
+                weaponList.remove(pos);
                 i--;
             }else{
                 grid[x][y] = 'H';
@@ -315,6 +317,7 @@ public class xLifeModel extends JPanel {
         humanList.clear();
         soldierList.clear();
         safeZoneList.clear();
+        weaponList.clear();
         safeCount = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
