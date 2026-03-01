@@ -18,7 +18,6 @@ public class xLifeModel extends JPanel {
     private ArrayList<Point> safeZoneList = new ArrayList<>();
     private ArrayList<Point> weaponList = new ArrayList<>();
 
-
     // for read from file we just take
     public xLifeModel(String fileName) throws FileNotFoundException {
         loadFile(fileName);
@@ -113,26 +112,12 @@ public class xLifeModel extends JPanel {
             int x = target.getX(); // rows
             int y = target.getY(); // cols
             // Remove current position from map
-            grid[x][y] = '-';
+            grid[x][y] = '-'; // remove current pos of S
             Point newPos = getNewPosition(target,x,y);
             soldierList.get(i).setX(newPos.x);
             soldierList.get(i).setY(newPos.y);
-            /*if(isProtect(newPos)){
-                newPos = safeZoneList.get(safeZoneList.size()-1-safeCount);
-                grid[newPos.x][newPos.y] = 'P';
-                soldierList.remove(target);
-                safeCount++;
-            }else {
-                // Soldier can kill
-                grid[newPos.x][newPos.y] = 'S';
-                soldierList.get(i).setX(newPos.x);
-                soldierList.get(i).setY(newPos.y);
-            }*/
         }
     }
-
-
-
 
     public void updateZombieMove(){
         for (int i = 0; i< zombieList.size();i++){
@@ -186,9 +171,6 @@ public class xLifeModel extends JPanel {
                 safeCount++;
                 i--;
             }
-            else{
-
-            }
         }
     }
 
@@ -209,7 +191,7 @@ public class xLifeModel extends JPanel {
             if (pos!=-1) {
                 grid[x][y] = 'S';
                 soldierList.add(new xSoldier(x,y));
-                humanList.remove(target);
+                humanList.remove(i);
                 weaponList.remove(pos);
                 i--;
             }else{
@@ -279,8 +261,9 @@ public class xLifeModel extends JPanel {
         // ************************** AFTER MOVE ******************************
         // 2. Check who win()
         // Q1. What happen when Zoombie, human move to the weapon cell? Zoombie win or Human win?
-        // Q2. What if human and soldier move to the same cell?
+        // Q2. What if human and soldier move to the same cell? // NOT FINISH
         // Q3. What if a lot of Zombie around soldier?
+
         // order: Human and Soldier in safeZone > Human promote Soldier > Soldier shoot zombie > Zombie tag Human
 
         // Human and Soldier are in safeZone
@@ -295,6 +278,10 @@ public class xLifeModel extends JPanel {
         // Zombie tag human - WAITING for LEE :)
 
         checkEndGame();
+        // Human and Soldier is in protect --> WIN
+        // No Human on map --> gameover
+        //flag
+
 
     }
 
@@ -321,7 +308,7 @@ public class xLifeModel extends JPanel {
         safeCount = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
-                grid[r][c] = '.';
+                grid[r][c] = '-';
             }
         }
         loadFile(fileName);
@@ -386,8 +373,8 @@ public class xLifeModel extends JPanel {
 
         g.setColor(new Color(0,0,0,150));
         g.fillRect(0,0,getWidth(),getHeight());
+        */
 
-         */
 
     }
 }
