@@ -28,7 +28,7 @@ public class AntSim {
     public static void printIntro() {
         System.out.println("Welcome to the Ant Colony Simulator!");
         System.out.println("This program creates a world with ant colonies and simulates ants'");
-        System.out.println("behaviors like foraging, fighting, and procreating.")
+        System.out.println("behaviors like foraging, fighting, and procreating.");
     }
 
     public WorldGrid getWorld() { return world; }
@@ -57,17 +57,19 @@ public class AntSim {
         int width = world.getWidth();
         int height = world.getHeight();
 
-        // carve a rectangular room of tunnel so ants can move
-        for (int y=height/16*7; y<=height/16*9; ++y) {
-            for (int x=width/16*7; x<=width/16*9; ++x) {
-                world.setTerrain(new Point(x, y), new Tunnel());
-            }
-        }
-
-        // carve a rectangular room of air for the surface world
-        for (int y=0; y<=5; ++y) {
-            for (int x=0; x<=width; ++x) {
-                world.setTerrain(new Point(x, y), new Air());
+        // Sets up the Terrain grid - Kyle
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                if ((y>=height/16*7 && y<=height/16*9) && (x>=width/16*7 && x<=width/16*9)) {
+                    // Sets Terrain to Tunnel
+                    world.setTerrain(new Point(x, y), new Tunnel());
+                } else if (y<=5) {
+                    // Sets Terrain to Air
+                    world.setTerrain(new Point(x, y), new Air());
+                } else {
+                    // Sets Terrain to Dirt
+                    world.setTerrain(new Point(x, y), new Dirt());
+                }
             }
         }
 
@@ -78,6 +80,10 @@ public class AntSim {
                 world.setTerrain(rand, new Rock());
             } else { --r; } // try again
         }
+    }
+
+    private void setupWorldObjects() {
+        //TODO: need to spawn WorldObjects like sugar, unless if none should be spawned
     }
 
     private void setupAnts() {
