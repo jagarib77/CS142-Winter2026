@@ -1,19 +1,35 @@
+import java.util.Random;
+
 public abstract class Human extends LivingEntity {
     protected boolean infected = false;
+    protected static Random rand = new Random();
 
-    // Constructor: gọi constructor của LivingEntity
     public Human(int x, int y, int health) {
         super(x, y, health);
     }
 
-    // Attack a zombie
-    //public void attack(Zombie z) {
-        // TODO: add attack logic
-    //}
-
-    // Move randomly on the grid
+    // Move randomly to a neighboring cell within grid bounds
     public void moveRandom(Entity[][] grid) {
-        // TODO: add move logic
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int newX = getX();
+        int newY = getY();
+
+        // Try to move one step in random direction
+        int dir = rand.nextInt(4); // 0: up, 1: down, 2: left, 3: right
+        switch (dir) {
+            case 0: if(newY > 0) newY--; break;
+            case 1: if(newY < cols - 1) newY++; break;
+            case 2: if(newX > 0) newX--; break;
+            case 3: if(newX < rows - 1) newX++; break;
+        }
+
+        // Check if the new cell is empty
+        if(grid[newX][newY] == null) {
+            setX(newX);
+            setY(newY);
+        }
+        // else: stay in place (collision)
     }
 
     // Check infection status
@@ -26,8 +42,7 @@ public abstract class Human extends LivingEntity {
         infected = true;
     }
 
-    // Step method will be implemented by subclasses (Citizen, Soldier, Doctor, etc.)
+    // Step method: will be implemented in subclasses
     @Override
     public abstract void step(Entity[][] grid);
-
 }
