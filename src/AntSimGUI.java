@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.Timer;
 
 public class AntSimGUI extends JFrame {
     // The size of the square cells containing the Terrain, Ant, and WorldObject
@@ -17,10 +18,12 @@ public class AntSimGUI extends JFrame {
     private AntSim simulator;
     // The entire interface of the program
     private JFrame frame;
-    // A label that contains an image of the world
-    private JLabel imageContainer;
     // Used to draw in imageContainer
     private Graphics g;
+    // Used to animate the simulation
+    private Timer timer;
+    // The intervals between animating each frame (in ms)
+    private int animationDelay = 500;
 
     public AntSimGUI(AntSim simulator) {
         this.simulator = simulator;
@@ -35,9 +38,20 @@ public class AntSimGUI extends JFrame {
         BufferedImage worldImage = new BufferedImage(world.getWidth() * cellSize, world.getHeight() * cellSize,
                 BufferedImage.TYPE_INT_RGB);
 
-        imageContainer = new JLabel(new ImageIcon(worldImage));
+        JLabel imageContainer = new JLabel(new ImageIcon(worldImage));
+        frame.add(imageContainer, BorderLayout.CENTER);
         g = worldImage.getGraphics();
 
+        createButtons();
+
+        drawWorld();
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    // Creates buttons on the frame
+    private void createButtons() {
         // Creates an area on the frame for the buttons.
         // Note that the buttons do not do anything yet, and that more buttons can be added.
         JPanel buttonContainer = new JPanel();
@@ -67,19 +81,14 @@ public class AntSimGUI extends JFrame {
         }
         buttonContainer.setLayout(new GridLayout(1, -1));
 
-        frame.add(imageContainer, BorderLayout.CENTER);
         frame.add(buttonContainer, BorderLayout.SOUTH);
-        // It might be better to preset the frame to a certain size than calling the pack() method.
-        frame.pack();
-
-        drawWorld();
-        frame.setVisible(true);
-
+        timer = new Timer(animationDelay, listener);
+        timer.start();
     }
 
     // Draws the WorldGrid as a picture.
     // By Kyle Hamasaki
-    public void drawWorld() {
+    private void drawWorld() {
         // The WorldGrid based on simulator
         WorldGrid world = simulator.getWorld();
 
@@ -131,20 +140,36 @@ public class AntSimGUI extends JFrame {
         frame.repaint();
     }
 
-    // Used to make buttons functional. The buttons do not do their respective function yet.
-    //TODO: create a timer and make the buttons perform their respective functions
+    // Used to make buttons functional.
     public class MyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            // Runs the animation.
+            if (event.getSource() == timer) {
+                update();
+                return;
+            }
+
             if (event.getActionCommand().equals("Stop")) {
-                System.out.println("Stop");
+                // Stops the timer.
+                timer.stop();
             } else if (event.getActionCommand().equals("Start")) {
-                System.out.println("Start");
+                // Starts the timer.
+                timer.start();
             } else if (event.getActionCommand().equals("Tick")) {
-                System.out.println("Tick");
+                // Updates to the next frame.
+                update();
             } else if (event.getActionCommand().equals("Speed up")) {
-                System.out.println("Speed up");
+                // Decrements the animation delay by 50 ms if the animation delay is over 50 ms.
+                if (animationDelay > 50) {
+                    animationDelay -= 50;
+                    timer.setDelay(animationDelay);
+                }
             } else if (event.getActionCommand().equals("Slow down")) {
-                System.out.println("Slow down");
+                // Increments the animation delay by 50 ms if the animation delay is below 1500 ms.
+                if (animationDelay < 1500) {
+                    animationDelay += 50;
+                    timer.setDelay(animationDelay);
+                }
             }
         }
     }
