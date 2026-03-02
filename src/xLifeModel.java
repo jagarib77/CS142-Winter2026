@@ -311,6 +311,19 @@ public class xLifeModel extends JPanel {
         }
         return -1;
     }
+    private Point findFirstHumanNeighbour(int r, int c){
+        for (int i = r-1; i <= r+1; i++) {
+            for (int j = c-1; j <= c+1; j++) {
+                if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c) ) {
+                    if (searchHuman(i,j)!=-1){
+                        return new Point(i,j);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     // Zombies tag first human it see, if none, move randomly
     public void updateZombieAction(){
         for (int i = 0; i < zombieList.size(); i++) {
@@ -349,18 +362,7 @@ public class xLifeModel extends JPanel {
 
         }
     }
-    private Point findFirstHumanNeighbour(int r, int c){
-        for (int i = r-1; i <= r+1; i++) {
-            for (int j = c-1; j <= c+1; j++) {
-                if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c) ) {
-                    if (searchHuman(i,j)!=-1){
-                        return new Point(i,j);
-                    }
-                }
-            }
-        }
-        return null;
-    }
+
 
     public void reset(String fileName) throws FileNotFoundException {
         zombieList.clear();
