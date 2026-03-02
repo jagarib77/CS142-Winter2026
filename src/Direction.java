@@ -3,6 +3,8 @@
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler
 
+import java.util.Random;
+
 /**
  * Represents a movement direction on the grid.
  * Each direction includes dx and dy offsets for coordinate updates.
@@ -20,6 +22,16 @@ public enum Direction {
     Direction(int dx, int dy) {
         this.dx = dx;
         this.dy = dy;
+    }
+
+    /**
+     * Returns a random direction
+     *
+     * @return random Direction of NORTH, SOUTH, EAST and WEST
+     */
+    public static Direction randDir(Random rng){
+        Direction[] all = allDirections();
+        return all[rng.nextInt(all.length)];
     }
 
     /**

@@ -6,6 +6,7 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 
 /**
@@ -69,6 +70,22 @@ public class AntSim {
      * - update pheromones (spread and decay)
      */
     public void step() {
+        // basic random movement
+        for (Ant a:ants){
+            a.move(Direction.randDir(rng));
+        }
+
+        // random chance for each queen to spawn an ant
+        ListIterator<Ant> it = ants.listIterator(); // safe iterator add
+        while (it.hasNext()) {
+            Ant a = it.next();
+            if (a instanceof QueenAnt q) {
+                if (rng.nextInt(50) == 0) {
+                    it.add(q.spawnAnt()); // safe add
+                }
+            }
+        }
+
         //TODO: implement queen spawning other ants loop through all Ants in ants
         // and check if ant is queenAnt then use queenAnt.spawnAnt(); to create
         // a new ant and .add() it to the ant list
@@ -98,6 +115,8 @@ public class AntSim {
         // don't worry about this yet, we need to get pheromones working
         // follow pheromones when possible otherwise move random and wait for trigger
 
+        //TODO: if all ants are dead then end sim and print message (all ants are dead) goodbye
+
         // pheromones update
         world.spreadPheromones(.01); // 1% spread per tick
         world.decayPheromones(.99); // 1% loss per tick
@@ -111,9 +130,20 @@ public class AntSim {
         int width = world.getWidth();
         int height = world.getHeight();
 
-        // carve a rectangular room of tunnel so ants can move
-        for (int y=height/16*7; y<=height/16*9; ++y) {
-            for (int x=width/16*7; x<=width/16*9; ++x) {
+        // Carve a centered square room of Tunnel tiles.
+        // 3x3 if size is odd, 4x4 if size is even.
+        int roomSize = (width%2 == 0) ? 4 : 3;
+        int half = roomSize/2;
+
+        // For odd (3): cx = w/2, start = cx-1, end = cx+1
+        // For even (4): cx = w/2, start = cx-2, end = cx+1
+        int startX = (width/2) - half;
+        int startY = (height/2) - half;
+        int endX = startX + roomSize-1;
+        int endY = startY + roomSize-1;
+
+        for (int y=startY; y<=endY; ++y) {
+            for (int x=startX; x<=endX; ++x) {
                 world.setTerrain(new Point(x, y), new Tunnel());
             }
         }

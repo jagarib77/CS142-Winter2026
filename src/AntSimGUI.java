@@ -214,7 +214,7 @@ public class AntSimGUI extends JFrame {
         List<Ant> ants = sim.getAnts();
 
         for (Ant a:ants){
-            if (!a.isAlive()) continue;
+            if (a == null || !a.isAlive()) continue;
             Point pos = a.getPoint();
 
             switch (a) {
