@@ -1,3 +1,3 @@
-# Git Demo
+# Ant Simulator
 
-Test Repository to Help Teach basic Github functionality of branches, commits, Push/Merge functionalities, and GitHubCI testing with Maven.
+AntSim Harrison branch: I made this branch becuase there seems to be 2 groups editing the same github repo so I brnached and removed all related zombie code. 
