@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import src.main.java.SeniorZombie;
 import src.main.java.Soldier;
 
 public class SimulationModel {
@@ -9,7 +10,7 @@ public class SimulationModel {
     private int rows;
     private int cols;
 
-    // 10% have human, 2% hava zombie at first
+    // 10% have human, 2% have soldier at first
     public void initializeGrid(int r, int c){
         
         rows=r;
@@ -24,15 +25,19 @@ public class SimulationModel {
                 if(z<10){
                     grid[x][y]=new Citizen(x, y, 100);
                 }
-
                 else if(z<12){
                     grid[x][y]=new Soldier(x, y, 150);
                 }
-
                 else if(z<15){
-                    grid[x][y]=new Zombie(x, y, 150);
+                    int z1=(int)(Math.random()*100);
+                    if(z1<10){
+                        grid[x][y]=new LordOfZombie(x, y, 150);
+                    }
+                    else if(z1<11){
+                        grid[x][y]=new SeniorZombie(x, y, 200);
+                    }
+                    grid[x][y]=new NormalZombie(x, y, 120);
                 }
-
                 else{
                     grid[x][y]=null;
                 }
