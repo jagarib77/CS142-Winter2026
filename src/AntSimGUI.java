@@ -1,7 +1,7 @@
 // AntSimGUI.java
 // Creates an interactive GUI and displays an animation of a world of ants.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler
 
 import java.awt.*;
 import javax.swing.*;
