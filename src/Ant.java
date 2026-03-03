@@ -113,6 +113,19 @@ public abstract class Ant {
     }
 
     /**
+     * checks the pheromones at this ants location then updates currentAction variable
+     * return something like a direction or modify a value like current action
+     */
+    public void smell(){
+        //TODO: does something based on strongest pheromone in its tile
+        // unless previous behavior overrides the smell
+
+        //TODO: probably should add in a variable that controls the and behavior based on
+        // on some criteria either its hungry or has been told by pheromones what to do
+        // or does some default behavior like wander
+    }
+
+    /**
      * Attempts to pick up a carryable world object from the ant's current tile.
      * Costs a fixed amount of energy on success.
      *
