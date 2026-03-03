@@ -89,23 +89,13 @@ public class AntSim {
         }
 
         //TODO: remove dead ants from ant list
-        // Removes dead ants and makes queen ants spawn other ants, but does not make them move
+        // Removes dead ants from the list
         // - Kyle
         for (int i = ants.size() - 1; i >= 0; i--) {
             Ant ant = ants.get(i);
-
             // Removes the Ant from the list if it is not alive.
             if (!ant.isAlive()) {
                 ants.remove(i);
-            }
-
-            // If the Ant is a Queen Ant, then the Queen Ant will try to spawn a new Ant, which
-            // will be added to the list.
-            if (ant.getSymbol() == 'Q') {
-                Ant newAnt = ((QueenAnt) ant).spawnAnt();
-                if (newAnt != null) {
-                    ants.add(newAnt);
-                }
             }
         }
 
