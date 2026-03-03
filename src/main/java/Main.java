@@ -11,15 +11,8 @@ public class Main {
 
         SimulationModel model = new SimulationModel();
         model.initializeGrid(20, 20);
-
+        
         SimulationGUI gui = new SimulationGUI(model);
-
-        JFrame frame = new JFrame("Zombie Simulation");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(gui);
-        frame.pack();
-        frame.setVisible(true);
-
-        gui.startSimulation();
+        gui.display(); 
     }    
 }
