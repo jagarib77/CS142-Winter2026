@@ -1,6 +1,5 @@
 //NormalZombie.java
 
-package src.main.java;
 
 public class NormalZombie extends Zombie{ 
     
