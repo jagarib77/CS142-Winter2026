@@ -74,6 +74,25 @@ public class AntSim {
         // a new ant and .add() it to the ant list
 
         //TODO: remove dead ants from ant list
+        // Removes dead ants and makes queen ants spawn other ants, but does not make them move
+        // - Kyle
+        for (int i = ants.size() - 1; i >= 0; i--) {
+            Ant ant = ants.get(i);
+
+            // Removes the Ant from the list if it is not alive.
+            if (!ant.isAlive()) {
+                ants.remove(i);
+            }
+
+            // If the Ant is a Queen Ant, then the Queen Ant will try to spawn a new Ant, which
+            // will be added to the list.
+            if (ant.getSymbol() == 'Q') {
+                Ant newAnt = ((QueenAnt) ant).spawnAnt();
+                if (newAnt != null) {
+                    ants.add(newAnt);
+                }
+            }
+        }
 
         //TODO: implement logic for ants to move
         // don't worry about this yet, we need to get pheromones working
