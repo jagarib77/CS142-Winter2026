@@ -128,6 +128,14 @@ public abstract class Ant {
     }
 
     /**
+     * creates a pheromone based on what its currently doing
+     */
+    public PheromoneType createPheromone(){
+        //TODO: implement logic
+        return PheromoneType.WALKING_TRAIL;
+    }
+
+    /**
      * Attempts to pick up a carryable world object from the ant's current tile.
      * Costs a fixed amount of energy on success.
      *

@@ -106,6 +106,13 @@ public class AntSim {
         //TODO: if all ants are dead then end sim and print to GUI the message ->
         // (all ants are dead) goodbye
 
+        // call ant behavior
+        for (Ant a:ants){
+            a.smell(); // set action state
+            // update the pheromones array
+            world.getPheromones().add(a.createPheromone(), a.getPoint(), 1);
+        }
+
         // pheromones update
         world.spreadPheromones(.01); // 1% spread per tick
         world.decayPheromones(.99); // 1% loss per tick

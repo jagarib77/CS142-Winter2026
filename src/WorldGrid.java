@@ -39,6 +39,7 @@ public class WorldGrid {
 
     public int getWidth(){ return width; }
     public int getHeight(){ return height; }
+    public Pheromones getPheromones(){ return pheromones; }
 
     public void setTerrain(Point pos, Terrain type){
         if (!inBounds(pos) || type == null) return;
