@@ -54,60 +54,58 @@ public class Zombie extends LivingEntity{
     }
     
     //only move if it's alive
-    public void step(Entity[][] grid, Entity[][] newGrid, int x, int y){
+    @Override
+    public void step(Entity[][] grid){
 
-        int rows=grid.length;
-        int cols=grid[0].length;
+        int rows = grid.length;
+        int cols = grid[0].length;
 
-        // spreadInfection
-        for(int dx=-1;dx<=1;dx++){
-            for(int dy=-1;dy<=1;dy++){
+        int x = getX();
+        int y = getY();
 
-                // cross self
+        // spread Infection
+        for(int dx = -1; dx <= 1; dx++){
+            for(int dy = -1; dy <= 1; dy++){
+
                 if(dx == 0 && dy == 0){
                     continue;
-                }
+                } 
+                int nx = x + dx;
+                int ny = y + dy;
 
-                int nx=x+dx;
-                int ny=y+dy;
-
-                // check edge
-                if(nx>=0 && nx<rows && ny>=0 && ny<cols){
-
+                if(nx >= 0 && nx < rows && ny >= 0 && ny < cols){
                     if(grid[nx][ny] instanceof Human){
 
-                        newGrid[nx][ny]=new Zombie();
-                        newGrid[x][y]=this;
+                        Human h = (Human) grid[nx][ny];
+                        h.infect();
                         return;
                     }
                 }
             }
         }
 
-        //no human, move random
-        int x1=x;
-        int y1=y;
+        // no human, move random
+        int newX = x;
+        int newY = y;
 
-        int d=(int)(Math.random()*4);
+        int d = (int)(Math.random() * 4);
 
-        if(d==0){
-            x1--;
+        if(d == 0){
+            newX--;
         } 
-        if(d==1){
-            x1++;
+        if(d == 1){
+            newX++;
         } 
-        if(d==2){
-            y1--;
+        if(d == 2){
+            newY--;
         } 
-        if(d==3){
-            y1++;
+        if(d == 3){
+            newY++;
         } 
 
-        if(x1>=0 && x1<rows && y1>=0 && y1<cols && newGrid[x1][y1]==null){
-            newGrid[x1][y1]=this;
-        } 
-        else{
-            newGrid[x][y]=this;
+        if(newX >= 0 && newX < rows && newY >= 0 && newY < cols && grid[newX][newY] == null){
+            setX(newX);
+            setY(newY);
         }
     }
 }
