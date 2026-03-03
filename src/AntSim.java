@@ -45,6 +45,7 @@ public class AntSim {
 
         setupWorld();
         setupAnts();
+        setupPheromones();
     }
 
     /**
@@ -183,6 +184,13 @@ public class AntSim {
         //TODO: spawn 2 guards and 2 workers with the queen
         Point home = new Point(world.getWidth()/2, world.getHeight()/2);
         ants.add(QueenAnt.spawn(world, rng, home, 500, home));
+    }
+
+    /**
+     * sets up Pheromones as the world is generated
+     */
+    public void setupPheromones(){
+        //TODO: add in initial pheromones state
     }
 
     /**
