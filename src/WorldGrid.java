@@ -73,9 +73,32 @@ public class WorldGrid {
      * @param p position to dig
      * @return true if dirt was successfully dug and changed, false otherwise
      */
-    public boolean dig(Point p){
+    // I worked on the dig method, but I am unsure if my code works or if I have the right 
+    // parameters, so I did not erase the instructions. Let me know or modify the code if something
+    // is wrong.
+    // - Kyle
+    public boolean dig(WorkerAnt a, Point p){
         //TODO: check if Terrain at p is dirt, remove the dirt, then add dirt
         // into ant inventory. Need to make sure ant has room for dirt
+        if (inBounds(p)) {
+            throw new IllegalArgumentException("Point is not within bounds.");
+        }
+
+        // Checks if the Terrain at the point is Dirt.
+        if (terrain[p.y][p.x] instanceof Dirt) {
+            // Checks if the WorkerAnt is carrying nothing and has enough energy.
+            if (a.getHeldItem() != null && a.getEnergy() >= 15) {
+                setTerrain(p, new Tunnel());
+                // Reduces the Worker Ant's energy by 5 (technically 10, because it also picks up
+                // the object, which costs 5 energy).
+                a.changeEnergy(-5);
+                a.move(Direction.moveToPoint(a.getPoint(), p));
+                // Picks up the WorldObject at the Point (Dirt).
+                a.pickupObject();
+                return true;
+            }
+        }
+
         return false;
     }
 
