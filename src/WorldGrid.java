@@ -89,7 +89,7 @@ public class WorldGrid {
         // Checks if the Terrain at the point is Dirt.
         if (terrain[p.y][p.x] instanceof Dirt) {
             // Checks if the WorkerAnt is carrying nothing and has enough energy.
-            if (a.getHeldItem() != null && a.getEnergy() >= 15) {
+            if (a.getHeldItem() == null && a.getEnergy() >= 15) {
                 setTerrain(p, new Tunnel());
                 // Reduces the Worker Ant's energy by 5 (technically 10, because it also picks up
                 // the object, which costs 5 energy).
