@@ -94,7 +94,7 @@ public class AntSim {
         for (int i = ants.size() - 1; i >= 0; i--) {
             Ant ant = ants.get(i);
             // Removes the Ant from the list if it is not alive.
-            if (!ant.isAlive()) {
+            if (ant == null || !ant.isAlive()) {
                 ants.remove(i);
             }
         }
