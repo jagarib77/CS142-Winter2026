@@ -80,7 +80,9 @@ public class WorldGrid {
     public boolean dig(WorkerAnt a, Point p){
         //TODO: check if Terrain at p is dirt, remove the dirt, then add dirt
         // into ant inventory. Need to make sure ant has room for dirt
-        if (inBounds(p)) {
+        
+        // Checks if the Point is within bounds.
+        if (!inBounds(p)) {
             throw new IllegalArgumentException("Point is not within bounds.");
         }
 
