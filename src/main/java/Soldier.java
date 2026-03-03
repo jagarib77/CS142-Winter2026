@@ -3,7 +3,7 @@
 package src.main.java;
 
 public class Soldier extends Human{
-    public void step(Entity[][] grid){
+    public void step(Entity[][] grid, Entity[][] newGrid){
         
         Zombie closestZombie=null;
         int minDistance=Integer.MAX_VALUE;

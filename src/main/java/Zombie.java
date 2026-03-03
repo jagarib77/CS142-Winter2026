@@ -54,10 +54,10 @@ public class Zombie extends LivingEntity{
     }
     
     //only move if it's alive
-    public void step(Entity[][] Grid, Entity[][] newGrid, int x, int y){
+    public void step(Entity[][] grid, Entity[][] newGrid, int x, int y){
 
-        int rows=Grid.length;
-        int cols=Grid[0].length;
+        int rows=grid.length;
+        int cols=grid[0].length;
 
         // spreadInfection
         for(int dx=-1;dx<=1;dx++){
@@ -74,7 +74,7 @@ public class Zombie extends LivingEntity{
                 // check edge
                 if(nx>=0 && nx<rows && ny>=0 && ny<cols){
 
-                    if(Grid[nx][ny] instanceof Human){
+                    if(grid[nx][ny] instanceof Human){
 
                         newGrid[nx][ny]=new Zombie();
                         newGrid[x][y]=this;
