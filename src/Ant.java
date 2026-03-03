@@ -115,6 +115,8 @@ public abstract class Ant {
     /**
      * checks the pheromones at this ants location then updates currentAction variable
      * return something like a direction or modify a value like current action
+     * this function should determine the next action any ant takes
+     * should override if an ant needs to behave differently
      */
     public void smell(){
         //TODO: does something based on strongest pheromone in its tile
