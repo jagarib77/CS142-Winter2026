@@ -1,5 +1,6 @@
 //SimulationGui.java
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Graphics;
@@ -100,5 +101,13 @@ public class SimulationGUI extends JPanel{
                 g.drawRect(y*cellSize, x*cellSize, cellSize, cellSize);
             }
         }
+    }
+    public void display() {
+        JFrame frame=new JFrame("Zombie Simulation");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(this);
+        frame.pack();
+        frame.setVisible(true);
+        this.startSimulation();
     }
 }
