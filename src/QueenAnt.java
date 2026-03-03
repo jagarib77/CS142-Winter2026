@@ -48,10 +48,10 @@ public class QueenAnt extends ColonyAnt {
 
             if (type == 0) {
                 changeEnergy(-5);
-                return GuardAnt.spawn(world(), rng(), spawn, 100, home);
+                return GuardAnt.spawn(world(), rng(), spawn, 200, home);
             } else {
                 changeEnergy(-5);
-                return WorkerAnt.spawn(world(), rng(), spawn, 100, home);
+                return WorkerAnt.spawn(world(), rng(), spawn, 200, home);
             }
         }
 

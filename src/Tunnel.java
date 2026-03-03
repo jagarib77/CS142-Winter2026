@@ -21,5 +21,5 @@ public class Tunnel extends Terrain {
     public boolean isTraversable() { return true; }
 
     @Override
-    public boolean isSolid() { return false; }
+    public boolean isSolid() { return true; }
 }

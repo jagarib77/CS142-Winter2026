@@ -65,7 +65,7 @@ public class AntSim {
      * Advances the simulation by one tick.
      * Intended responsibilities:
      * - update ant behaviors (movement, actions, combat, etc.)
-     * - spawn new ants from queens
+     * - spawn new ants from Queens
      * - remove dead ants
      * - update pheromones (spread and decay)
      */
@@ -147,10 +147,11 @@ public class AntSim {
         }
 
         // tunnel from starting nest to surface, either 1 or 2 wide depending on size of world
-        startX = (width/2)-1;
-        startY = 0; // top of map
-        endX = startX+half-1;
-        endY = (width/2);
+        startX = (width-half)/2;
+        startY = 0;
+
+        endX = startX + half-1;
+        endY = height/2;
 
         for (int y=startY; y<=endY; ++y) {
             for (int x=startX; x<=endX; ++x) {
@@ -179,9 +180,9 @@ public class AntSim {
      * This method is called once during construction.
      */
     private void setupAnts() {
-        //TODO: need to spawn the first ants in the sim (at least a queen)
+        //TODO: spawn 2 guards and 2 workers with the queen
         Point home = new Point(world.getWidth()/2, world.getHeight()/2);
-        ants.add(QueenAnt.spawn(world, rng, home, 200, home));
+        ants.add(QueenAnt.spawn(world, rng, home, 500, home));
     }
 
     /**
@@ -190,7 +191,7 @@ public class AntSim {
      */
     public static void main(String[] args) {
         printIntro();
-        AntSim sim = new AntSim(51, 51);
+        AntSim sim = new AntSim(100, 50);
         new AntSimGUI(sim);
     }
 }

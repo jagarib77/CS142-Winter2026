@@ -43,8 +43,8 @@ public class AntSimGUI extends JFrame {
         JPanel buttonContainer = new JPanel(new FlowLayout(FlowLayout.LEFT));
         add(buttonContainer, BorderLayout.SOUTH);
 
-        JButton speedUpButton = new JButton("Speed Up");
-        JButton slowDownButton = new JButton("Slow Down");
+        JButton speedUpButton = new JButton("Speed Up: "+TICKS_PER_SECOND);
+        JButton slowDownButton = new JButton("Slow Down: "+TICKS_PER_SECOND);
         JButton pauseButton = new JButton("Pause");
         JButton stepButton = new JButton("Step");
 
@@ -63,12 +63,14 @@ public class AntSimGUI extends JFrame {
         speedUpButton.addActionListener(e -> {
             TICKS_PER_SECOND += 1;
             timer.setDelay(1000/TICKS_PER_SECOND);
+            speedUpButton.setText("Speed Up: "+TICKS_PER_SECOND);
         });
 
         slowDownButton.addActionListener(e -> {
             if (TICKS_PER_SECOND == 1) return; // don't make tick rate 0
             TICKS_PER_SECOND -= 1;
             timer.setDelay(1000/TICKS_PER_SECOND);
+            slowDownButton.setText("Slow Down: "+TICKS_PER_SECOND);
         });
 
         pauseButton.addActionListener(e -> {

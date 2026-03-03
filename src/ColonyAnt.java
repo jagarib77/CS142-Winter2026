@@ -51,6 +51,7 @@ public class ColonyAnt extends Ant {
     public Direction depositFood() {
         if (foodStore == null) return Direction.CENTER;
         //TODO: handle logic when foodStore is null better
+        // set behavior to findFood();
         return pathFind(foodStore);
     }
 
