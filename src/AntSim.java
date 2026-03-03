@@ -72,6 +72,7 @@ public class AntSim {
     public void step() {
         // basic random movement
         for (Ant a:ants){
+            if (a == null) continue;
             a.move(Direction.randDir(rng));
         }
 
@@ -85,10 +86,6 @@ public class AntSim {
                 }
             }
         }
-
-        //TODO: implement queen spawning other ants loop through all Ants in ants
-        // and check if ant is queenAnt then use queenAnt.spawnAnt(); to create
-        // a new ant and .add() it to the ant list
 
         //TODO: remove dead ants from ant list
         // Removes dead ants and makes queen ants spawn other ants, but does not make them move
@@ -115,7 +112,8 @@ public class AntSim {
         // don't worry about this yet, we need to get pheromones working
         // follow pheromones when possible otherwise move random and wait for trigger
 
-        //TODO: if all ants are dead then end sim and print message (all ants are dead) goodbye
+        //TODO: if all ants are dead then end sim and print to GUI the message ->
+        // (all ants are dead) goodbye
 
         // pheromones update
         world.spreadPheromones(.01); // 1% spread per tick
@@ -141,6 +139,18 @@ public class AntSim {
         int startY = (height/2) - half;
         int endX = startX + roomSize-1;
         int endY = startY + roomSize-1;
+
+        for (int y=startY; y<=endY; ++y) {
+            for (int x=startX; x<=endX; ++x) {
+                world.setTerrain(new Point(x, y), new Tunnel());
+            }
+        }
+
+        // tunnel from starting nest to surface, either 1 or 2 wide depending on size of world
+        startX = (width/2)-1;
+        startY = 0; // top of map
+        endX = startX+half-1;
+        endY = (width/2);
 
         for (int y=startY; y<=endY; ++y) {
             for (int x=startX; x<=endX; ++x) {
@@ -180,7 +190,7 @@ public class AntSim {
      */
     public static void main(String[] args) {
         printIntro();
-        AntSim sim = new AntSim(50, 50);
+        AntSim sim = new AntSim(51, 51);
         new AntSimGUI(sim);
     }
 }
