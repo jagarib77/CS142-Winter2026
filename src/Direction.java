@@ -1,7 +1,7 @@
 // Direction.java
 // Cardinal movement directions used by ants and pheromone spreading.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Kyle Hamasaki
 
 import java.util.Random;
 
