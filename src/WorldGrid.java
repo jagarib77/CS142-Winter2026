@@ -1,6 +1,7 @@
-// WorldObject.java
-// Base type for any object that can exist in the world, including terrain and resources.
-// Defines shared properties such as carryability, edibility and energy value.
+// WorldGrid.java
+// Represents the 2D simulation world grid, storing terrain, world objects and pheromones.
+// Provides methods for querying and modifying tiles, handling movement rules and managing
+// interactions.
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler
 
