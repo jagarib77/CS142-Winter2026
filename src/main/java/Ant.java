@@ -118,15 +118,79 @@ public abstract class Ant {
      * this function should determine the next action any ant takes
      * should override if an ant needs to behave differently
      */
-    public void smell(){
+    // - Kyle
+    public Direction smell(Pheromones pheromones){
         //TODO: does something based on strongest pheromone in its tile
         // unless previous behavior overrides the smell
 
         //TODO: probably should add in a variable that controls the and behavior based on
         // on some criteria either its hungry or has been told by pheromones what to do
         // or does some default behavior like wander
+        
+        // The current location of the Ant
+        Point currentPoint = new Point(x, y);
+        // The strongest pheromones at the location of the Ant (there could be multiple)
+        List<PheromoneType> strongestPheromones = new ArrayList<>();
+        // The highest strength of the pheromones present at the location
+        double highestStrength = 0;
+        
+        // Identifies the highest strength of the pheromones present at the location.
+        for (int i = 0; i < 3; i++) {
+            PheromoneType type = PheromoneType.values()[i];
+            double strength = pheromones.get(type, new Point(x, y));
+            if (strength > highestStrength) {
+                highestStrength = strength;
+            }
+        }
+        
+        // Identifies which pheromone types have the highest strength.
+        for (int i = 0; i < 3; i++) {
+            PheromoneType type = PheromoneType.values()[i];
+            double strength = pheromones.get(type, new Point(x, y));
+            if (strength == highestStrength) {
+                strongestPheromones.add(type);
+            }
+        }
+        
+        // Chooses a random pheromone in the list of the strongest pheromones.
+        PheromoneType chosenPheromone = strongestPheromones.get(rng.nextInt(strongestPheromones.size()));
+        
+        // TODO: Write code for the behavior of other pheromone types
+        if (chosenPheromone == PheromoneType.WALKING_TRAIL) {
+            // If the chosen pheromone is WALKING_TRAIL, then it will return a Direction toward a
+            // random adjacent Point whose WALKING_TRAIL Pheromone is stronger than the current
+            // location's.
+            
+            // List that keeps track of adjacent Points that have a stronger WALKING_TRAIL
+            // pheromone than the current location's.
+            List<Point> potentialLocations = new ArrayList<>();
+            
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    // The adjacent point that is being checked
+                    Point adjacent = new Point(x + i, y + j);
+                    // Skips the loop if the Point is out of bounds or if it is checking the
+                    // current location.
+                    if (!pheromones.inBounds(adjacent) || (i == 0 && j == 0)) {
+                        continue;
+                    }
+                    
+                    if (pheromones.get(PheromoneType.WALKING_TRAIL, adjacent) > highestStrength) {
+                        potentialLocations.add(adjacent);
+                    }
+                }
+            }
+            
+            if (potentialLocations.size() > 0) {
+                // Returns the direction to a random adjacent Point with a stronger WALKING_TRAIL 
+                // pheromone than the current location's, assuming that such a Point exists.
+                return Direction.moveToPoint(currentPoint, potentialLocations.get(
+                        rng.nextInt(potentialLocations.size())));
+            }
+        }
+        return Direction.CENTER;
     }
-
+    
     /**
      * creates a pheromone based on what its currently doing
      */
