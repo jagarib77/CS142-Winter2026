@@ -178,9 +178,18 @@ public class AntSim {
      * This method is called once during construction.
      */
     private void setupAnts() {
-        //TODO: spawn 2 guards and 2 workers with the queen
         Point home = new Point(world.getWidth()/2, world.getHeight()/2);
         ants.add(QueenAnt.spawn(world, rng, home, 500, home));
+
+        // guards
+        Point homeNorth = home.add(Direction.NORTH);
+        ants.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.WEST), 300, home));
+        ants.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.EAST), 300, home));
+
+        // workers
+        Point homeSouth = home.add(Direction.SOUTH);
+        ants.add(GuardAnt.spawn(world, rng, homeSouth.add(Direction.WEST), 300, home));
+        ants.add(GuardAnt.spawn(world, rng, homeSouth.add(Direction.EAST), 300, home));
     }
 
     /**
