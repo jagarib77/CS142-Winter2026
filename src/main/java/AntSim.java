@@ -194,9 +194,43 @@ public class AntSim {
 
     /**
      * sets up Pheromones as the world is generated
+     * reuses the code from setupWorld but changes Pheromones instead of Terrain
      */
     public void setupPheromones(){
-        //TODO: add in initial pheromones state
+        int width = world.getWidth();
+        int height = world.getHeight();
+        Pheromones pheromones = world.getPheromones();
+
+        // fill in starting tunnel with walking trail pheromones
+        // 3x3 if size is odd, 4x4 if size is even.
+        int roomSize = (width%2 == 0) ? 4 : 3;
+        int half = roomSize/2;
+
+        // For odd (3): cx = w/2, start = cx-1, end = cx+1
+        // For even (4): cx = w/2, start = cx-2, end = cx+1
+        int startX = (width/2) - half;
+        int startY = (height/2) - half;
+        int endX = startX + roomSize-1;
+        int endY = startY + roomSize-1;
+
+        for (int y=startY; y<=endY; ++y) {
+            for (int x=startX; x<=endX; ++x) {
+                pheromones.add(PheromoneType.WALKING_TRAIL, new Point(x, y), 1);
+            }
+        }
+
+        // tunnel from starting nest to surface, either 1 or 2 wide depending on size of world
+        startX = (width-half)/2;
+        startY = 0;
+
+        endX = startX + half-1;
+        endY = height/2;
+
+        for (int y=startY; y<=endY; ++y) {
+            for (int x=startX; x<=endX; ++x) {
+                pheromones.add(PheromoneType.WALKING_TRAIL, new Point(x, y), 1);
+            }
+        }
     }
 
     /**
