@@ -24,7 +24,7 @@ public class SimulationModel {
                 
                 if(z<10){
                     if(z<1){
-                        int z1=(int)(Math.random()*100);
+                        int z1=(int)(Math.random()*10);
                         if(z1<1){
                             grid[x][y]=new MiracleDoctor(x, y, 150);
                         }
