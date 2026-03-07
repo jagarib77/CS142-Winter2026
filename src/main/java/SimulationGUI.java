@@ -71,18 +71,31 @@ public class SimulationGUI extends JPanel{
         
         for(int x=0;x<grid.length;x++){
             for(int y=0;y<grid[0].length;y++){
+                Entity e=grid[x][y];
                 
                 //Soldier is a blue on gui
                 //This color can be change
-                if(grid[x][y] instanceof Soldier){
-                    g.setColor(Color.BLUE);
-                }
-                //citizen is green
-                else if(grid[x][y] instanceof Citizen){
-                    g.setColor(Color.GREEN);
-                }
-                else if(grid[x][y] instanceof Doctor){
-                    g.setColor(Color.CYAN);
+                if (e instanceof Human) {
+                    Human h = (Human) e;
+                
+                    // 1. 優先判斷是否被感染（視覺化進度）
+                    if (h.isInfected()){
+                        g.setColor(Color.MAGENTA); // 紫色：代表感染中
+                    }
+                    // color it depends on it career
+                    else if (h instanceof MiracleDoctor){
+                        g.setColor(new Color(0, 255, 0)); 
+                    }
+                    else if (h instanceof Doctor){
+                        g.setColor(new Color(0, 150, 150)); 
+                    }
+                    else if (h instanceof Soldier){
+                        g.setColor(new Color(0, 0, 255));
+                    } 
+                    //citizen
+                    else {
+                        g.setColor(new Color(0, 0, 150));
+                    }
                 }
                 //Lord of zombie is orange
                 else if(grid[x][y] instanceof LordOfZombie){
