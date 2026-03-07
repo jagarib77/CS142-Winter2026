@@ -1,6 +1,6 @@
-// Resource.java
+package resources;// resources.Resource.java
 // Base class for edible, carryable world objects such as sugar.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**

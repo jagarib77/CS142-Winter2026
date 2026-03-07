@@ -1,7 +1,7 @@
-// WorldObject.java
+package resources;// resources.WorldObject.java
 // Base type for any object that can exist in the world, including terrain and resources.
 // Defines shared properties such as carryability, edibility and energy value.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**

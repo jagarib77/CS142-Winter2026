@@ -1,11 +1,11 @@
-// Terrain.java
+package terrain;// terrain.Terrain.java
 // Base class for terrain tiles (dirt, tunnel, air and rock).
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**
  * Base class for terrain tiles in the world.
- * Terrain is generally not carryable or edible and may define movement properties.
+ * terrain.Terrain is generally not carryable or edible and may define movement properties.
  */
 public abstract class Terrain extends WorldObject {
     @Override

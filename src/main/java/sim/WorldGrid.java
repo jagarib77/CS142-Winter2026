@@ -1,4 +1,4 @@
-// WorldGrid.java
+package sim;// sim.WorldGrid.java
 // Represents the 2D simulation world grid, storing terrain, world objects and pheromones.
 // Provides methods for querying and modifying tiles, handling movement rules and managing
 // interactions.
@@ -28,7 +28,7 @@ public class WorldGrid {
         objects = new WorldObject[height][width];
         pheromones = new Pheromones(width, height);
 
-        // Default: fill with Dirt
+        // Default: fill with terrain.Dirt
         for (int y=0; y<height; ++y) {
             for (int x=0; x<width; ++x) {
                 terrain[y][x] = new Dirt();
@@ -80,6 +80,8 @@ public class WorldGrid {
     public boolean dig(WorkerAnt a, Point p){
         //TODO: check if Terrain at p is dirt, remove the dirt, then add dirt
         // into ant inventory. Need to make sure ant has room for dirt
+        
+        // Checks if the Point is within bounds.
         if (!inBounds(p)) {
             throw new IllegalArgumentException("Point is not within bounds.");
         }
@@ -89,7 +91,6 @@ public class WorldGrid {
             // Checks if the WorkerAnt is carrying nothing and has enough energy.
             if (a.getHeldItem() == null && a.getEnergy() >= 15) {
                 setTerrain(p, new Tunnel());
-
                 // Reduces the Worker Ant's energy by 5 (technically 10, because it also picks up
                 // the object, which costs 5 energy).
                 a.changeEnergy(-5);

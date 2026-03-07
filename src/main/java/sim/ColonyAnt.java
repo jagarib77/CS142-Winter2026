@@ -1,6 +1,6 @@
-// ColonyAnt.java
+package sim;// sim.ColonyAnt.java
 // Base class for ants that belong to a colony, with a home location and optional food storage.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 import java.util.Random;

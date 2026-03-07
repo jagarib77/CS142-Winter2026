@@ -1,4 +1,4 @@
-// Ant.java
+package sim;// sim.Ant.java
 // Base class for all ants. Tracks position, energy, life state and an optional held item.
 // Provides shared actions like move, pickup, drop and eat.
 // Group Project: Ant Colony Simulator

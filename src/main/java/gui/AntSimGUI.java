@@ -1,7 +1,9 @@
-// AntSimGUI.java
+package gui;// gui.AntSimGUI.java
 // Creates an interactive GUI and displays an animation of a world of ants.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
+
+import sim.AntSim;
 
 import java.awt.*;
 import javax.swing.*;
@@ -28,7 +30,7 @@ public class AntSimGUI extends JFrame {
      * @param sim simulation model to display and advance (non-null)
      */
     public AntSimGUI(AntSim sim) {
-        super("Ant Simulation"); // makes JFrame, everything after is custom functionally
+        super("sim.Ant Simulation"); // makes JFrame, everything after is custom functionally
         if (sim == null) throw new IllegalArgumentException("sim");
         this.sim = sim;
 
@@ -214,7 +216,7 @@ public class AntSimGUI extends JFrame {
 
     /**
      * Draws all living ants from the simulation list.
-     * Ant type controls rendering color and symbol.
+     * sim.Ant type controls rendering color and symbol.
      *
      * @param g graphics context
      */

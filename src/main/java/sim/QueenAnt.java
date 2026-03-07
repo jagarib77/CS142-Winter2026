@@ -1,6 +1,6 @@
-// QueenAnt.java
+package sim;// sim.QueenAnt.java
 // Colony queen role that can spawn new worker and guard ants.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 import java.util.Random;
@@ -18,9 +18,9 @@ public class QueenAnt extends ColonyAnt {
     }
 
     /**
-     * Convenience factory used to construct a QueenAnt.
+     * Convenience factory used to construct a sim.QueenAnt.
      *
-     * @return newly created QueenAnt instance
+     * @return newly created sim.QueenAnt instance
      */
     public static QueenAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
         return new QueenAnt(world, rng, pos, maxEnergy, home);

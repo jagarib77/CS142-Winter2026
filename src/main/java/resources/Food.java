@@ -1,6 +1,6 @@
-// Food.java
+package resources;// resources.Food.java
 // Simple carryable, edible object with a nutrition value.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**

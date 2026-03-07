@@ -1,6 +1,6 @@
-// PheromoneType.java
+package pheromones;// pheromones.PheromoneType.java
 // Enumerates the pheromone channels used by the simulation.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**

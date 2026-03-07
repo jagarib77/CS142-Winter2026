@@ -1,12 +1,12 @@
-// Air.java
+package terrain;// terrain.Air.java
 // Represents above-ground air tiles.
-// Air is not traversable by default and only becomes walkable if supported from below.
-// Group Project: Ant Colony Simulator
+// terrain.Air is not traversable by default and only becomes walkable if supported from below.
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**
- * Terrain type representing open air in the surface area of the world.
- * Air is typically non-solid and non-traversable unless movement rules allow it
+ * terrain.Terrain type representing open air in the surface area of the world.
+ * terrain.Air is typically non-solid and non-traversable unless movement rules allow it
  * (for example, if supported by solid terrain below).
  */
 public class Air extends Terrain {

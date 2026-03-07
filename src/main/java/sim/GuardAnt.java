@@ -1,6 +1,6 @@
-// GuardAnt.java
+package sim;// sim.GuardAnt.java
 // Colony ant role intended for defending the nest and attacking threats.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 import java.util.Random;
@@ -21,7 +21,7 @@ public class GuardAnt extends ColonyAnt {
     /**
      * Convenience factory used by the queen to create a guard ant.
      *
-     * @return newly created GuardAnt instance
+     * @return newly created sim.GuardAnt instance
      */
     public static GuardAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
         return new GuardAnt(world, rng, pos, maxEnergy, home);

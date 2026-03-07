@@ -1,10 +1,10 @@
-// Tunnel.java
+package terrain;// terrain.Tunnel.java
 // Traversable terrain representing the nest interior.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**
- * Terrain type representing a tunnel tile.
+ * terrain.Terrain type representing a tunnel tile.
  * Tunnels are traversable and non-solid under current rules.
  */
 public class Tunnel extends Terrain {

@@ -1,3 +1,5 @@
+package util;
+
 public enum Direction8 {
     UP(-1, 0),
     UP_LEFT(-1, -1),

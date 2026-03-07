@@ -1,4 +1,4 @@
-// Point.java
+package util;// util.Point.java
 // Immutable integer (x, y) coordinate used throughout the grid.
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler and Kyle Hamasaki
@@ -17,7 +17,7 @@ public final class Point {
     }
 
     /**
-     * Returns a new Point offset by the direction's dx and dy.
+     * Returns a new util.Point offset by the direction's dx and dy.
      *
      * @param dir direction offset
      * @return new point equal to this + dir

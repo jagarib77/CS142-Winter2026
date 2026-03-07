@@ -1,11 +1,11 @@
-// Rock.java
+package terrain;// terrain.Rock.java
 // Solid, untraversable terrain used as an obstacle.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**
- * Terrain type representing rock.
- * Rock is solid and blocks movement.
+ * terrain.Terrain type representing rock.
+ * terrain.Rock is solid and blocks movement.
  */
 public class Rock extends Terrain {
     @Override

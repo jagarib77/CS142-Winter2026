@@ -1,6 +1,6 @@
-// WorkerAnt.java
+package sim;// sim.WorkerAnt.java
 // Colony ant role intended for foraging and nest expansion behaviors.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 import java.util.Random;
@@ -20,7 +20,7 @@ public class WorkerAnt extends ColonyAnt {
     /**
      * Convenience factory used by the queen to create a worker ant.
      *
-     * @return newly created WorkerAnt instance
+     * @return newly created sim.WorkerAnt instance
      */
     public static WorkerAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
         return new WorkerAnt(world, rng, pos, maxEnergy, home);

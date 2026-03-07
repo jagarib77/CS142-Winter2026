@@ -1,6 +1,6 @@
-// Pheromones.java
+package pheromones;// pheromones.Pheromones.java
 // Stores and updates pheromone concentrations across the grid for multiple pheromone types.
-// Group Project: Ant Colony Simulator
+// Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
 /**

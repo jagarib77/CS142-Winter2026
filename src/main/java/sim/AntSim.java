@@ -1,8 +1,10 @@
-// AntSim.java
+package sim;// sim.AntSim.java
 // Simulation driver that owns the world grid, RNG and list of ants.
 // Advances the simulation in discrete ticks and performs global updates.
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler and Kyle Hamasaki
+
+import gui.AntSimGUI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +118,7 @@ public class AntSim {
                     continue;
                 }
             }
-            
+
             // If the Ant has a Sugar, is not hungry, and the food storage exists, then it will go
             // to the food storage and drop the sugar there. Does not release any pheromones.
             if (ant.getHeldItem() instanceof Sugar && foodStorePoint != null) {
