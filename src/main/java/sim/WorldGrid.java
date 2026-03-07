@@ -5,6 +5,15 @@ package sim;// sim.WorldGrid.java
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler and Kyle Hamasaki
 
+import pheromones.Pheromones;
+import resources.WorldObject;
+import terrain.Air;
+import terrain.Dirt;
+import terrain.Terrain;
+import terrain.Tunnel;
+import util.Direction;
+import util.Point;
+
 /**
  * Base class for all world objects.
  * Subclasses define whether they are carryable, edible, their display symbol and energy value.

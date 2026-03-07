@@ -3,6 +3,9 @@ package pheromones;// pheromones.Pheromones.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
+import util.Direction;
+import util.Point;
+
 /**
  * Stores pheromone concentrations as a 3D array indexed by type, x and y.
  * Supports reading, adding, setting, decay and spreading of pheromones each tick.

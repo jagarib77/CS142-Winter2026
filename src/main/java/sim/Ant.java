@@ -4,6 +4,12 @@ package sim;// sim.Ant.java
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler and Kyle Hamasaki
 
+import pheromones.PheromoneType;
+import pheromones.Pheromones;
+import resources.WorldObject;
+import util.Direction;
+import util.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

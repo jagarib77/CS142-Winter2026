@@ -3,6 +3,9 @@ package sim;// sim.ColonyAnt.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
+import util.Direction;
+import util.Point;
+
 import java.util.Random;
 
 /**

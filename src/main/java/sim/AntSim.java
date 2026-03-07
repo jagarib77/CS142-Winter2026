@@ -5,6 +5,11 @@ package sim;// sim.AntSim.java
 // Authors: Harrison Butler and Kyle Hamasaki
 
 import gui.AntSimGUI;
+import pheromones.PheromoneType;
+import pheromones.Pheromones;
+import terrain.*;
+import util.Direction;
+import util.Point;
 
 import java.util.ArrayList;
 import java.util.List;

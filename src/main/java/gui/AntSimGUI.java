@@ -3,8 +3,6 @@ package gui;// gui.AntSimGUI.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
-import sim.AntSim;
-
 import java.awt.*;
 import javax.swing.*;
 import java.util.List; // don't import util.* as that creates timer conflicts
@@ -207,6 +205,8 @@ public class AntSimGUI extends JFrame {
                 }
 
                 g.fillOval(px+3, py+3, TILE_SIZE-6, TILE_SIZE-6);
+
+                g.setColor(Color.BLACK);
                 g.drawString(String.valueOf(obj.getSymbol()),
                         px + (TILE_SIZE/2) - 4,
                         py + (TILE_SIZE/2) + 4);

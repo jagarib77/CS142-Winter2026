@@ -3,6 +3,8 @@ package terrain;// terrain.Terrain.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
+import resources.WorldObject;
+
 /**
  * Base class for terrain tiles in the world.
  * terrain.Terrain is generally not carryable or edible and may define movement properties.

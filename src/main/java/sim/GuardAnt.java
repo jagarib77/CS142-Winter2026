@@ -4,6 +4,7 @@ package sim;// sim.GuardAnt.java
 // Authors: Harrison Butler
 
 import java.util.Random;
+import util.Point;
 
 /**
  * Guard ant role. Intended responsibilities include patrol and combat.
