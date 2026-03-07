@@ -137,8 +137,7 @@ public abstract class Ant {
         double highestStrength = 0;
 
         // Identifies the highest strength of the pheromones present at the location.
-        for (int i = 0; i < 3; i++) {
-            PheromoneType type = PheromoneType.values()[i];
+        for (PheromoneType type : PheromoneType.values()) {
             double strength = pheromones.get(type, new Point(x, y));
             if (strength > highestStrength) {
                 highestStrength = strength;
@@ -146,8 +145,7 @@ public abstract class Ant {
         }
 
         // Identifies which pheromone types have the highest strength.
-        for (int i = 0; i < 3; i++) {
-            PheromoneType type = PheromoneType.values()[i];
+        for (PheromoneType type : PheromoneType.values()) {
             double strength = pheromones.get(type, new Point(x, y));
             if (strength == highestStrength) {
                 strongestPheromones.add(type);
