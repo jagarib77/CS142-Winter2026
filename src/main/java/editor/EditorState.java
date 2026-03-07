@@ -16,6 +16,15 @@ public class EditorState {
 
     private Point hoveredTile;
 
+    public TerrainKind getTerrainKind() { return terrainKind; }
+    public void setTerrainKind(TerrainKind terrainKind) { this.terrainKind = terrainKind; }
+
+    public FoodKind getFoodKind() { return foodKind; }
+    public void setFoodKind(FoodKind foodKind) { this.foodKind = foodKind; }
+
+    public ColonyID getColonyID() { return colonyID; }
+    public void setColonyID(ColonyID colonyID) { this.colonyID = colonyID; }
+
     public boolean isEditingEnabled() { return editingEnabled; }
     public void setEditingEnabled(boolean editingEnabled) { this.editingEnabled = editingEnabled; }
 

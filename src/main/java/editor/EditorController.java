@@ -28,7 +28,7 @@ public class EditorController {
     public void applyBrushAt(Point center) {
         if (!state.isEditingEnabled()) return;
 
-        for (Point p : BrushMath.pointsInCircle(center, state.getBrushRadius())) {
+        for (Point p : BrushMath.pointsInCircle(sim, center, state.getBrushRadius())) {
             applySingle(p);
         }
     }

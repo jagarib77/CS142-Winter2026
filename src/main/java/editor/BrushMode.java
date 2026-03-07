@@ -1,4 +1,7 @@
 package editor;
 
-public class BrushMode {
+public enum BrushMode {
+    TERRAIN,
+    FOOD,
+    COLONY
 }
