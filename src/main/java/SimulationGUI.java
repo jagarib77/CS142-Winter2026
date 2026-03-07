@@ -32,9 +32,15 @@ public class SimulationGUI extends JPanel{
             public void actionPerformed(ActionEvent e){
                 model.update();
                 repaint();
+
+                // if human or zombie is gone
+                String result= model.checkGameOver();
+                if(result!=null){
+                    timer.stop();
+                    javax.swing.JOptionPane.showMessageDialog(null, result);
+                }
             }
         };
-
         timer=new Timer(turn, listener);
     }
     
