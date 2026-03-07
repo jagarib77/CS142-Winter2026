@@ -2,7 +2,7 @@
 // Base class for all ants. Tracks position, energy, life state and an optional held item.
 // Provides shared actions like move, pickup, drop and eat.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Kyle Hamasaki
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,14 +128,14 @@ public abstract class Ant {
         //TODO: probably should add in a variable that controls the and behavior based on
         // on some criteria either its hungry or has been told by pheromones what to do
         // or does some default behavior like wander
-        
+
         // The current location of the Ant
         Point currentPoint = new Point(x, y);
         // The strongest pheromones at the location of the Ant (there could be multiple)
         List<PheromoneType> strongestPheromones = new ArrayList<>();
         // The highest strength of the pheromones present at the location
         double highestStrength = 0;
-        
+
         // Identifies the highest strength of the pheromones present at the location.
         for (int i = 0; i < 3; i++) {
             PheromoneType type = PheromoneType.values()[i];
@@ -144,7 +144,7 @@ public abstract class Ant {
                 highestStrength = strength;
             }
         }
-        
+
         // Identifies which pheromone types have the highest strength.
         for (int i = 0; i < 3; i++) {
             PheromoneType type = PheromoneType.values()[i];
@@ -153,46 +153,72 @@ public abstract class Ant {
                 strongestPheromones.add(type);
             }
         }
-        
+
         // Chooses a random pheromone in the list of the strongest pheromones.
         PheromoneType chosenPheromone = strongestPheromones.get(rng.nextInt(strongestPheromones.size()));
-        
-        // TODO: Write code for the behavior of other pheromone types
-        if (chosenPheromone == PheromoneType.WALKING_TRAIL) {
-            // If the chosen pheromone is WALKING_TRAIL, then it will return a Direction toward a
-            // random adjacent Point whose WALKING_TRAIL Pheromone is stronger than the current
-            // location's.
-            
-            // List that keeps track of adjacent Points that have a stronger WALKING_TRAIL
-            // pheromone than the current location's.
-            List<Point> potentialLocations = new ArrayList<>();
-            
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    // The adjacent point that is being checked
-                    Point adjacent = new Point(x + i, y + j);
-                    // Skips the loop if the Point is out of bounds or if it is checking the
-                    // current location.
-                    if (!pheromones.inBounds(adjacent) || (i == 0 && j == 0)) {
-                        continue;
-                    }
-                    
-                    if (pheromones.get(PheromoneType.WALKING_TRAIL, adjacent) > highestStrength) {
-                        potentialLocations.add(adjacent);
-                    }
+
+        // A random adjacent Point with a stronger Pheromone than the current's
+        Point target;
+
+        if (currentEnergy <= 50) {
+            // If the Ant is hungry (currentEnergy <= 50), then returns an adjacent Point with a
+            // stronger FOOD pheromone than the current's.
+            target = getStrongerAdjacentPheromonePoint(PheromoneType.FOOD, pheromones,
+                    highestStrength);
+        } else {
+            // Else, returned an adjacent Point with a stronger chosenPheromone than the current's.
+            target = getStrongerAdjacentPheromonePoint(chosenPheromone, pheromones,
+                    highestStrength);
+        }
+
+        if (target == null) {
+            // If no stronger adjacent pheromone exists, then a random Direction will be returned.
+            return Direction.randDir(rng);
+        } else if (chosenPheromone == PheromoneType.DANGER) {
+            // If chosenPheromone is DANGER, then returns a Direction away from a stronger
+            // adjacent DANGER pheromone.
+            return Direction.moveAwayFromPoint(currentPoint, target);
+        } else {
+            // Else, returns a Direction towards a stronger adjacent pheromone.
+            return Direction.moveToPoint(currentPoint, target);
+        }
+    }
+
+    // Returns a random Point of an adjacent Pheromone that is stronger than highestStrength.
+    // If no pheromone is stronger than highestStrength, then a random null will be returned.
+    private Point getStrongerAdjacentPheromonePoint(PheromoneType type, Pheromones pheromones,
+                                                        double highestStrength) {
+        // List that keeps track of adjacent Points that have a stronger pheromone than the
+        // current location's
+        List<Point> potentialLocations = new ArrayList<>();
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                // The adjacent point that is being checked
+                Point adjacent = new Point(x + i, y + j);
+                // Skips the loop if the Point is out of bounds or if it is checking the
+                // current location.
+                if (!pheromones.inBounds(adjacent) || (i == 0 && j == 0)) {
+                    continue;
+                }
+
+                if (pheromones.get(type, adjacent) > highestStrength) {
+                    potentialLocations.add(adjacent);
                 }
             }
-            
-            if (potentialLocations.size() > 0) {
-                // Returns the direction to a random adjacent Point with a stronger WALKING_TRAIL 
-                // pheromone than the current location's, assuming that such a Point exists.
-                return Direction.moveToPoint(currentPoint, potentialLocations.get(
-                        rng.nextInt(potentialLocations.size())));
-            }
         }
-        return Direction.CENTER;
+
+        if (potentialLocations.size() > 0) {
+            // Returns a random adjacent Point with a stronger pheromone than the current
+            // location's, assuming that such a Point exists.
+            return potentialLocations.get(rng.nextInt(potentialLocations.size()));
+        } else {
+            // If no adjacent pheromone is stronger than the current location's. then null will be
+            // returned.
+            return null;
+        }
     }
-    
+
     /**
      * creates a pheromone based on what its currently doing
      */
@@ -238,7 +264,6 @@ public abstract class Ant {
      * @return a direction step toward the target
      */
     public Direction pathFind(Point target){
-        //TODO: complete pathfinding
-        return Direction.CENTER;
+        return Direction.moveToPoint(new Point(x, y), target);
     }
 }
