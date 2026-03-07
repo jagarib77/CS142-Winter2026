@@ -110,7 +110,7 @@ public class AntSim {
 
         // call ant behavior
         for (Ant a:ants){
-            a.smell(); // set action state
+            //a.smell(); // set action state
             // update the pheromones array
             world.getPheromones().add(a.createPheromone(), a.getPoint(), 1);
         }

@@ -4,6 +4,8 @@
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**

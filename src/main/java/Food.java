@@ -8,8 +8,7 @@
  * Nutrition is stored as a positive integer and can be used to restore energy.
  */
 public class Food extends WorldObject {
-
-    // only needed if we want food to restore a certain amount of energy
+    int foodCount;
     private final int nutrition;
 
     /**
@@ -17,9 +16,10 @@ public class Food extends WorldObject {
      *
      * @param nutrition energy restored when eaten, must be > 0
      */
-    public Food(int nutrition) {
+    public Food(int nutrition, int foodCount) {
         if (nutrition <= 0) throw new IllegalArgumentException("nutrition must be > 0");
         this.nutrition = nutrition;
+        this.foodCount = foodCount;
     }
 
     public int getNutrition() {
