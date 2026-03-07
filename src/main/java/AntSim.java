@@ -99,12 +99,14 @@ public class AntSim {
             }
         }
 
+        //TODO: if all ants are dead then end sim and print to GUI the message ->
+        // (all ants are dead) goodbye
+
         //TODO: implement logic for ants to move
         // don't worry about this yet, we need to get pheromones working
         // follow pheromones when possible otherwise move random and wait for trigger
 
-        //TODO: if all ants are dead then end sim and print to GUI the message ->
-        // (all ants are dead) goodbye
+
 
         // call ant behavior
         for (Ant a:ants){
