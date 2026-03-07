@@ -3,11 +3,12 @@ package editor;
 import resources.Food;
 import sim.AntSim;
 import sim.WorldGrid;
-import terrain.Air;
-import terrain.Dirt;
-import terrain.Rock;
-import terrain.Tunnel;
+import terrain.*;
 import util.Point;
+
+// enums
+import static editor.TerrainKind.*;
+import static editor.FoodKind.*;
 
 public class EditorController {
     private final AntSim sim;

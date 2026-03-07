@@ -7,7 +7,7 @@ public class EditorState {
     private BrushMode brushMode;      // TERRAIN, FOOD, COLONY
     private TerrainKind terrainKind;  // DIRT, ROCK, AIR, TUNNEL
     private FoodKind foodKind;        // FOOD, SUGAR, etc.
-    private ColonyKind colonyKind;    // later if needed
+    private ColonyID colonyID;    // later if needed
 
     private int brushRadius;
 
