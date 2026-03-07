@@ -43,20 +43,20 @@ public enum Direction {
         return new Direction[]{NORTH, SOUTH, EAST, WEST};
     }
 
-    // Returns a Direction to move from the current Point to the destination Point.
+    // Returns a Direction to move from the current Point to the target Point.
     // By Kyle
-    public static Direction moveToPoint(Point current, Point destination) {
-        int dx = destination.x - current.x;
-        int dy = destination.y - current.y;
+    public static Direction moveToPoint(Point current, Point target) {
+        int dx = target.x - current.x;
+        int dy = target.y - current.y;
 
-        // If the current Point and destination Point are at the same location, then CENTER will
+        // If the current Point and target Point are at the same location, then CENTER will
         // be returned.
         if (dx == 0 && dy == 0) {
             return CENTER;
         }
 
         // If the magnitudes of the horizontal and vertical distances between the Points are
-        // equal, then it will return a random Direction towards the destination.
+        // equal, then it will return a random Direction towards the target.
         if (Math.abs(dx) == Math.abs(dy)) {
             if (Math.random() >= 0.5) {
                 dx = 0;
@@ -66,7 +66,7 @@ public enum Direction {
         }
 
         // If the magnitude of the horizontal distance between the Points is larger than the
-        // vertical, then it will return a horizontal Direction towards the destination.
+        // vertical, then it will return a horizontal Direction towards the target.
         if (Math.abs(dx) > Math.abs(dy)) {
             if (dx < 0) {
                 return WEST;
@@ -75,12 +75,18 @@ public enum Direction {
             }
         } else {
             // If the magnitude of the vertical distance between the Points is larger than the
-            // horizontal, then it will return a vertical Direction towards the destination.
+            // horizontal, then it will return a vertical Direction towards the target.
             if (dy < 0) {
                 return NORTH;
             } else {
                 return SOUTH;
             }
         }
+    }
+    
+    // Returns a Direction to move from the current Point away from the target Point.
+    // By Kyle
+    public static Direction moveAwayFromPoint(Point current, Point target) {
+        return moveToPoint(current, new Point(-target.x, -target.y));
     }
 }
