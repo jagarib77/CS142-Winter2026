@@ -1,11 +1,7 @@
 //SimulationGui.java
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +13,12 @@ public class SimulationGUI extends JPanel{
 
     private Timer timer;
     private int turn=500; 
+
+    // label to control
+    private JLabel statsLabel;
+
+    private JLabel humanLabel;
+    private JLabel zombieLabel;
 
     public SimulationGUI(SimulationModel model){
         this.model=model;
@@ -32,6 +34,7 @@ public class SimulationGUI extends JPanel{
             public void actionPerformed(ActionEvent e){
                 model.update();
                 repaint();
+                refreshStats();
 
                 // if human or zombie is gone
                 String result= model.checkGameOver();
@@ -42,6 +45,9 @@ public class SimulationGUI extends JPanel{
             }
         };
         timer=new Timer(turn, listener);
+
+        humanLabel=new JLabel("Human number: 0");
+        zombieLabel=new JLabel("Zombie number: 0");
     }
     
     // a button to control
@@ -99,7 +105,7 @@ public class SimulationGUI extends JPanel{
                     } 
                     //citizen
                     else {
-                        g.setColor(new Color(260, 220, 255));
+                        g.setColor(new Color(210, 220, 255));
                     }
                 }
                 //Lord of zombie is orange
@@ -131,12 +137,67 @@ public class SimulationGUI extends JPanel{
             }
         }
     }
+
     public void display() {
         JFrame frame=new JFrame("Zombie Simulation");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(this);
+        frame.setLayout(new BorderLayout());
+
+        // the grid in the center
+        frame.add(this, BorderLayout.CENTER);
+
+        JPanel controlPanel=new JPanel();
+        controlPanel.setLayout(new GridLayout(6, 1));
+
+        // a button to start
+        JButton startB=new JButton("START");
+        ActionListener listener1=new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                startSimulation();
+            }
+        };
+        startB.addActionListener(listener1);
+
+        // a button to pause
+        JButton pauseB=new JButton("PAUSE");
+        ActionListener listener2=new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                pauseSimulation();
+            }
+        };
+        pauseB.addActionListener(listener2);
+
+        // A button to reset
+        JButton restartB=new JButton("RESTART");
+        ActionListener listener3=new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                restartSimulation();
+            }
+        };
+        restartB.addActionListener(listener3);
+
+        controlPanel.add(startB);
+        controlPanel.add(pauseB);
+        controlPanel.add(restartB);
+        controlPanel.add(new JSeparator());
+        controlPanel.add(humanLabel);
+        controlPanel.add(zombieLabel);
+        
+        // Right side
+        frame.add(controlPanel, BorderLayout.EAST);
         frame.pack();
+
+        refreshStats();
         frame.setVisible(true);
-        this.startSimulation();
+    }
+
+    //show the population 
+    public void refreshStats() {
+        int[] stats=model.getStats();
+        humanLabel.setText("Human number: "+stats[0]);
+        zombieLabel.setText("Zombie number: "+stats[1]);
     }
 }

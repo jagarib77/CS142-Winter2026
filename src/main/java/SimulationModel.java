@@ -131,6 +131,7 @@ public class SimulationModel {
             System.out.println();
         }
     }
+
     //End if there is no human or no zombie
     public String checkGameOver(){
         int numH=0;
@@ -154,5 +155,21 @@ public class SimulationModel {
             return "DOOMSDAY";
         }
         return null;
+    }
+
+    public int[] getStats(){
+        int h=0;
+        int z=0;
+        for (int x=0;x<rows;x++) {
+            for (int y=0;y<cols;y++) {
+                if (grid[x][y] instanceof Human){
+                    h++;
+                }
+                else if(grid[x][y] instanceof Zombie){
+                    z++;
+                }
+            }
+        }
+        return new int[]{h, z};
     }
 }
