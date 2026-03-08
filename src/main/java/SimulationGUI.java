@@ -139,7 +139,7 @@ public class SimulationGUI extends JPanel{
     }
 
     public void display() {
-        JFrame frame=new JFrame("Zombie Simulation");
+        JFrame frame=new JFrame("Human vs. Zombie Survival Simulation");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
