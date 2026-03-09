@@ -6,6 +6,7 @@ package sim;// sim.WorldGrid.java
 // Authors: Harrison Butler and Kyle Hamasaki
 
 import pheromones.Pheromones;
+import resources.Sugar;
 import resources.WorldObject;
 import terrain.*;
 import util.Direction;
@@ -136,6 +137,11 @@ public class WorldGrid {
         if (!inBounds(pos)) return null;
         WorldObject obj = getObjectAt(pos);
         if (obj == null || !obj.isCarryable()) return null;
+        if (obj instanceof Sugar){
+            ((Sugar) obj).takeFood(); // takes 1 sugar from pile
+            if (((Sugar) obj).isEmptied()) setObjectAt(pos, null); // deletes sugar if empty
+            return obj;
+        }
         setObjectAt(pos, null);
         return obj;
     }

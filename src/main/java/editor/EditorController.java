@@ -1,6 +1,7 @@
 package editor;
 
 import resources.Food;
+import resources.Sugar;
 import sim.AntSim;
 import sim.WorldGrid;
 import terrain.*;
@@ -52,7 +53,7 @@ public class EditorController {
 
     private void applyFood(Point p) {
         WorldGrid world = sim.getWorld();
-        world.setObjectAt(p, new Food(state.getFoodEnergy(), state.getFoodCount()));
+        world.setObjectAt(p, new Sugar(state.getFoodEnergy(), state.getFoodCount()));
     }
 
     private void applyColony(Point p) {
