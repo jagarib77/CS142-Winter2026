@@ -5,6 +5,11 @@ package gui;// gui.AntSimGUI.java
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import terrain.*;
 import editor.EditorController;
 import editor.EditorState;
@@ -99,6 +104,22 @@ public class AntSimGUI extends JFrame {
             try { setTicksPerSecond(Integer.parseInt(speedField.getText().trim()), speedField); }
             catch (NumberFormatException ex) { // ignore erroneous input
                 speedField.setText(String.valueOf(ticksPerSecond));
+            }
+        });
+
+        // if you click out of the text field save the value and update speed
+        speedField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                speedField.postActionEvent();
+            }
+        });
+
+        // highlight whole field when clicked
+        speedField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                speedField.selectAll();
             }
         });
 

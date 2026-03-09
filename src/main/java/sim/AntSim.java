@@ -7,6 +7,7 @@ package sim;// sim.AntSim.java
 import gui.AntSimGUI;
 import pheromones.PheromoneType;
 import pheromones.Pheromones;
+import resources.Sugar;
 import terrain.*;
 import util.Direction;
 import util.Point;

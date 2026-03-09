@@ -35,6 +35,7 @@ public class WorldPanel extends JPanel {
         this.editorController = editorController;
         setBackground(Color.WHITE);
         setDoubleBuffered(true);
+        setFocusable(true);
 
         // anonymous subclass
         // used for custom functionality when the mouse moves or is clicked
@@ -64,6 +65,7 @@ public class WorldPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 updateHoveredTile(e);
+                requestFocusInWindow();
 
                 if (SwingUtilities.isRightMouseButton(e)) {
                     editorController.toggleEditing();
