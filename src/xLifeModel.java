@@ -87,10 +87,12 @@ public class xLifeModel extends JPanel {
                 y1 = y;
             }
             isMove = checkMoveValid(x1,y1);
-            // ZOMBIE MUST ADD PROCESS THAT ZOMBIE CAN NOT GO TO SAFEZONE
+            // Zombie Can't go into safezone and can't step on weapon
             if(target instanceof xZombie){
-                if(isProtect(new Point(x1,y1))){
-                    isMove = false;
+                if(isMove){
+                    if(isProtect(new Point(x1,y1)) || grid[x1][y1] == 'W'){
+                        isMove = false;
+                    }
                 }
             }
         }
@@ -302,6 +304,8 @@ public class xLifeModel extends JPanel {
 
     // Zombie logic by Leehuot Lay
 
+    // ----------------------- ZOMBIE PROCESS START ------------------------------
+
     // Search Humans
     public int searchHuman(int x, int y) {
         for (int i =0; i<humanList.size();i++){
@@ -362,7 +366,7 @@ public class xLifeModel extends JPanel {
 
         }
     }
-
+    // ----------------------- ZOMBIE PROCESS END ------------------------------
 
     public void reset(String fileName) throws FileNotFoundException {
         zombieList.clear();
