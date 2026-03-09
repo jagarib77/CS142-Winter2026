@@ -112,19 +112,9 @@ public class SimulationModel {
 
     //End if there is no human or no zombie
     public String checkGameOver(){
-        int numH=0;
-        int numZ=0;
-
-        for(int x=0;x<rows;x++){
-            for(int y=0;y<cols;y++){
-                if(grid[x][y] instanceof Human){
-                    numH++;
-                }
-                else if(grid[x][y] instanceof Zombie){
-                    numZ++;
-                }
-            }
-        }
+        int[] stats=getStats();
+        int numH=stats[0];
+        int numZ=stats[1];
         
         if(numH==0){
             return "DOOMSDAY";
@@ -135,6 +125,7 @@ public class SimulationModel {
         return null;
     }
 
+    //count the number of human and zombie
     public int[] getStats(){
         int h=0;
         int z=0;
@@ -151,10 +142,8 @@ public class SimulationModel {
         return new int[]{h, z};
     }
 
-    public void reset() {
+    public void reset(){
     // call initializeGrid, create a new Grid
         initializeGrid(this.rows, this.cols);
     }
-
-
 }
