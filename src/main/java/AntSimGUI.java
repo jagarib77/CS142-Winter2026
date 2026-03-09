@@ -198,7 +198,7 @@ public class AntSimGUI extends JFrame {
 
                 g.fillOval(px+3, py+3, TILE_SIZE-6, TILE_SIZE-6);
 
-                g.setColor(Color.BLACK);
+                g.setColor(Color.WHITE);
                 g.drawString(String.valueOf(obj.getSymbol()),
                         px + (TILE_SIZE/2) - 4,
                         py + (TILE_SIZE/2) + 4);
