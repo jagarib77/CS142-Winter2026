@@ -196,9 +196,15 @@ public class AntSimGUI extends JFrame {
                 int px = pos.x*TILE_SIZE;
                 int py = pos.y*TILE_SIZE;
 
-                g.fillOval(px+3, py+3, TILE_SIZE-6, TILE_SIZE-6);
+                if (obj instanceof Sugar) {
+                    // The color of Sugar
+                    g.setColor(Color.WHITE);
+                } else {
+                    // The color of anything else (error color)
+                    g.setColor(Color.MAGENTA);
+                }
 
-                g.setColor(Color.WHITE);
+                g.fillOval(px+3, py+3, TILE_SIZE-6, TILE_SIZE-6);
                 g.drawString(String.valueOf(obj.getSymbol()),
                         px + (TILE_SIZE/2) - 4,
                         py + (TILE_SIZE/2) + 4);
