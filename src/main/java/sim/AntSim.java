@@ -215,8 +215,9 @@ public class AntSim {
         sugarSpawnProgress += sugarSpawnRate;
         */
 
-        world.spreadPheromones(.5); // 1% spread per tick
-        world.decayPheromones(.5); // 1% loss per tick
+        // I didn't plan out these functions so when I wrote them they use different maths.
+        world.spreadPheromones(.1); // value is the % amount that spreads out, 1% spread
+        world.decayPheromones(.99); // value is the % remaining after decay, 1% loss
     }
 
     /**
