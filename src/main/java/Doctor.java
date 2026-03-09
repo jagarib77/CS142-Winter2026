@@ -8,8 +8,8 @@ public class Doctor extends Human {
     private Random rand = new Random();
 
     // Constructor: initializes doctor position using Human constructor
-    public Doctor(int x, int y) {
-        super(x, y, 100);
+    public Doctor(int x, int y, int health) {
+        super(x, y, health);
     }
 
     // Called each simulation step

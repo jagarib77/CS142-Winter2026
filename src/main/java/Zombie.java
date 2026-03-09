@@ -53,7 +53,7 @@ public class Zombie extends LivingEntity{
 
     public void attack(Human h){
         // the number also can change 
-        h.takeDamage(damage);   
+        h.takeDamage(damage);
     }
     
     //only move if it's alive
@@ -80,7 +80,14 @@ public class Zombie extends LivingEntity{
                     if(grid[nx][ny] instanceof Human){
 
                         Human h=(Human)grid[nx][ny];
-                        h.infect();
+                        
+                        int z=(int)(Math.random()*10);
+                        if(z<3){
+                            attack(h);
+                        }
+                        else{
+                            h.infect();
+                        }
                         return;
                     }
                 }

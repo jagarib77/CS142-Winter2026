@@ -29,7 +29,7 @@ public class SimulationModel {
                             grid[x][y]=new MiracleDoctor(x, y, 150);
                         }
                         else{
-                            grid[x][y]=new Doctor(x, y);
+                            grid[x][y]=new Doctor(x, y, 100);
                         }
                     }
                     else{

@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
 public class SimulationGUI extends JPanel{
     
     private SimulationModel model;
+
     //one block's size is 20
     private int cellSize=20;
 
+    // update every 0.5 secend
     private Timer timer;
     private int turn=500; 
 
@@ -194,7 +196,7 @@ public class SimulationGUI extends JPanel{
         frame.setVisible(true);
     }
 
-    //show the population 
+    //show the deta of human and zombie
     public void refreshStats() {
         int[] stats=model.getStats();
         humanLabel.setText("Human number: "+stats[0]);
