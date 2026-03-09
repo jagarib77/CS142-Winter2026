@@ -3,7 +3,7 @@
 // Provides methods for querying and modifying tiles, handling movement rules and managing
 // interactions.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler
 
 /**
  * Base class for all world objects.
@@ -73,15 +73,13 @@ public class WorldGrid {
      * @param p position to dig
      * @return true if dirt was successfully dug and changed, false otherwise
      */
-    // I worked on the dig method, but I am unsure if my code works or if I have the right 
+    // I worked on the dig method, but I am unsure if my code works or if I have the right
     // parameters, so I did not erase the instructions. Let me know or modify the code if something
     // is wrong.
     // - Kyle
     public boolean dig(WorkerAnt a, Point p){
         //TODO: check if Terrain at p is dirt, remove the dirt, then add dirt
         // into ant inventory. Need to make sure ant has room for dirt
-        
-        // Checks if the Point is within bounds.
         if (!inBounds(p)) {
             throw new IllegalArgumentException("Point is not within bounds.");
         }
@@ -91,12 +89,16 @@ public class WorldGrid {
             // Checks if the WorkerAnt is carrying nothing and has enough energy.
             if (a.getHeldItem() == null && a.getEnergy() >= 15) {
                 setTerrain(p, new Tunnel());
+
                 // Reduces the Worker Ant's energy by 5 (technically 10, because it also picks up
                 // the object, which costs 5 energy).
                 a.changeEnergy(-5);
-                a.move(Direction.moveToPoint(a.getPoint(), p));
+                a.move(a.getPoint().moveToPoint(p));
+
+                // TODO: Write code to make the Ant pick up the Dirt (the code below does not work)
                 // Picks up the WorldObject at the Point (Dirt).
-                a.pickupObject();
+                //a.pickupObject();
+
                 return true;
             }
         }
