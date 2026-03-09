@@ -216,8 +216,8 @@ public class AntSim {
         */
 
         // I didn't plan out these functions so when I wrote them they use different maths.
-        world.spreadPheromones(.1); // value is the % amount that spreads out, 1% spread
-        world.decayPheromones(.99); // value is the % remaining after decay, 1% loss
+        world.spreadPheromones(.01); // value is the % amount that spreads out, .01 means 1% spread
+        world.decayPheromones(.99); // value is the % remaining after decay, .99 means 1% loss
     }
 
     /**
@@ -396,8 +396,7 @@ public class AntSim {
      */
     public static void main(String[] args) {
         printIntro();
-        // 93 is based on the default window size, not sure why 100 is too big
-        AntSim sim = new AntSim(93, 50);
+        AntSim sim = new AntSim(50, 50);
         new AntSimGUI(sim);
     }
 }

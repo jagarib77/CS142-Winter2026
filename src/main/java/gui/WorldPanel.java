@@ -107,6 +107,7 @@ public class WorldPanel extends JPanel {
         drawTerrain(g, w);
         drawObjects(g, w);
         drawAnts(g);
+        drawBrushHighlight(g);
     }
 
     private void drawTerrain(Graphics g, WorldGrid w) {
@@ -192,7 +193,7 @@ public class WorldPanel extends JPanel {
 
         List<Point> validP = BrushMath.pointsInCircle(sim, hovered, editorState.getBrushRadius());
 
-        g.setColor(new Color(128, 128, 128, 20)); // 20% opacity
+        g.setColor(new Color(128, 128, 128, 50)); // 20% opacity
 
         for (Point p:validP) {
             int px = p.x*TILE_SIZE;

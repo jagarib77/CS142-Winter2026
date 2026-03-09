@@ -14,6 +14,7 @@ import terrain.*;
 import editor.EditorController;
 import editor.EditorState;
 import sim.AntSim;
+
 /**
  * Swing GUI for visualizing the ant simulation.
  * Owns a timer that advances the simulation and repaints the world at a target tick rate.
@@ -68,7 +69,7 @@ public class AntSimGUI extends JFrame {
             sim.step();
             worldPanel.repaint();
         });
-        timer.start();
+        //timer.start();
 
         pack();
         setLocationRelativeTo(null);
@@ -100,7 +101,7 @@ public class AntSimGUI extends JFrame {
         JButton plus1 = new JButton("+1");
 
         // middle
-        JButton pauseButton = new JButton("Pause");
+        JButton pauseButton = new JButton("Start");
 
         // right
         JButton stepButton = new JButton("Step");
@@ -189,7 +190,7 @@ public class AntSimGUI extends JFrame {
 
         JLabel brushSizeLabel = new JLabel("Brush Radius:");
         JSpinner brushRadiusSpinner = new JSpinner(
-                new SpinnerNumberModel(editorState.getBrushRadius(), 0, 50, 5)
+                new SpinnerNumberModel(editorState.getBrushRadius(), 0, 50, 2)
         );
 
         JLabel foodEnergyLabel = new JLabel("Food Energy:");
