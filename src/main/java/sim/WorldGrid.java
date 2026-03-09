@@ -7,10 +7,7 @@ package sim;// sim.WorldGrid.java
 
 import pheromones.Pheromones;
 import resources.WorldObject;
-import terrain.Air;
-import terrain.Dirt;
-import terrain.Terrain;
-import terrain.Tunnel;
+import terrain.*;
 import util.Direction;
 import util.Point;
 

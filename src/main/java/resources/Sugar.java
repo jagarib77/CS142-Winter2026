@@ -14,7 +14,7 @@ public class Sugar extends Resource {
     public boolean isEdible() { return true; }
 
     @Override
-    public char getSymbol() { return '$'; }
+    public char getSymbol() { return 'S'; }
 
     @Override
     public int energyValue() { return 50; }

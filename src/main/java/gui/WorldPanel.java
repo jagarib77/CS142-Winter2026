@@ -7,6 +7,7 @@ package gui;
 import editor.BrushMath;
 import editor.EditorController;
 import editor.EditorState;
+import resources.*;
 import sim.AntSim;
 import sim.WorldGrid;
 import terrain.*;
@@ -140,14 +141,17 @@ public class WorldPanel extends JPanel {
         for (int y=0; y<w.getHeight(); ++y) {
             for (int x=0; x<w.getWidth(); ++x) {
                 Point pos = new Point(x, y);
-                var obj = w.getObjectAt(pos);
+                WorldObject obj = w.getObjectAt(pos);
                 if (obj == null) continue;
 
                 int px = x*TILE_SIZE;
                 int py = y*TILE_SIZE;
 
-                g.fillOval(px+3, py+3, TILE_SIZE-6, TILE_SIZE-6);
-                g.setColor(Color.BLACK);
+                switch (obj) {
+                    case Sugar sugar -> g.setColor(Color.WHITE);
+                    default          -> g.setColor(Color.MAGENTA); // debug color
+                }
+
                 g.drawString(String.valueOf(obj.getSymbol()),
                         px+(TILE_SIZE/2)-4,
                         py+(TILE_SIZE/2)+4);

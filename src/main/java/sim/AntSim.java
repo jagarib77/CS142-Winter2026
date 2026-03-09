@@ -31,7 +31,7 @@ public class AntSim {
     // Keeps track of when to spawn sugar. When it is >= 1, spawns sugar.
     private double sugarSpawnProgress = 0;
     // The probability sugar will spawn at a Point
-    private final double sugarSpawnProbability = 0.1;
+    private final double sugarSpawnProbability = 0.01;
 
     /**
      * Creates a simulation with the given grid size and a default Random generator.
