@@ -42,12 +42,23 @@ public class QueenAnt extends ColonyAnt {
      */
     public Ant spawnAnt() {
         if (getEnergy() < 50) return null; // avoids killing the queen ant to quickly
+
+        // queen has a 1/50 chance to spawn any ant then a 1/80 chance to spawn a queen this
+        // gives a total chance of 1/400 to spawn, with queen life being 500, there is a good
+        // chance a new queen will be spawned but no guarantees.
+        boolean spawnNewQueen = (rng().nextInt(80) == 0);
+
         int type = rng().nextInt(2);
         Point home = getHome();
 
         for (Direction d : Direction.allDirections()) {
             Point spawn = getPoint().add(d);
             if (!world().canMoveTo(spawn)) continue;
+
+            if (spawnNewQueen){ // uses its own chance based logic
+                changeEnergy(-50);
+                return GuardAnt.spawn(world(), rng(), spawn, 500, home);
+            }
 
             if (type == 0) {
                 changeEnergy(-5);

@@ -4,9 +4,11 @@ package sim;// sim.Ant.java
 // Group Project: Ant Colony Simulator
 // Authors: Harrison Butler and Kyle Hamasaki
 
+import editor.TerrainKind;
 import pheromones.PheromoneType;
 import pheromones.Pheromones;
 import resources.WorldObject;
+import terrain.Terrain;
 import util.Direction;
 import util.Point;
 
@@ -262,6 +264,19 @@ public abstract class Ant {
         WorldObject obj = world.getObjectAt(getPoint());
         if (heldItem != null || obj == null || !obj.isCarryable()) return false;
         heldItem = world.takeObject(getPoint());
+        changeEnergy(-5);
+        return true;
+    }
+
+    /**
+     * Attempts to pick up a piece of terrain.
+     * Costs a fixed amount of energy on success.
+     *
+     * @return true if pickup succeeded, false otherwise
+     */
+    public boolean pickupObject(Terrain t) {
+        if (heldItem != null) return false;
+        heldItem = t;
         changeEnergy(-5);
         return true;
     }

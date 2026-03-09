@@ -292,8 +292,8 @@ public class AntSim {
 
         // workers
         Point homeSouth = home.add(Direction.SOUTH);
-        ants.add(GuardAnt.spawn(world, rng, homeSouth.add(Direction.WEST), 300, home));
-        ants.add(GuardAnt.spawn(world, rng, homeSouth.add(Direction.EAST), 300, home));
+        ants.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.WEST), 300, home));
+        ants.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.EAST), 300, home));
     }
 
     /**
