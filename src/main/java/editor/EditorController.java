@@ -19,9 +19,8 @@ public class EditorController {
         this.state = state;
     }
 
-    public boolean toggleEditing(boolean simPaused) {
-        if (!simPaused) return false;
-        state.setEditingEnabled(!state.isEditingEnabled());
+    public boolean toggleEditing() {
+        state.setEditingEnabled(!state.isEditingEnabled()); // toggles editing status
         return true;
     }
 
