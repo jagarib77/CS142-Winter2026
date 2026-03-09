@@ -26,6 +26,12 @@ public abstract class Ant {
     private WorldObject heldItem = null;
     private boolean alive = true;
 
+    // The last location of the Ant
+    private Point lastLocation;
+    // Boolean for whether the ant is scavenging for food. An ant Scavenges for food when it is
+    // hungry, but finds no food at the food storage.
+    private boolean scavenging;
+
     /**
      * Creates an ant at a given starting position with a maximum energy capacity.
      * Validates inputs and initializes current energy to the maximum.
@@ -47,6 +53,7 @@ public abstract class Ant {
         this.currentEnergy = maxEnergy;
         this.x = pos.x;;
         this.y = pos.y;
+        lastLocation = pos;
     }
 
     protected final WorldGrid world() { return world; }
@@ -60,6 +67,14 @@ public abstract class Ant {
     public final int getEnergy() { return currentEnergy; }
     public char getSymbol() { return 'A'; }
     public WorldObject getHeldItem(){ return heldItem; }
+    // Returns whether the Ant is scavenging for food
+    public boolean isScavenging() {
+        return scavenging;
+    }
+
+    public void setScavenging(boolean scavenging) {
+        this.scavenging = scavenging;
+    }
 
     /**
      * Adds delta to the ant's energy, clamping to max energy.
@@ -104,6 +119,7 @@ public abstract class Ant {
      */
     public boolean move(Direction dir){
         Point self = getPoint();
+        lastLocation = self;
         if (world.canMoveTo(self.add(dir))){
             x += dir.dx;
             y += dir.dy;
@@ -130,7 +146,7 @@ public abstract class Ant {
         // or does some default behavior like wander
 
         // The current location of the Ant
-        Point currentPoint = new Point(x, y);
+        Point currentPoint = getPoint();
         // The strongest pheromones at the location of the Ant (there could be multiple)
         List<PheromoneType> strongestPheromones = new ArrayList<>();
         // The highest strength of the pheromones present at the location
@@ -138,7 +154,7 @@ public abstract class Ant {
 
         // Identifies the highest strength of the pheromones present at the location.
         for (PheromoneType type : PheromoneType.values()) {
-            double strength = pheromones.get(type, new Point(x, y));
+            double strength = pheromones.get(type, currentPoint);
             if (strength > highestStrength) {
                 highestStrength = strength;
             }
@@ -146,7 +162,7 @@ public abstract class Ant {
 
         // Identifies which pheromone types have the highest strength.
         for (PheromoneType type : PheromoneType.values()) {
-            double strength = pheromones.get(type, new Point(x, y));
+            double strength = pheromones.get(type, currentPoint);
             if (strength == highestStrength) {
                 strongestPheromones.add(type);
             }
@@ -158,8 +174,8 @@ public abstract class Ant {
         // A random adjacent Point with a stronger Pheromone than the current's
         Point target;
 
-        if (currentEnergy <= 50) {
-            // If the Ant is hungry (currentEnergy <= 50), then returns an adjacent Point with a
+        if (isHungry()) {
+            // If the Ant is hungry, then returns an adjacent Point with a
             // stronger FOOD pheromone than the current's.
             target = getStrongerAdjacentPheromonePoint(PheromoneType.FOOD, pheromones,
                     highestStrength);
@@ -169,17 +185,28 @@ public abstract class Ant {
                     highestStrength);
         }
 
+        // The next Direction the Ant will move to based on the pheromones.
+        Direction nextMove;
+
         if (target == null) {
-            // If no stronger adjacent pheromone exists, then a random Direction will be returned.
-            return Direction.randDir(rng);
+            // If no stronger adjacent pheromone exists, then nextMove will be a random Direction.
+            nextMove = Direction.randDir(rng);
         } else if (chosenPheromone == PheromoneType.DANGER) {
-            // If chosenPheromone is DANGER, then returns a Direction away from a stronger
+            // If chosenPheromone is DANGER, then nextMove will be a Direction away from a stronger
             // adjacent DANGER pheromone.
-            return Direction.moveAwayFromPoint(currentPoint, target);
+            nextMove = currentPoint.moveAwayFromPoint(target);
         } else {
-            // Else, returns a Direction towards a stronger adjacent pheromone.
-            return Direction.moveToPoint(currentPoint, target);
+            // Else, nextMove will be a Direction towards a stronger adjacent pheromone.
+            nextMove = currentPoint.moveToPoint(target);
         }
+
+        // Ensures the Ant will not return to its previous location so that it will not go back
+        // and forth in one area.
+        while (lastLocation.equals(currentPoint.add(nextMove))) {
+            nextMove = Direction.randDir(rng);
+        }
+
+        return nextMove;
     }
 
     // Returns a random Point of an adjacent Pheromone that is stronger than highestStrength.
@@ -190,19 +217,13 @@ public abstract class Ant {
         // current location's
         List<Point> potentialLocations = new ArrayList<>();
 
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                // The adjacent point that is being checked
-                Point adjacent = new Point(x + i, y + j);
-                // Skips the loop if the Point is out of bounds or if it is checking the
-                // current location.
-                if (!pheromones.inBounds(adjacent) || (i == 0 && j == 0)) {
-                    continue;
-                }
+        for (Direction direction : Direction.allDirections()) {
+            // The adjacent point that is being checked
+            Point adjacent = new Point(x, y).add(direction);
 
-                if (pheromones.get(type, adjacent) > highestStrength) {
-                    potentialLocations.add(adjacent);
-                }
+            if (pheromones.inBounds(adjacent) &&
+                    (pheromones.get(type, adjacent) > highestStrength)) {
+                potentialLocations.add(adjacent);
             }
         }
 
@@ -249,19 +270,18 @@ public abstract class Ant {
         if (heldItem == null || !heldItem.isEdible()) return false;
         changeEnergy(heldItem.energyValue());
         heldItem = null;
+        // The Ant no longer scavenges for food once it eats.
+        scavenging = false;
         return true;
     }
 
     public boolean isHungry(){ return currentEnergy < 50; }
 
     /**
-     * Pathfinding hook for moving toward a target point.
-     * Currently, unimplemented and returns CENTER by default.
-     *
      * @param target destination to move toward
      * @return a direction step toward the target
      */
     public Direction pathFind(Point target){
-        return Direction.moveToPoint(new Point(x, y), target);
+        return getPoint().moveToPoint(target);
     }
 }
