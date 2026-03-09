@@ -31,7 +31,7 @@ public class AntSim {
     // Keeps track of when to spawn sugar. When it is >= 1, spawns sugar.
     private double sugarSpawnProgress = 0;
     // The probability sugar will spawn at a Point
-    private final double sugarSpawnProbability = 0.01;
+    private final double sugarSpawnProbability = 0.1;
 
     /**
      * Creates a simulation with the given grid size and a default Random generator.
@@ -228,6 +228,13 @@ public class AntSim {
         int width = world.getWidth();
         int height = world.getHeight();
 
+        for (int y=0; y<=height; ++y) {
+            for (int x=0; x<=width; ++x) {
+                world.setTerrain(new Point(x, y), new Tunnel());
+            }
+        }
+
+        /* commented this out as i plan to rework the basic idea of how the sim will work
         // Carve a centered square room of Tunnel tiles.
         // 3x3 if size is odd, 4x4 if size is even.
         int roomSize = (width%2 == 0) ? 4 : 3;
@@ -276,6 +283,7 @@ public class AntSim {
 
         // Sets up the sugar in the world.
         setupSugar();
+        */
     }
 
     /**
@@ -340,10 +348,11 @@ public class AntSim {
 
     // Initializes the sugar in the world. Every Dirt terrain has a chance of having sugar.
     public void setupSugar() {
-        for (int i = 0; i < world.getWidth(); i++) {
-            for (int j = 6; j <= world.getHeight(); j++) {
-                Point currentPoint = new Point(i, j);
-                if (world.getTerrainAt(currentPoint) instanceof Dirt) {
+        for (int h = 0; h < world.getHeight(); h++) {
+            for (int w = 0; w <= world.getWidth(); w++) {
+                Point currentPoint = new Point(w, h);
+                // seeing what the game looks like when sugar can be anywhere
+                if (true /*world.getTerrainAt(currentPoint) instanceof Dirt*/) {
                     if (Math.random() <= sugarSpawnProbability) {
                         world.setObjectAt(currentPoint, new Sugar());
                     }
@@ -387,7 +396,8 @@ public class AntSim {
      */
     public static void main(String[] args) {
         printIntro();
-        AntSim sim = new AntSim(100, 50);
+        // 93 is based on the default window size, not sure why 100 is too big
+        AntSim sim = new AntSim(93, 50);
         new AntSimGUI(sim);
     }
 }

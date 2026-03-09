@@ -3,16 +3,16 @@ package editor;
 import util.Point;
 
 public class EditorState {
-    private boolean editingEnabled;
-    private BrushMode brushMode;      // TERRAIN, FOOD, COLONY
-    private TerrainKind terrainKind;  // DIRT, ROCK, AIR, TUNNEL
-    private FoodKind foodKind;        // FOOD, SUGAR, etc.
-    private ColonyID colonyID;    // later if needed
+    private boolean editingEnabled = true;
+    private BrushMode brushMode = BrushMode.TERRAIN;
+    private TerrainKind terrainKind = TerrainKind.DIRT;
+    private FoodKind foodKind = FoodKind.SUGAR;
+    private ColonyID colonyID;
 
-    private int brushRadius;
+    private int brushRadius = 1;
 
-    private int foodEnergy;
-    private int foodCount;
+    private int foodEnergy = 10;
+    private int foodCount = 1;
 
     private Point hoveredTile;
 
