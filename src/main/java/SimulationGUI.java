@@ -133,7 +133,7 @@ public class SimulationGUI extends JPanel{
                 }
 
                 //draw edge
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(240, 240, 240));
                 g.drawRect(y*cellSize, x*cellSize, cellSize, cellSize);
             }
         }
