@@ -3,7 +3,7 @@
 // Provides methods for querying and modifying tiles, handling movement rules and managing
 // interactions.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Kyle Hamasaki
 
 /**
  * Base class for all world objects.
