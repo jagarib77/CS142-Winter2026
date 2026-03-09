@@ -76,14 +76,12 @@ public class AntSimGUI extends JFrame {
     }
 
     private JPanel buildSimControlPanel(){
-        JPanel bottomPanel = new JPanel();
-        setLayout(new BorderLayout());
+        // buffer panel
+        JPanel outerPanel = new JPanel(new BorderLayout());
+        outerPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
-        // bottom panel is clipping with edge so it needs a buffer
-        bottomPanel.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createEtchedBorder(),
-                        BorderFactory.createEmptyBorder(50, 20, 20, 20))
-        );
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEtchedBorder());
 
         JPanel speedPanel = new JPanel();
         JPanel pausePanel = new JPanel();
@@ -167,7 +165,9 @@ public class AntSimGUI extends JFrame {
             sim.step();
             worldPanel.repaint();
         });
-        return bottomPanel;
+
+        outerPanel.add(bottomPanel, BorderLayout.CENTER);
+        return outerPanel;
     }
 
     private JPanel buildEditorPanel() {
