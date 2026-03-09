@@ -7,6 +7,8 @@ public class MiracleDoctor extends Doctor {
 
     @Override
     public void step(Entity[][] grid) {
+        super.step(grid);
+
         // 1. Move randomly
         moveRandom(grid);
 
