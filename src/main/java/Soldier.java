@@ -8,6 +8,7 @@ public class Soldier extends Human{
     }
 
     public void step(Entity[][] grid){
+        super.step(grid);
         
         Zombie closestZombie=null;
         int minDistance=Integer.MAX_VALUE;
