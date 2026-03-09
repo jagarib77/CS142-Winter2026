@@ -16,12 +16,9 @@ import sim.AntSim;
 public class AntSimGUI extends JFrame {
     private final AntSim sim;
     private final Timer timer;
-
     private int ticksPerSecond = 15;
-
     private final EditorState editorState;
     private final EditorController editorController;
-
     private final WorldPanel worldPanel;
 
     /**
@@ -35,17 +32,16 @@ public class AntSimGUI extends JFrame {
         super("Ant Simulation");
         if (sim == null) throw new IllegalArgumentException("sim is null");
         this.sim = sim;
-
         this.editorState = new EditorState();
         this.editorController = new EditorController(sim, editorState);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel();
-        JPanel leftPanel = new JPanel();
-        JPanel rightPanel = new JPanel();
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(); // not implemented yet - will display info like sim time/steps
+        JPanel leftPanel = new JPanel(); // not implemented yet - will be the editor panel
+        JPanel rightPanel = new JPanel(); // not implemented yet - will be object info panel(e.g. ant info)
+        JPanel bottomPanel = new JPanel(new BorderLayout()); // Sim controller buttons
 
         worldPanel = new WorldPanel(sim, editorState, editorController);
 
@@ -55,21 +51,27 @@ public class AntSimGUI extends JFrame {
         add(worldPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
+        // bottomPanel
         JPanel speedPanel = new JPanel();
         JPanel pausePanel = new JPanel();
         JPanel stepPanel = new JPanel();
 
+        // left is sim speed, middle is pause/unpause, right is sim step
         bottomPanel.add(speedPanel, BorderLayout.WEST);
         bottomPanel.add(pausePanel, BorderLayout.CENTER);
         bottomPanel.add(stepPanel, BorderLayout.EAST);
 
+        // left
         JButton minus1 = new JButton("-1");
         JButton minus5 = new JButton("-5");
         JTextField speedField = new JTextField(String.valueOf(ticksPerSecond), 4);
         JButton plus5 = new JButton("+5");
         JButton plus1 = new JButton("+1");
 
+        // middle
         JButton pauseButton = new JButton("Pause");
+
+        // right
         JButton stepButton = new JButton("Step");
 
         speedPanel.add(minus1);
@@ -79,24 +81,23 @@ public class AntSimGUI extends JFrame {
         speedPanel.add(plus1);
 
         pausePanel.add(pauseButton);
+
         stepPanel.add(stepButton);
 
-        timer = new Timer(1000 / ticksPerSecond, e -> {
+        timer = new Timer(1000/ticksPerSecond, e -> {
             sim.step();
             worldPanel.repaint();
         });
         timer.start();
 
-        minus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond - 1, speedField));
-        minus5.addActionListener(e -> setTicksPerSecond(ticksPerSecond - 5, speedField));
-        plus5.addActionListener(e -> setTicksPerSecond(ticksPerSecond + 5, speedField));
-        plus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond + 1, speedField));
+        minus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond-1, speedField));
+        minus5.addActionListener(e -> setTicksPerSecond(ticksPerSecond-5, speedField));
+        plus5.addActionListener(e -> setTicksPerSecond(ticksPerSecond+5, speedField));
+        plus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond+1, speedField));
 
         speedField.addActionListener(e -> {
-            try {
-                int value = Integer.parseInt(speedField.getText().trim());
-                setTicksPerSecond(value, speedField);
-            } catch (NumberFormatException ex) {
+            try { setTicksPerSecond(Integer.parseInt(speedField.getText().trim()), speedField); }
+            catch (NumberFormatException ex) { // ignore erroneous input
                 speedField.setText(String.valueOf(ticksPerSecond));
             }
         });
@@ -126,9 +127,9 @@ public class AntSimGUI extends JFrame {
     }
 
     private void setTicksPerSecond(int newValue, JTextField speedField) {
-        if (newValue < 1) newValue = 1;
+        if (newValue<1) newValue = 1; // sim speed floor of 1 tick
         ticksPerSecond = newValue;
-        timer.setDelay(1000 / ticksPerSecond);
+        timer.setDelay(1000/ticksPerSecond);
         speedField.setText(String.valueOf(ticksPerSecond));
     }
 
