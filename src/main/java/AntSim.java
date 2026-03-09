@@ -18,6 +18,13 @@ public class AntSim {
     private final Random rng;
     private final List<Ant> ants;
 
+    // The rate in which sugar spawns (spawn/cycle).
+    private final double sugarSpawnRate = 1;
+    // Keeps track of when to spawn sugar. When it is >= 1, spawns sugar.
+    private double sugarSpawnProgress = 0;
+    // The probability sugar will spawn at a Point
+    private final double sugarSpawnProbability = 0.1;
+
     /**
      * Creates a simulation with the given grid size and a default Random generator.
      *
@@ -55,7 +62,7 @@ public class AntSim {
     public static void printIntro() {
         System.out.println("Welcome to the Ant Colony Simulator!");
         System.out.println("This program creates a world with ant colonies and simulates ants'");
-        System.out.println("behaviors like foraging, fighting, and procreating.");
+        System.out.println("behaviors like foraging, fighting, and reproducing.");
     }
 
     public WorldGrid getWorld() { return world; }
@@ -71,53 +78,137 @@ public class AntSim {
      * - update pheromones (spread and decay)
      */
     public void step() {
-        // basic random movement
-        for (Ant a:ants){
-            if (a == null) continue;
-            a.move(Direction.randDir(rng));
-        }
-
-        // random chance for each queen to spawn an ant
+        // TODO: Write GuardAnt's behavior and setting the Point for the food storage. The movement
+        //  system I made is imperfect, so feel free to modify anything.
         ListIterator<Ant> it = ants.listIterator(); // safe iterator add
         while (it.hasNext()) {
-            Ant a = it.next();
-            if (a instanceof QueenAnt q) {
+            Ant ant = it.next();
+
+            // Removes the Ant from the list if it is not alive.
+            if (ant == null || !ant.isAlive()) {
+                it.remove();
+                continue;
+            }
+
+            // The Ant's current location
+            Point currentPoint = ant.getPoint();
+            // The location of the food storage
+            Point foodStorePoint = ((ColonyAnt) ant).getFoodStore();
+
+            // The ant eats food (if it is holding Sugar) when it is hungry, and goes to the food
+            // storage for food if it exists. Does not release any pheromone.
+            if (ant.isHungry()) {
+                if (!ant.eat() && !ant.isScavenging() && foodStorePoint != null) {
+                    // If the Ant cannot eat and is not scavenging, then it will move to the food
+                    // storage. If there is an obstacle, then it will move randomly.
+                    if (!ant.move(currentPoint.moveToPoint(foodStorePoint))) {
+                        ant.move(Direction.randDir(rng));
+                    }
+
+                    // If the Ant is at the food storage, then it will pick up the food. If there
+                    // is no food, then the Ant will scavenge. Scavenging means that the Ant will
+                    // wander the world to find food instead of going to the food storage.
+                    if (currentPoint.equals(foodStorePoint)) {
+                        if (!ant.pickupObject()) {
+                            ant.setScavenging(true);
+                        }
+                    }
+                    continue;
+                }
+            }
+            
+            // If the Ant has a Sugar, is not hungry, and the food storage exists, then it will go
+            // to the food storage and drop the sugar there. Does not release any pheromones.
+            if (ant.getHeldItem() instanceof Sugar && foodStorePoint != null) {
+                // The Ant will go to the food storage. If there is an obstacle, it will move in a
+                // random Direction.
+                if (!ant.move(((ColonyAnt) ant).depositFood())) {
+                    ant.move(Direction.randDir(rng));
+                }
+
+                // TODO: I think that there is something wrong with this code because the Ant
+                //  becomes frozen at the food storage
+                // If the Ant is at the food storage, then it will drop the Sugar.
+                if (currentPoint.equals(foodStorePoint)) {
+                    ant.dropItem();
+                }
+                continue;
+            }
+
+            if (ant instanceof QueenAnt q) {
+                // random chance for each queen to spawn an ant
                 if (rng.nextInt(50) == 0) {
                     it.add(q.spawnAnt()); // safe add
                 }
+
+                // If the Queen is too far away from the home Point, then it will move towards
+                // the home Point.
+                if (q.getHome().getDistanceBetween(ant.getPoint()) > 3) {
+                    if (q.move(q.getPoint().moveToPoint(q.getHome()))) {
+                        continue;
+                    }
+                }
+            }
+
+            // If the Ant is a WorkerAnt, is not carrying anything, has enough energy, and is
+            // adjacent to Dirt, then the Ant will dig out the Dirt to make it a Tunnel and
+            // release WALKING_TRAIL pheromones.
+            if (ant instanceof WorkerAnt worker && ant.getHeldItem() == null &&
+                    ant.getEnergy() >= 15) {
+                // The adjacent Dirt Terrain around the Ant.
+                List<Point> adjacentDirt = new ArrayList<>();
+
+                for (Direction dir : Direction.allDirections()) {
+                    // An adjacent point to the Ant.
+                    Point adjacent = worker.getPoint().add(dir);
+                    if (world.inBounds(adjacent) && world.getTerrainAt(adjacent) instanceof Dirt) {
+                        adjacentDirt.add(adjacent);
+                    }
+                }
+
+                // The Ant will dig out an adjacent Dirt terrain if it exists. If not, then it will
+                // move based on pheromones (as shown in the later code).
+                if (adjacentDirt.size() > 0) {
+                    world.dig(worker, adjacentDirt.get(rng.nextInt(adjacentDirt.size())));
+                    worker.pickupObject();
+                    world.getPheromones().add(worker.createPheromone(), worker.getPoint(), 1);
+                    continue;
+                }
+            }
+
+            // The Direction the ant will move based on the pheromones
+            Direction direction = ant.smell(world.getPheromones());
+            // Makes the Ant move in the Direction based on the pheromone. If the Ant cannot move
+            // said Direction, then it will move in a random Direction.
+            if (!ant.move(direction)) {
+                ant.move(Direction.randDir(rng));
+            }
+
+            if (ant.pickupObject()) {
+                if (ant.getHeldItem() instanceof Sugar && ((ColonyAnt) ant).getFoodStore() != null
+                        && !((ColonyAnt) ant).getFoodStore().equals(ant.getPoint())) {
+                    // If the Ant picks up Sugar, and is not at the food storage, then
+                    // it will release FOOD pheromone.
+                    world.getPheromones().add(PheromoneType.FOOD, ant.getPoint(), 5);
+                }
+            } else if (ant instanceof WorkerAnt) {
+                // If the Ant is a WorkerAnt, and did not pick up Sugar, then it will create a
+                // WALKING_TRAIL pheromone.
+                world.getPheromones().add(ant.createPheromone(), ant.getPoint(), 1.5);
             }
         }
 
-        //TODO: remove dead ants from ant list
-        // Removes dead ants from the list
-        // - Kyle
-        for (int i = ants.size() - 1; i >= 0; i--) {
-            Ant ant = ants.get(i);
-            // Removes the Ant from the list if it is not alive.
-            if (ant == null || !ant.isAlive()) {
-                ants.remove(i);
-            }
+        // Spawns sugar. Commented this out in case you do not want to spawn sugar.
+        /*
+        while (sugarSpawnProgress >= 1) {
+            spawnSugar();
+            sugarSpawnProgress -= 1;
         }
+        sugarSpawnProgress += sugarSpawnRate;
+        */
 
-        //TODO: if all ants are dead then end sim and print to GUI the message ->
-        // (all ants are dead) goodbye
-
-        //TODO: implement logic for ants to move
-        // don't worry about this yet, we need to get pheromones working
-        // follow pheromones when possible otherwise move random and wait for trigger
-
-
-
-        // call ant behavior
-        for (Ant a:ants){
-            //a.smell(); // set action state
-            // update the pheromones array
-            world.getPheromones().add(a.createPheromone(), a.getPoint(), 1);
-        }
-
-        // pheromones update
-        world.spreadPheromones(.01); // 1% spread per tick
-        world.decayPheromones(.99); // 1% loss per tick
+        world.spreadPheromones(.5); // 1% spread per tick
+        world.decayPheromones(.5); // 1% loss per tick
     }
 
     /**
@@ -173,6 +264,9 @@ public class AntSim {
                 world.setTerrain(rand, new Rock());
             } else { --r; } // try again
         }
+
+        // Sets up the sugar in the world.
+        setupSugar();
     }
 
     /**
@@ -234,6 +328,49 @@ public class AntSim {
             }
         }
     }
+
+    // Initializes the sugar in the world. Every Dirt terrain has a chance of having sugar.
+    public void setupSugar() {
+        for (int i = 0; i < world.getWidth(); i++) {
+            for (int j = 6; j <= world.getHeight(); j++) {
+                Point currentPoint = new Point(i, j);
+                if (world.getTerrainAt(currentPoint) instanceof Dirt) {
+                    if (Math.random() <= sugarSpawnProbability) {
+                        world.setObjectAt(currentPoint, new Sugar());
+                    }
+                }
+            }
+        }
+    }
+
+    // Spawns sugar in the world. Commented this out in case you do not want to spawn sugar.
+    // By Kyle
+    /*
+    public void spawnSugar() {
+        // X position where the bunch of sugar spawns
+        int xPos = rng.nextInt(world.getWidth());
+        // Y position where the bunch of sugar spawns
+        int yPos = rng.nextInt(world.getHeight());
+
+        // Spawns sugar in a 3x3 area (assuming the xPos and yPos are not at the border).
+        // Sugar can spawn on Dirt, Tunnel, and Sky, but not Rock.
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                Point sugarSpawnPoint = new Point(xPos + i, yPos + j);
+
+                if (world.inBounds(sugarSpawnPoint)) {
+                    if (!(world.getTerrainAt(sugarSpawnPoint) instanceof Rock)) {
+                        // The probability of sugar spawning
+                        if (Math.random() < 0.1) {
+                            world.setObjectAt(sugarSpawnPoint, new Sugar());
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    */
 
     /**
      * Program entry point. Creates the simulation and launches the GUI.
