@@ -101,9 +101,13 @@ public class AntSimGUI extends JFrame {
         plus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond+1, speedField));
 
         speedField.addActionListener(e -> {
-            try { setTicksPerSecond(Integer.parseInt(speedField.getText().trim()), speedField); }
+            try {
+                setTicksPerSecond(Integer.parseInt(speedField.getText().trim()), speedField);
+                worldPanel.requestFocusInWindow(); // unfocus after hitting enter
+            }
             catch (NumberFormatException ex) { // ignore erroneous input
                 speedField.setText(String.valueOf(ticksPerSecond));
+                worldPanel.requestFocusInWindow();
             }
         });
 
