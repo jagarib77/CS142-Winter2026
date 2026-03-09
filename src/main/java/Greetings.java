@@ -7,10 +7,6 @@ public final class Greetings {
 
     private static final List<String> MESSAGES = new ArrayList<>();
     static {
-        MESSAGES.add("Hello from the teacher!");
-        // students add exactly one line each:
-        // MESSAGES.add("Hola — Alice P.");
-        MESSAGES.add("Hello-DarionP.");
 
         MESSAGES.add("Human vs. Zombie Survival Simulation is an infection and survival simulation in grid-based. ");
         MESSAGES.add("The simulation takes place in a two-dimensional world divided into cells with integer coordinates, similar to the Critter model. Each cell may contain an entity. ");
