@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import editor.BrushMode;
 import terrain.*;
 import editor.EditorController;
 import editor.EditorState;
@@ -187,6 +188,7 @@ public class AntSimGUI extends JFrame {
         JButton airButton = new JButton("Air");
         JButton tunnelButton = new JButton("Tunnel");
         JButton sugarButton = new JButton("Sugar");
+        JButton colonyButton = new JButton("Colony");
 
         JLabel brushSizeLabel = new JLabel("Brush Radius:");
         JSpinner brushRadiusSpinner = new JSpinner(
@@ -256,6 +258,13 @@ public class AntSimGUI extends JFrame {
             worldPanel.requestFocusInWindow();
         });
 
+        // colony buttons
+        colonyButton.addActionListener(e -> {
+            editorState.setBrushMode(BrushMode.COLONY);
+            updateBrushDisplay.run();
+            worldPanel.requestFocusInWindow();
+        });
+
         // spinner listeners - whenever a change occurs -> update the editorState value
         brushRadiusSpinner.addChangeListener(e ->
                 editorState.setBrushRadius((Integer)brushRadiusSpinner.getValue())
@@ -284,6 +293,7 @@ public class AntSimGUI extends JFrame {
         airButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         tunnelButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         sugarButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        colonyButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         brushSizeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         brushRadiusSpinner.setAlignmentX(Component.LEFT_ALIGNMENT);
         foodEnergyLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -312,6 +322,11 @@ public class AntSimGUI extends JFrame {
         leftPanel.add(new JLabel("Food"));
         leftPanel.add(Box.createVerticalStrut(4));
         leftPanel.add(sugarButton);
+
+        leftPanel.add(Box.createVerticalStrut(12));
+        leftPanel.add(new JLabel("Colony"));
+        leftPanel.add(Box.createVerticalStrut(4));
+        leftPanel.add(colonyButton);
 
         leftPanel.add(Box.createVerticalStrut(12));
         leftPanel.add(brushSizeLabel);

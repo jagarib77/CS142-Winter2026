@@ -26,7 +26,7 @@ public class Sugar extends Resource {
     }
 
     public boolean isEmptied(){
-        return foodCount<=0;
+        return foodCount <= 0;
     }
 
     public boolean isDepleted() {

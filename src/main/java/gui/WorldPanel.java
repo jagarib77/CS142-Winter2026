@@ -149,7 +149,7 @@ public class WorldPanel extends JPanel {
                 int py = y*TILE_SIZE;
 
                 switch (obj) {
-                    case Sugar sugar -> g.setColor(Color.WHITE);
+                    case Sugar sugar -> g.setColor(Color.BLUE);
                     default          -> g.setColor(Color.MAGENTA); // debug color
                 }
 
@@ -193,7 +193,7 @@ public class WorldPanel extends JPanel {
 
         List<Point> validP = BrushMath.pointsInCircle(sim, hovered, editorState.getBrushRadius());
 
-        g.setColor(new Color(128, 128, 128, 50)); // 20% opacity
+        g.setColor(new Color(128, 128, 128, 80)); // 80% opacity
 
         for (Point p:validP) {
             int px = p.x*TILE_SIZE;

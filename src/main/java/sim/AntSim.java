@@ -24,7 +24,7 @@ import java.util.Random;
 public class AntSim {
     private final WorldGrid world;
     private final Random rng;
-    private final List<Ant> ants;
+    private final List<Ant> antColonys;
 
     // The rate in which sugar spawns (spawn/cycle).
     private final double sugarSpawnRate = 1;
@@ -56,7 +56,7 @@ public class AntSim {
 
         this.world = new WorldGrid(width, height);
         this.rng = rng;
-        this.ants = new ArrayList<>();
+        this.antColonys = new ArrayList<>();
 
         setupWorld();
         setupAnts();
@@ -75,7 +75,7 @@ public class AntSim {
 
     public WorldGrid getWorld() { return world; }
 
-    public List<Ant> getAnts() { return ants; }
+    public List<Ant> getAnts() { return antColonys; }
 
     /**
      * Advances the simulation by one tick.
@@ -88,7 +88,7 @@ public class AntSim {
     public void step() {
         // TODO: Write GuardAnt's behavior and setting the Point for the food storage. The movement
         //  system I made is imperfect, so feel free to modify anything.
-        ListIterator<Ant> it = ants.listIterator(); // safe iterator add
+        ListIterator<Ant> it =  antColonys.listIterator(); // safe iterator add
         while (it.hasNext()) {
             Ant ant = it.next();
 
@@ -292,17 +292,17 @@ public class AntSim {
      */
     private void setupAnts() {
         Point home = new Point(world.getWidth()/2, world.getHeight()/2);
-        ants.add(QueenAnt.spawn(world, rng, home, 500, home));
+        antColonys.add(QueenAnt.spawn(world, rng, home, 500, home));
 
         // guards
         Point homeNorth = home.add(Direction.NORTH);
-        ants.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.WEST), 300, home));
-        ants.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.EAST), 300, home));
+        antColonys.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.WEST), 300, home));
+        antColonys.add(GuardAnt.spawn(world, rng, homeNorth.add(Direction.EAST), 300, home));
 
         // workers
         Point homeSouth = home.add(Direction.SOUTH);
-        ants.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.WEST), 300, home));
-        ants.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.EAST), 300, home));
+        antColonys.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.WEST), 300, home));
+        antColonys.add(WorkerAnt.spawn(world, rng, homeSouth.add(Direction.EAST), 300, home));
     }
 
     /**
@@ -396,7 +396,7 @@ public class AntSim {
      */
     public static void main(String[] args) {
         printIntro();
-        AntSim sim = new AntSim(50, 50);
+        AntSim sim = new AntSim(49, 49);
         new AntSimGUI(sim);
     }
 }

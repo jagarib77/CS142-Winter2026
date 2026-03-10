@@ -1,15 +1,11 @@
 package editor;
 
-import resources.Food;
+import resources.Colony;
 import resources.Sugar;
 import sim.AntSim;
 import sim.WorldGrid;
 import terrain.*;
 import util.Point;
-
-// enums
-import static editor.TerrainKind.*;
-import static editor.FoodKind.*;
 
 public class EditorController {
     private final AntSim sim;
@@ -27,6 +23,11 @@ public class EditorController {
 
     public void applyBrushAt(Point center) {
         if (!state.isEditingEnabled()) return;
+
+        if (state.getBrushMode() == BrushMode.COLONY){
+            applySingle(center);
+            return; // place 1 colony
+        }
 
         for (Point p : BrushMath.pointsInCircle(sim, center, state.getBrushRadius())) {
             applySingle(p);
@@ -57,6 +58,8 @@ public class EditorController {
     }
 
     private void applyColony(Point p) {
-        // placeholder for later
+        WorldGrid world = sim.getWorld();
+        //sim.getAnts().add(new Colony(p));
+        //world.setObjectAt(p, sim.getAnts().getLast());
     }
 }
