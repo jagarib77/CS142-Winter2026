@@ -14,12 +14,25 @@ public class ColonyState {
     private final int colonyId;
     private final Point home;
     private final List<Ant> ants;
+    private int foodCount = 10;
 
     public ColonyState(int colonyId, Point home) {
         if (home == null) throw new IllegalArgumentException("home is null");
         this.colonyId = colonyId;
         this.home = home;
         this.ants = new ArrayList<>();
+    }
+
+    public void addFood(){
+        foodCount++;
+    }
+
+    public boolean retrieveFood(){
+        if (foodCount > 0) {
+            foodCount--;
+            return true;
+        }
+        return false;
     }
 
     public int getColonyId() {

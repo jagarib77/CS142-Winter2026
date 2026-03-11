@@ -50,20 +50,6 @@ public class ColonyAnt extends Ant {
      */
     public Direction returnHome() { return pathFind(home); }
 
-
-    /**
-     * Returns a direction step toward the food storage location.
-     * If no food storage is configured, returns CENTER.
-     *
-     * @return direction toward food storage or CENTER if unset
-     */
-    public Direction depositFood() {
-        if (foodStore == null) return Direction.CENTER;
-        //TODO: handle logic when foodStore is null better
-        // set behavior to findFood();
-        return pathFind(foodStore);
-    }
-
     public boolean attack(Ant a){
         if(!(a instanceof ColonyAnt enemy)) return false;
         if(enemy.getColonyId() == getColonyId()) return false;

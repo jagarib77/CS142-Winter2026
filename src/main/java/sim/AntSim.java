@@ -135,7 +135,7 @@ public class AntSim {
             // IF CARRYING FOOD, RETURN HOME
             if (ant.getHeldItem() instanceof Sugar) {
                 if (ant.getPoint().equals(home)) {
-                    ant.dropItem();
+                    ant.destroyHeld();
                 } else {
                     Direction dir = ant.getPoint().moveToPoint(home);
                     if (!ant.move(dir)) {
@@ -217,12 +217,26 @@ public class AntSim {
                 if (!a.getPoint().equals(b.getPoint())) continue;
                 if (colonyAnt.getColonyId() == colonyB.getColonyId()) continue;
 
-                if (a instanceof GuardAnt guard) {
-                    guard.attack(b);
-                } else if (a instanceof WorkerAnt worker) {
-                    worker.attack(b);
-                } else if (a instanceof QueenAnt queen) {
-                    queen.attack(b);
+                switch (a) {
+                    case GuardAnt guard -> {
+                        if (guard.attack(b)) {
+                            world.getPheromones().add(PheromoneType.DANGER, a.getPoint(), 5);
+                        }
+                    }
+
+                    case WorkerAnt worker -> {
+                        if (worker.attack(b)) {
+                            world.getPheromones().add(PheromoneType.DANGER, a.getPoint(), 5);
+                        }
+                    }
+
+                    case QueenAnt queen -> {
+                        if (queen.attack(b)) {
+                            world.getPheromones().add(PheromoneType.DANGER, a.getPoint(), 5);
+                        }
+                    }
+
+                    default -> {}
                 }
             }
         }

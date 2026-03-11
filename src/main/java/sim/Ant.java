@@ -224,6 +224,10 @@ public abstract class Ant {
         return true;
     }
 
+    public void destroyHeld(){
+        heldItem = null;
+    }
+
     /**
      * Eats the currently held item if it is edible, converting its energy value
      * into ant energy and consuming the item.
