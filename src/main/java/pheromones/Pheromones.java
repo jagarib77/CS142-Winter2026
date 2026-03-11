@@ -6,8 +6,6 @@ package pheromones;// pheromones.Pheromones.java
 import util.Direction;
 import util.Point;
 
-import java.awt.event.WindowStateListener;
-
 /**
  * Stores pheromone concentrations as a 3D array indexed by type, x and y.
  * Supports reading, adding, setting, decay and spreading of pheromones each tick.

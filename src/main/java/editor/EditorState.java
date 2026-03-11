@@ -7,7 +7,6 @@ public class EditorState {
     private BrushMode brushMode = BrushMode.TERRAIN;
     private TerrainKind terrainKind = TerrainKind.DIRT;
     private FoodKind foodKind = FoodKind.SUGAR;
-    private ColonyID colonyID;
 
     private int brushRadius = 1;
 
@@ -21,9 +20,6 @@ public class EditorState {
 
     public FoodKind getFoodKind() { return foodKind; }
     public void setFoodKind(FoodKind foodKind) { this.foodKind = foodKind; }
-
-    public ColonyID getColonyID() { return colonyID; }
-    public void setColonyID(ColonyID colonyID) { this.colonyID = colonyID; }
 
     public boolean isEditingEnabled() { return editingEnabled; }
     public void setEditingEnabled(boolean editingEnabled) { this.editingEnabled = editingEnabled; }
