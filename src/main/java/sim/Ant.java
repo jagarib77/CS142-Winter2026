@@ -145,27 +145,47 @@ public abstract class Ant {
      * this function should determine the next action any ant takes
      * should override if an ant needs to behave differently
      */
-    // - Kyle
     public Direction smell(Pheromones pheromones) {
         Point current = getPoint();
-        Direction bestDir = Direction.randDir(rng);
-        double bestStrength = -1;
 
-        for(Direction d:Direction.allDirections()){
-            Point p = current.add(d);
-            if(!pheromones.inBounds(p)) continue;
+        Direction bestDir = null;
+        double bestScore = Double.NEGATIVE_INFINITY;
 
-            double food = pheromones.get(PheromoneType.FOOD, p);
-            double danger = pheromones.get(PheromoneType.DANGER, p);
+        for (Direction d:Direction.allDirections()) {
+            Point next = current.add(d);
+            if (!world().canMoveTo(next)) continue;
 
-            double value = food - danger;
-            if(value > bestStrength){
-                bestStrength = value;
+            double food = pheromones.get(PheromoneType.FOOD, next);
+            double danger = pheromones.get(PheromoneType.DANGER, next);
+            double score = food - danger;
+
+            // discourage immediately going back to last tile
+            if (next.equals(lastLocation)) { score -= 1000; }
+
+            // needed to add some slight variation to the directions bc the ants are stubborm
+            score += rng().nextDouble()*0.001;
+
+            if (score > bestScore) {
+                bestScore = score;
                 bestDir = d;
             }
         }
 
-        return bestDir;
+        if (bestDir != null && bestScore > 0) { return bestDir; }
+
+        // wander
+        List<Direction> dirx = new ArrayList<>();
+
+        for (Direction d:Direction.allDirections()) {
+            Point next = current.add(d);
+            if (!world().canMoveTo(next)) continue;
+            if (next.equals(lastLocation)) continue;
+            dirx.add(d);
+        }
+
+        if (!dirx.isEmpty()) return dirx.get(rng().nextInt(dirx.size()));
+
+        return Direction.randDir(rng());
     }
 
     /**
@@ -173,7 +193,6 @@ public abstract class Ant {
      */
     public PheromoneType createPheromone(){
         if(getHeldItem() instanceof Sugar) return PheromoneType.FOOD;
-        if(isHungry()) return PheromoneType.FOOD;
 
         return null; // no pheromone
     }

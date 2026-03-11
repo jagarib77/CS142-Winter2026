@@ -3,6 +3,7 @@ package sim;// sim.ColonyAnt.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
+import pheromones.PheromoneType;
 import util.Direction;
 import util.Point;
 
@@ -63,17 +64,13 @@ public class ColonyAnt extends Ant {
         return pathFind(foodStore);
     }
 
-    public boolean attack(List<Ant> ants){
-        for(Ant a:ants){
-            if(a == this) continue;
-            if(!(a instanceof ColonyAnt enemy)) continue; // only ants with ID's
+    public boolean attack(Ant a){
+        if(!(a instanceof ColonyAnt enemy)) return false;
+        if(enemy.getColonyId() == getColonyId()) return false;
 
-            if(enemy.getColonyId() == getColonyId()) continue;
-
-            if(enemy.getPoint().equals(getPoint())){
-                if(rng().nextDouble() < 0.5) enemy.kill();
-                return true;
-            }
+        if(enemy.getPoint().equals(getPoint())){
+            if(rng().nextDouble() < .5) enemy.kill();
+            return true;
         }
         return false;
     }

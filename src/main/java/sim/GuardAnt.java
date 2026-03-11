@@ -54,17 +54,13 @@ public class GuardAnt extends ColonyAnt {
      *
      * @return true if an attack action occurred, false otherwise
      */
-    public boolean attack(List<Ant> ants){
-        for(Ant a:ants){
-            if(a == this) continue;
-            if(!(a instanceof ColonyAnt enemy)) continue; // only ants with ID's
+    public boolean attack(Ant a){
+        if(!(a instanceof ColonyAnt enemy)) return false;
+        if(enemy.getColonyId() == getColonyId()) return false;
 
-            if(enemy.getColonyId() == getColonyId()) continue;
-
-            if(enemy.getPoint().equals(getPoint())){
-                if(rng().nextDouble() < 0.66) enemy.kill();
-                return true;
-            }
+        if(enemy.getPoint().equals(getPoint())){
+            if(rng().nextDouble() < 0.66) enemy.kill();
+            return true;
         }
         return false;
     }

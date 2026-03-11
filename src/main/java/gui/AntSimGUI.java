@@ -168,7 +168,7 @@ public class AntSimGUI extends JFrame {
         // 1. Create JRadioButton instances
         JRadioButton off = new JRadioButton("Off");
         JRadioButton danger = new JRadioButton("Danger");
-        JRadioButton wT = new JRadioButton("Walking Trail");
+        //JRadioButton wT = new JRadioButton("Walking Trail");
         JRadioButton food = new JRadioButton("Food");
 
         // Add action listeners
@@ -185,13 +185,13 @@ public class AntSimGUI extends JFrame {
             worldPanel.repaint();
         });
 
-        wT.addActionListener(e -> {
+        /*wT.addActionListener(e -> {
             seePheromones = true;
             dangerPhermoneSwitch = false;
             walkingTrailPhermoneSwitch = true;
             foodPhermoneSwitch = false;
             worldPanel.repaint();
-        });
+        });*/
 
         food.addActionListener(e -> {
             seePheromones = true;
@@ -207,13 +207,13 @@ public class AntSimGUI extends JFrame {
         // 3. Add radio buttons to the group
         group.add(off);
         group.add(danger);
-        group.add(wT);
+        //group.add(wT);
         group.add(food);
 
         // 4. Add radio buttons to the frame
         viewPanel.add(off);
         viewPanel.add(danger);
-        viewPanel.add(wT);
+        //viewPanel.add(wT);
         viewPanel.add(food);
         off.setSelected(true);   // default selection
 

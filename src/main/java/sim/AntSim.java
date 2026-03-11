@@ -192,10 +192,40 @@ public class AntSim {
             if (!ant.move(dir)) {
                 ant.move(Direction.randDir(rng));
             }
+
+            // EMIT PHEROMONE
+            world.getPheromones().add(ant.createPheromone(), ant.getPoint(), 5);
         }
+
+        resolveAntAttacks();
 
         world.spreadPheromones(.05);
         world.decayPheromones(.95);
+    }
+
+    private void resolveAntAttacks() {
+        for (int i=0; i<antColonys.size(); ++i) {
+            Ant a = antColonys.get(i);
+            if (a==null || !a.isAlive()) continue;
+            if (!(a instanceof ColonyAnt colonyAnt)) continue;
+
+            for (int j=i+1; j<antColonys.size(); ++j) {
+                Ant b = antColonys.get(j);
+                if (b==null || !b.isAlive()) continue;
+                if (!(b instanceof ColonyAnt colonyB)) continue;
+
+                if (!a.getPoint().equals(b.getPoint())) continue;
+                if (colonyAnt.getColonyId() == colonyB.getColonyId()) continue;
+
+                if (a instanceof GuardAnt guard) {
+                    guard.attack(b);
+                } else if (a instanceof WorkerAnt worker) {
+                    worker.attack(b);
+                } else if (a instanceof QueenAnt queen) {
+                    queen.attack(b);
+                }
+            }
+        }
     }
 
     /**
