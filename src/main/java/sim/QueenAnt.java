@@ -16,8 +16,8 @@ public class QueenAnt extends ColonyAnt {
     /**
      * Creates a queen ant with a home location.
      */
-    public QueenAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        super(world, rng, pos, maxEnergy, home);
+    public QueenAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int ColonyID){
+        super(world, rng, pos, maxEnergy, home, ColonyID);
     }
 
     /**
@@ -25,8 +25,8 @@ public class QueenAnt extends ColonyAnt {
      *
      * @return newly created sim.QueenAnt instance
      */
-    public static QueenAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        return new QueenAnt(world, rng, pos, maxEnergy, home);
+    public static QueenAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
+        return new QueenAnt(world, rng, pos, maxEnergy, home, colonyID);
     }
 
     @Override
@@ -57,15 +57,15 @@ public class QueenAnt extends ColonyAnt {
 
             if (spawnNewQueen){ // uses its own chance based logic
                 changeEnergy(-200);
-                return QueenAnt.spawn(world(), rng(), spawn, 500, home);
+                return QueenAnt.spawn(world(), rng(), spawn, 500, home, getColonyId());
             }
 
             if (type == 0) {
                 changeEnergy(-5);
-                return GuardAnt.spawn(world(), rng(), spawn, 200, home);
+                return GuardAnt.spawn(world(), rng(), spawn, 200, home, getColonyId());
             } else {
                 changeEnergy(-5);
-                return WorkerAnt.spawn(world(), rng(), spawn, 200, home);
+                return WorkerAnt.spawn(world(), rng(), spawn, 200, home, getColonyId());
             }
         }
 

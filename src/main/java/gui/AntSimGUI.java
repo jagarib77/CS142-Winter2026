@@ -309,6 +309,7 @@ public class AntSimGUI extends JFrame {
 
         // colony buttons
         colonyButton.addActionListener(e -> {
+            editorState.setBrushRadius(0);
             editorState.setBrushMode(BrushMode.COLONY);
             updateBrushDisplay.run();
             worldPanel.requestFocusInWindow();

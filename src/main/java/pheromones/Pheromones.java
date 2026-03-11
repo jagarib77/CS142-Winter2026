@@ -39,6 +39,7 @@ public class Pheromones {
     }
 
     public void add(PheromoneType type, Point p, double amount){
+        if (type == null || p == null || !inBounds(p)) return;
         grid[type.type][p.x][p.y] += amount;
     }
 

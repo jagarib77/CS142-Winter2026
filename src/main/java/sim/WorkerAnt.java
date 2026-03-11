@@ -15,8 +15,8 @@ public class WorkerAnt extends ColonyAnt {
     /**
      * Creates a worker ant at a position with a home location.
      */
-    public WorkerAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        super(world, rng, pos, maxEnergy, home);
+    public WorkerAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
+        super(world, rng, pos, maxEnergy, home, colonyID);
     }
 
     /**
@@ -24,8 +24,8 @@ public class WorkerAnt extends ColonyAnt {
      *
      * @return newly created sim.WorkerAnt instance
      */
-    public static WorkerAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        return new WorkerAnt(world, rng, pos, maxEnergy, home);
+    public static WorkerAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
+        return new WorkerAnt(world, rng, pos, maxEnergy, home, colonyID);
     }
 
     @Override
@@ -33,12 +33,8 @@ public class WorkerAnt extends ColonyAnt {
         return 'W';
     }
 
-    /**
-     * Digging hook. Intended to convert diggable terrain into tunnel tiles and manage
-     * carried dirt. Currently unimplemented.
-     */
-    public void digTunnel(){
-        // TODO: add logic for ants to expand the nest
-        return;
+    public boolean forage(){
+        if(getHeldItem() != null) return false;
+        return pickupObject();
     }
 }

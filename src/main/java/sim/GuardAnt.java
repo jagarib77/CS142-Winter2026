@@ -3,6 +3,7 @@ package sim;// sim.GuardAnt.java
 // Group Project: sim.Ant Colony Simulator
 // Authors: Harrison Butler
 
+import java.util.List;
 import java.util.Random;
 import util.Point;
 
@@ -15,8 +16,8 @@ public class GuardAnt extends ColonyAnt {
     /**
      * Creates a guardAnt ant with a home location.
      */
-    public GuardAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        super(world, rng, pos, maxEnergy, home);
+    public GuardAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
+        super(world, rng, pos, maxEnergy, home, colonyID);
     }
 
     /**
@@ -24,8 +25,8 @@ public class GuardAnt extends ColonyAnt {
      *
      * @return newly created sim.GuardAnt instance
      */
-    public static GuardAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
-        return new GuardAnt(world, rng, pos, maxEnergy, home);
+    public static GuardAnt spawn(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
+        return new GuardAnt(world, rng, pos, maxEnergy, home, colonyID);
     }
 
     @Override
@@ -53,7 +54,18 @@ public class GuardAnt extends ColonyAnt {
      *
      * @return true if an attack action occurred, false otherwise
      */
-    public boolean attack(){
-        return true;
+    public boolean attack(List<Ant> ants){
+        for(Ant a:ants){
+            if(a == this) continue;
+            if(!(a instanceof ColonyAnt enemy)) continue; // only ants with ID's
+
+            if(enemy.getColonyId() == getColonyId()) continue;
+
+            if(enemy.getPoint().equals(getPoint())){
+                if(rng().nextDouble() < 0.66) enemy.kill();
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -6,6 +6,7 @@ package sim;// sim.ColonyAnt.java
 import util.Direction;
 import util.Point;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -15,6 +16,7 @@ import java.util.Random;
 public class ColonyAnt extends Ant {
     private final Point home;
     private Point foodStore;
+    private final int colonyID;
 
     /**
      * Creates a colony ant with a required home location.
@@ -25,10 +27,11 @@ public class ColonyAnt extends Ant {
      * @param maxEnergy maximum energy
      * @param home colony home position (non-null)
      */
-    public ColonyAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home){
+    public ColonyAnt(WorldGrid world, Random rng, Point pos, int maxEnergy, Point home, int colonyID){
         super(world, rng, pos, maxEnergy);
         if (home == null) throw new IllegalArgumentException("home");
         this.home = home;
+        this.colonyID = colonyID;
     }
 
     public final Point getHome() { return home; }
@@ -36,6 +39,8 @@ public class ColonyAnt extends Ant {
     public final Point getFoodStore() { return foodStore; }
 
     public final void setFoodStore(Point foodStore) { this.foodStore = foodStore; }
+
+    public int getColonyId(){ return colonyID; }
 
     /**
      * Returns a direction step toward the colony home location.
@@ -58,16 +63,18 @@ public class ColonyAnt extends Ant {
         return pathFind(foodStore);
     }
 
-    /**
-     * Foraging hook. Intended to choose a direction toward food sources
-     * based on pheromones and exploration.
-     *
-     * @return direction to move next
-     */
-    public Direction findFood(){
-        //TODO: logic for eating when hungry
-        // should go to foodstore first then go outside and look for food
-        // except for the queen, she is not allowed to leave the nest
-        return null;
+    public boolean attack(List<Ant> ants){
+        for(Ant a:ants){
+            if(a == this) continue;
+            if(!(a instanceof ColonyAnt enemy)) continue; // only ants with ID's
+
+            if(enemy.getColonyId() == getColonyId()) continue;
+
+            if(enemy.getPoint().equals(getPoint())){
+                if(rng().nextDouble() < 0.5) enemy.kill();
+                return true;
+            }
+        }
+        return false;
     }
 }

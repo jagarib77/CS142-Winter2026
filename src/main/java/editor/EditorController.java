@@ -1,6 +1,5 @@
 package editor;
 
-import resources.Colony;
 import resources.Sugar;
 import sim.AntSim;
 import sim.WorldGrid;
@@ -58,8 +57,6 @@ public class EditorController {
     }
 
     private void applyColony(Point p) {
-        WorldGrid world = sim.getWorld();
-        //sim.getAnts().add(new Colony(p));
-        //world.setObjectAt(p, sim.getAnts().getLast());
+        sim.placeColony(p);
     }
 }

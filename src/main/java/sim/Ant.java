@@ -7,6 +7,7 @@ package sim;// sim.Ant.java
 import editor.TerrainKind;
 import pheromones.PheromoneType;
 import pheromones.Pheromones;
+import resources.Sugar;
 import resources.WorldObject;
 import terrain.Terrain;
 import util.Direction;
@@ -145,113 +146,36 @@ public abstract class Ant {
      * should override if an ant needs to behave differently
      */
     // - Kyle
-    public Direction smell(Pheromones pheromones){
-        //TODO: does something based on strongest pheromone in its tile
-        // unless previous behavior overrides the smell
+    public Direction smell(Pheromones pheromones) {
+        Point current = getPoint();
+        Direction bestDir = Direction.randDir(rng);
+        double bestStrength = -1;
 
-        //TODO: probably should add in a variable that controls the and behavior based on
-        // on some criteria either its hungry or has been told by pheromones what to do
-        // or does some default behavior like wander
+        for(Direction d:Direction.allDirections()){
+            Point p = current.add(d);
+            if(!pheromones.inBounds(p)) continue;
 
-        // The current location of the Ant
-        Point currentPoint = getPoint();
-        // The strongest pheromones at the location of the Ant (there could be multiple)
-        List<PheromoneType> strongestPheromones = new ArrayList<>();
-        // The highest strength of the pheromones present at the location
-        double highestStrength = 0;
+            double food = pheromones.get(PheromoneType.FOOD, p);
+            double danger = pheromones.get(PheromoneType.DANGER, p);
 
-        // Identifies the highest strength of the pheromones present at the location.
-        for (PheromoneType type : PheromoneType.values()) {
-            double strength = pheromones.get(type, currentPoint);
-            if (strength > highestStrength) {
-                highestStrength = strength;
+            double value = food - danger;
+            if(value > bestStrength){
+                bestStrength = value;
+                bestDir = d;
             }
         }
 
-        // Identifies which pheromone types have the highest strength.
-        for (PheromoneType type : PheromoneType.values()) {
-            double strength = pheromones.get(type, currentPoint);
-            if (strength == highestStrength) {
-                strongestPheromones.add(type);
-            }
-        }
-
-        // Chooses a random pheromone in the list of the strongest pheromones.
-        PheromoneType chosenPheromone = strongestPheromones.get(rng.nextInt(strongestPheromones.size()));
-
-        // A random adjacent Point with a stronger Pheromone than the current's
-        Point target;
-
-        if (isHungry()) {
-            // If the Ant is hungry, then returns an adjacent Point with a
-            // stronger FOOD pheromone than the current's.
-            target = getStrongerAdjacentPheromonePoint(PheromoneType.FOOD, pheromones,
-                    highestStrength);
-        } else {
-            // Else, returned an adjacent Point with a stronger chosenPheromone than the current's.
-            target = getStrongerAdjacentPheromonePoint(chosenPheromone, pheromones,
-                    highestStrength);
-        }
-
-        // The next Direction the Ant will move to based on the pheromones.
-        Direction nextMove;
-
-        if (target == null) {
-            // If no stronger adjacent pheromone exists, then nextMove will be a random Direction.
-            nextMove = Direction.randDir(rng);
-        } else if (chosenPheromone == PheromoneType.DANGER) {
-            // If chosenPheromone is DANGER, then nextMove will be a Direction away from a stronger
-            // adjacent DANGER pheromone.
-            nextMove = currentPoint.moveAwayFromPoint(target);
-        } else {
-            // Else, nextMove will be a Direction towards a stronger adjacent pheromone.
-            nextMove = currentPoint.moveToPoint(target);
-        }
-
-        // Ensures the Ant will not return to its previous location so that it will not go back
-        // and forth in one area.
-        while (lastLocation.equals(currentPoint.add(nextMove))) {
-            nextMove = Direction.randDir(rng);
-        }
-
-        return nextMove;
-    }
-
-    // Returns a random Point of an adjacent Pheromone that is stronger than highestStrength.
-    // If no pheromone is stronger than highestStrength, then a random null will be returned.
-    private Point getStrongerAdjacentPheromonePoint(PheromoneType type, Pheromones pheromones,
-                                                        double highestStrength) {
-        // List that keeps track of adjacent Points that have a stronger pheromone than the
-        // current location's
-        List<Point> potentialLocations = new ArrayList<>();
-
-        for (Direction direction : Direction.allDirections()) {
-            // The adjacent point that is being checked
-            Point adjacent = new Point(x, y).add(direction);
-
-            if (pheromones.inBounds(adjacent) &&
-                    (pheromones.get(type, adjacent) > highestStrength)) {
-                potentialLocations.add(adjacent);
-            }
-        }
-
-        if (potentialLocations.size() > 0) {
-            // Returns a random adjacent Point with a stronger pheromone than the current
-            // location's, assuming that such a Point exists.
-            return potentialLocations.get(rng.nextInt(potentialLocations.size()));
-        } else {
-            // If no adjacent pheromone is stronger than the current location's. then null will be
-            // returned.
-            return null;
-        }
+        return bestDir;
     }
 
     /**
      * creates a pheromone based on what its currently doing
      */
     public PheromoneType createPheromone(){
-        //TODO: implement logic
-        return PheromoneType.WALKING_TRAIL;
+        if(getHeldItem() instanceof Sugar) return PheromoneType.FOOD;
+        if(isHungry()) return PheromoneType.FOOD;
+
+        return null; // no pheromone
     }
 
     /**
