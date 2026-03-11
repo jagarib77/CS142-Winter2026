@@ -7,6 +7,7 @@ package gui;
 import editor.BrushMath;
 import editor.EditorController;
 import editor.EditorState;
+import pheromones.Pheromones;
 import resources.*;
 import sim.AntSim;
 import sim.WorldGrid;
@@ -23,15 +24,17 @@ public class WorldPanel extends JPanel {
     private static final int TILE_SIZE = 15;
 
     private final AntSim sim;
+    private final AntSimGUI gui;
     private final EditorState editorState;
     private final EditorController editorController;
 
-    public WorldPanel(AntSim sim, EditorState editorState, EditorController editorController) {
+    public WorldPanel(AntSim sim, AntSimGUI gui, EditorState editorState, EditorController editorController) {
         if (sim == null) throw new IllegalArgumentException("sim is null");
         if (editorState == null) throw new IllegalArgumentException("editorState is null");
         if (editorController == null) throw new IllegalArgumentException("editorController is null");
 
         this.sim = sim;
+        this.gui = gui;
         this.editorState = editorState;
         this.editorController = editorController;
         setBackground(Color.WHITE);
@@ -104,10 +107,83 @@ public class WorldPanel extends JPanel {
 
     private void drawWorld(Graphics g) {
         WorldGrid w = sim.getWorld();
-        drawTerrain(g, w);
-        drawObjects(g, w);
-        drawAnts(g);
-        drawBrushHighlight(g);
+        if (gui.getSeePheromones()) {
+            if (gui.getDangerPhermoneSwitch()) {
+                drawPheromones (g, w, w.getPheromones(), 0);
+            } else if (gui.getWalkingTrailPhermoneSwitch()) {
+                drawPheromones (g, w, w.getPheromones(), 1);
+            } else {
+                drawPheromones (g, w, w.getPheromones(), 2);
+            }
+        } else {
+            drawTerrain(g, w);
+            drawObjects(g, w);
+            drawAnts(g);
+            drawBrushHighlight(g);
+        }
+    }
+
+    private void drawPheromones (Graphics g, WorldGrid w, Pheromones p, int spec) {
+        double [] [] [] grid = p.getGrid();
+        double [] [] pherG = grid[spec];
+
+        // Check dimensions match
+        if (pherG.length != w.getWidth() || pherG[0].length != w.getHeight()) {
+            return;
+        }
+
+        double strongestPheromone = Double.MIN_VALUE;
+        double weakestPheromone = Double.MAX_VALUE;
+
+        for (int x = 0; x < pherG.length; x++) {
+            for (int y = 0; y < pherG[0].length; y++) {
+                if (strongestPheromone < pherG[x][y])
+                    strongestPheromone = pherG[x][y];
+                if (weakestPheromone > pherG[x][y])
+                    weakestPheromone = pherG[x][y];
+            }
+        }
+
+        double range = strongestPheromone - weakestPheromone;
+
+        //rgb 0-255
+        //255 * ( ( strongestPhermone - pherG[x][y] ) / ( strongestPhermone - weakestPhermone ) )
+        for (int x=0; x<pherG.length; ++x){
+            for (int y=0; y<pherG[0].length; ++y){
+                int px = x*TILE_SIZE;
+                int py = y*TILE_SIZE;
+
+                //range of r, g or b    0 - 255
+                int colorValue;
+                if (range == 0) {
+                    colorValue = (pherG[x][y] == 0) ? 0 : 255; // If all equal and non-zero, show full color
+                } else {
+                    // Map from 0-255 based on pheromone intensity
+                    colorValue = (int)(255 * ((pherG[x][y] - weakestPheromone) / range));
+                }
+
+                // Ensure value stays within 0-255 range
+                colorValue = Math.min(255, Math.max(0, colorValue));
+
+                if (spec == 0) { //Danger
+                    g.setColor(new Color (colorValue, 0, 0)); //Black to bright red
+                } else if (spec == 1) { //walking trail
+                    g.setColor(new Color (0, colorValue, 0)); //Black to bright green
+                } else if (spec == 2) { //Food
+                    g.setColor(new Color (0, 0, colorValue)); //Black to bright blue
+                } else {
+                    g.setColor(Color.MAGENTA); // error color
+                }
+
+                // fills in grid with rectangles
+                g.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+                // fills in grid lines
+                g.setColor(Color.BLACK);
+                g.drawRect(px, py, TILE_SIZE, TILE_SIZE);
+            }
+
+        }
     }
 
     private void drawTerrain(Graphics g, WorldGrid w) {

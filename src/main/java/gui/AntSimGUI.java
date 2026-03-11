@@ -28,10 +28,10 @@ public class AntSimGUI extends JFrame {
     private final EditorController editorController;
     private final WorldPanel worldPanel;
 
-    private boolean seePheromones;
-    private boolean dangerPhermoneSwitch;
-    private boolean walkingTrailPhermoneSwitch;
-    private boolean foodPhermoneSwitch;
+    private boolean seePheromones = false;
+    private boolean dangerPhermoneSwitch = false;
+    private boolean walkingTrailPhermoneSwitch = false;
+    private boolean foodPhermoneSwitch = false;
 
     /**
      * Builds the GUI window, creates drawing and button panels and starts the simulation timer.
@@ -46,10 +46,6 @@ public class AntSimGUI extends JFrame {
         this.sim = sim;
         this.editorState = new EditorState();
         this.editorController = new EditorController(sim, editorState);
-        seePheromones = false;
-        dangerPhermoneSwitch = false;
-        walkingTrailPhermoneSwitch = false;
-        foodPhermoneSwitch = false ;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -58,7 +54,7 @@ public class AntSimGUI extends JFrame {
         JPanel rightPanel = new JPanel(); // not implemented yet - will be object info panel(e.g. ant info)
         JPanel bottomPanel = buildSimControlPanel(); // Sim controller
 
-        worldPanel = new WorldPanel(sim, editorState, editorController);
+        worldPanel = new WorldPanel(sim, this, editorState, editorController);
 
         add(topPanel, BorderLayout.NORTH);
         add(leftPanel, BorderLayout.WEST);
@@ -85,14 +81,14 @@ public class AntSimGUI extends JFrame {
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        JPanel speedPanel = new JPanel();
-        JPanel pausePanel = new JPanel();
-        JPanel stepPanel = new JPanel();
+        JPanel speedPanel = new JPanel(); // LEFT
+        JPanel pausePanel = new JPanel(); // MIDDLE
+        JPanel viewPanel = new JPanel(); // RIGHT
 
         // left is sim speed, middle is pause/unpause, right is sim step
         bottomPanel.add(speedPanel, BorderLayout.WEST);
         bottomPanel.add(pausePanel, BorderLayout.CENTER);
-        bottomPanel.add(stepPanel, BorderLayout.EAST);
+        bottomPanel.add(viewPanel, BorderLayout.EAST);
 
         // left
         JButton minus1 = new JButton("-1");
@@ -114,8 +110,7 @@ public class AntSimGUI extends JFrame {
         speedPanel.add(plus1);
 
         pausePanel.add(pauseButton);
-
-        stepPanel.add(stepButton);
+        pausePanel.add(stepButton);
 
         minus1.addActionListener(e -> setTicksPerSecond(ticksPerSecond-1, speedField));
         minus5.addActionListener(e -> setTicksPerSecond(ticksPerSecond-5, speedField));
@@ -167,6 +162,60 @@ public class AntSimGUI extends JFrame {
             sim.step();
             worldPanel.repaint();
         });
+
+        // RIGHT
+
+        // 1. Create JRadioButton instances
+        JRadioButton off = new JRadioButton("Off");
+        JRadioButton danger = new JRadioButton("Danger");
+        JRadioButton wT = new JRadioButton("Walking Trail");
+        JRadioButton food = new JRadioButton("Food");
+
+        // Add action listeners
+        off.addActionListener(e -> {
+            seePheromones = false;
+            worldPanel.repaint();
+        });
+
+        danger.addActionListener(e -> {
+            seePheromones = true;
+            dangerPhermoneSwitch = true;
+            walkingTrailPhermoneSwitch = false;
+            foodPhermoneSwitch = false;
+            worldPanel.repaint();
+        });
+
+        wT.addActionListener(e -> {
+            seePheromones = true;
+            dangerPhermoneSwitch = false;
+            walkingTrailPhermoneSwitch = true;
+            foodPhermoneSwitch = false;
+            worldPanel.repaint();
+        });
+
+        food.addActionListener(e -> {
+            seePheromones = true;
+            dangerPhermoneSwitch = false;
+            walkingTrailPhermoneSwitch = false;
+            foodPhermoneSwitch = true;
+            worldPanel.repaint();
+        });
+
+        // 2. Create a ButtonGroup
+        ButtonGroup group = new ButtonGroup();
+
+        // 3. Add radio buttons to the group
+        group.add(off);
+        group.add(danger);
+        group.add(wT);
+        group.add(food);
+
+        // 4. Add radio buttons to the frame
+        viewPanel.add(off);
+        viewPanel.add(danger);
+        viewPanel.add(wT);
+        viewPanel.add(food);
+        off.setSelected(true);   // default selection
 
         outerPanel.add(bottomPanel, BorderLayout.CENTER);
         return outerPanel;
@@ -364,5 +413,21 @@ public class AntSimGUI extends JFrame {
 
     public boolean isPaused() {
         return !timer.isRunning();
+    }
+
+    public boolean getSeePheromones(){
+        return seePheromones;
+    }
+
+    public boolean getDangerPhermoneSwitch(){
+        return dangerPhermoneSwitch;
+    }
+
+    public boolean getWalkingTrailPhermoneSwitch(){
+        return walkingTrailPhermoneSwitch;
+    }
+
+    public boolean getFoodPhermoneSwitch(){
+        return foodPhermoneSwitch;
     }
 }
