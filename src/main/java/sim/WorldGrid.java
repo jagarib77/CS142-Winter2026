@@ -140,7 +140,7 @@ public class WorldGrid {
         if (obj instanceof Sugar){
             ((Sugar) obj).takeFood(); // takes 1 sugar from pile
             if (((Sugar) obj).isEmptied()) setObjectAt(pos, null); // deletes sugar if empty
-            return obj;
+            return new Sugar(obj.energyValue(), 1); // sugar of size 1 with energy x
         }
         setObjectAt(pos, null);
         return obj;
