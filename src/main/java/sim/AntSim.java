@@ -6,6 +6,7 @@ package sim;// sim.AntSim.java
 
 import gui.AntSimGUI;
 import pheromones.PheromoneType;
+import pheromones.Pheromones;
 import resources.Colony;
 import resources.Sugar;
 import terrain.*;
@@ -141,7 +142,10 @@ public class AntSim {
                     if (!ant.move(dir)) {
                         ant.move(Direction.randDir(rng));
                     }
-                    world.getPheromones().add(PheromoneType.FOOD, ant.getPoint(), 2);
+                    double dist = ant.getPoint().getDistanceBetween(home);
+                    double amount = Math.max(4.0, Math.min(20.0, 40.0/Math.max(dist, 1.0)));
+
+                    world.getPheromones().add(PheromoneType.FOOD, ant.getPoint(), amount);
                 }
                 continue;
             }
@@ -149,7 +153,7 @@ public class AntSim {
             // PICK UP FOOD IF STANDING ON IT
             if (ant.pickupObject()) {
                 if (ant.getHeldItem() instanceof Sugar) {
-                    world.getPheromones().add(PheromoneType.FOOD, ant.getPoint(), 10);
+                    world.getPheromones().add(PheromoneType.FOOD, ant.getPoint(), 25);
                     continue;
                 }
             }
@@ -200,7 +204,38 @@ public class AntSim {
         resolveAntAttacks();
 
         world.spreadPheromones(.05);
-        world.decayPheromones(.95);
+        world.decayPheromones(.99);
+        world.getPheromones().capPheromones();
+
+        // clear space around colony
+        Pheromones pher = world.getPheromones();
+        int radius = 4;
+        for(ColonyState c:colonies){
+            Point home = c.getHome();
+
+            for (int y=home.y-radius; y<=home.y+radius; ++y) {
+                for (int x=home.x-radius; x<=home.x+radius; ++x) {
+                    Point p = new Point(x, y);
+                    if (!world.inBounds(p)) continue;
+
+                    double dist = p.getDistanceBetween(home);
+                    if (dist >= radius) continue;
+
+                    double current = pher.get(PheromoneType.FOOD, p);
+                    double newValue;
+
+                    if (dist <= 1) {
+                        newValue = 0; // completely clear near nest
+                    } else {
+                        // linear decay removal from distance 1 -> 4
+                        double removeFactor = (radius-dist)/(radius-1);
+                        newValue = current*(1.0-removeFactor);
+                    }
+
+                    pher.set(PheromoneType.FOOD, p, newValue);
+                }
+            }
+        }
     }
 
     private void resolveAntAttacks() {

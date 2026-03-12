@@ -36,7 +36,9 @@ public abstract class Ant {
     private boolean alive = true;
 
     // The last location of the Ant
-    private Point lastLocation;
+    private final List<Point> lastLocations;
+    private static final int MEMORY_LENGTH = 10;
+
     // Boolean for whether the ant is scavenging for food. An ant Scavenges for food when it is
     // hungry, but finds no food at the food storage.
     private boolean scavenging;
@@ -62,7 +64,13 @@ public abstract class Ant {
         this.currentEnergy = maxEnergy;
         this.x = pos.x;;
         this.y = pos.y;
-        lastLocation = pos;
+        this.lastLocations = new ArrayList<>();
+        rememberLocation(pos);
+    }
+
+    private void rememberLocation(Point p) {
+        lastLocations.add(p);
+        if (lastLocations.size()>MEMORY_LENGTH) lastLocations.removeFirst();
     }
 
     protected final WorldGrid world() { return world; }
@@ -128,10 +136,12 @@ public abstract class Ant {
      */
     public boolean move(Direction dir){
         Point self = getPoint();
-        lastLocation = self;
-        if (world.canMoveTo(self.add(dir))){
+        Point next = self.add(dir);
+
+        if (world.canMoveTo(next)) {
             x += dir.dx;
             y += dir.dy;
+            rememberLocation(next);
             // costs extra to move while holding an item
             changeEnergy(heldItem == null ? -1 : -2);
             return true;
@@ -159,8 +169,8 @@ public abstract class Ant {
             double danger = pheromones.get(PheromoneType.DANGER, next);
             double score = food - danger;
 
-            // discourage immediately going back to last tile
-            if (next.equals(lastLocation)) { score -= 1000; }
+            // discourage immediately going back to last tiles
+            if (lastLocations.contains(next)) { score -= 10; }
 
             // needed to add some slight variation to the directions bc the ants are stubborm
             score += rng().nextDouble()*0.001;
@@ -179,7 +189,7 @@ public abstract class Ant {
         for (Direction d:Direction.allDirections()) {
             Point next = current.add(d);
             if (!world().canMoveTo(next)) continue;
-            if (next.equals(lastLocation)) continue;
+            if (lastLocations.contains(next)) continue;
             dirx.add(d);
         }
 
@@ -208,6 +218,7 @@ public abstract class Ant {
         if (heldItem != null || obj == null || !obj.isCarryable()) return false;
         heldItem = world.takeObject(getPoint());
         changeEnergy(-5);
+        if (obj instanceof Sugar) lastLocations.clear();
         return true;
     }
 

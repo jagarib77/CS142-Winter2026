@@ -43,6 +43,16 @@ public class Pheromones {
         grid[type.type][p.x][p.y] += amount;
     }
 
+    public void capPheromones(){
+        for (int t=0; t<PheromoneType.values().length; ++t) {
+            for (int x=0; x<width; ++x) {
+                for (int y=0; y<height; ++y) {
+                    grid[t][x][y] = Math.min(grid[t][x][y], 100);
+                }
+            }
+        }
+    }
+
     public void set(PheromoneType type, Point p, double value){
         grid[type.type][p.x][p.y] = value;
     }

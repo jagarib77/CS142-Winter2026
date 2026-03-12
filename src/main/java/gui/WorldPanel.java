@@ -132,7 +132,7 @@ public class WorldPanel extends JPanel {
             return;
         }
 
-        double strongestPheromone = Double.MIN_VALUE;
+        /*double strongestPheromone = Double.MIN_VALUE;
         double weakestPheromone = Double.MAX_VALUE;
 
         for (int x = 0; x < pherG.length; x++) {
@@ -144,7 +144,7 @@ public class WorldPanel extends JPanel {
             }
         }
 
-        double range = strongestPheromone - weakestPheromone;
+        double range = strongestPheromone - weakestPheromone;*/
 
         //rgb 0-255
         //255 * ( ( strongestPhermone - pherG[x][y] ) / ( strongestPhermone - weakestPhermone ) )
@@ -153,7 +153,7 @@ public class WorldPanel extends JPanel {
                 int px = x*TILE_SIZE;
                 int py = y*TILE_SIZE;
 
-                //range of r, g or b    0 - 255
+                /*//range of r, g or b    0 - 255
                 int colorValue;
                 if (range == 0) {
                     colorValue = (pherG[x][y] == 0) ? 0 : 255; // If all equal and non-zero, show full color
@@ -163,7 +163,20 @@ public class WorldPanel extends JPanel {
                 }
 
                 // Ensure value stays within 0-255 range
-                colorValue = Math.min(255, Math.max(0, colorValue));
+                colorValue = Math.min(255, Math.max(0, colorValue));*/
+
+                // clamped pheromone so im adjusting the display accoringly
+                double maxPheromone = 100.0;
+                double value = pherG[x][y];
+
+                // Map 0-100 to 0-255
+                double intensity = value/maxPheromone;
+                intensity = Math.cbrt(intensity);
+
+                int colorValue;
+                if (value <= 1) { colorValue=0;
+                } else { colorValue = 49+(int)Math.round(intensity*205);
+                }
 
                 if (spec == 0) { //Danger
                     g.setColor(new Color (colorValue, 0, 0)); //Black to bright red
