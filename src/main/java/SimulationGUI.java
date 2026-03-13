@@ -92,17 +92,17 @@ public class SimulationGUI extends JPanel{
                     Human h = (Human) e;
                 
                     if (h.isInfected()){
-                        g.setColor(Color.MAGENTA); 
+                        g.setColor(new Color(250, 180, 255)); 
                     }
                     // color it depends on it career
                     else if (h instanceof MiracleDoctor){
-                        g.setColor(new Color(150, 255, 150)); 
+                        g.setColor(new Color(150, 255, 200)); 
                     }
                     else if (h instanceof Doctor){
-                        g.setColor(new Color(50, 255, 255)); 
+                        g.setColor(new Color(200, 255, 140)); 
                     }
                     else if (h instanceof Soldier){
-                        g.setColor(new Color(120, 150, 255));
+                        g.setColor(new Color(150, 200, 255));
                     } 
                     //citizen
                     else {
@@ -111,11 +111,11 @@ public class SimulationGUI extends JPanel{
                 }
                 //Lord of zombie is orange
                 else if(grid[x][y] instanceof LordOfZombie){
-                    g.setColor(Color.RED);
+                    g.setColor(new Color(255, 160, 160));
                 }
                 //all zombie is red
                 else if(grid[x][y] instanceof Zombie){
-                    g.setColor(new Color(255, 170, 0));
+                    g.setColor(new Color(255, 200, 60));
                 }
 
                 //not thing this block show white
@@ -133,7 +133,7 @@ public class SimulationGUI extends JPanel{
                 }
 
                 //draw edge
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(240, 240, 240));
                 g.drawRect(y*cellSize, x*cellSize, cellSize, cellSize);
             }
         }

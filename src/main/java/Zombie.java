@@ -67,6 +67,7 @@ public class Zombie extends LivingEntity{
         int y=getY();
 
         // spread Infection
+        // check is there any human beside?
         for(int dx=-1;dx<=1;dx++){
             for(int dy=-1;dy<=1;dy++){
 
@@ -82,7 +83,7 @@ public class Zombie extends LivingEntity{
                         Human h=(Human)grid[nx][ny];
                         
                         int z=(int)(Math.random()*10);
-                        if(z<3){
+                        if(z<7){
                             attack(h);
                         }
                         else{

@@ -1,7 +1,4 @@
 // SimulationModel.java
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class SimulationModel {
     
@@ -38,12 +35,13 @@ public class SimulationModel {
                 else if(z<12){
                     grid[x][y]=new Soldier(x, y, 150);
                 }
+                //5% to create zombie in hole grid
                 else if(z<15){
                     int z2=(int)(Math.random()*100);
                     if(z2<10){
                         grid[x][y]=new LordOfZombie(x, y, 150);
                     }
-                    else if(z2<11){
+                    else if(z2<30){
                         grid[x][y]=new SeniorZombie(x, y, 200);
                     }
                     else{
@@ -57,13 +55,13 @@ public class SimulationModel {
         }
     }
 
-    //update 
+    //update every time
     public void update(){
 
         // clear grid
         Entity[][] newGrid=new Entity[rows][cols];
 
-        // to list the entity which already be change
+        //Temporary list the entity which already be change
         java.util.Set<Entity> processed = new java.util.HashSet<>();
 
         for(int x=0;x<rows;x++){
@@ -113,19 +111,9 @@ public class SimulationModel {
 
     //End if there is no human or no zombie
     public String checkGameOver(){
-        int numH=0;
-        int numZ=0;
-
-        for(int x=0;x<rows;x++){
-            for(int y=0;y<cols;y++){
-                if(grid[x][y] instanceof Human){
-                    numH++;
-                }
-                else if(grid[x][y] instanceof Zombie){
-                    numZ++;
-                }
-            }
-        }
+        int[] stats=getStats();
+        int numH=stats[0];
+        int numZ=stats[1];
         
         if(numH==0){
             return "DOOMSDAY";
@@ -136,6 +124,7 @@ public class SimulationModel {
         return null;
     }
 
+    //count the number of human and zombie
     public int[] getStats(){
         int h=0;
         int z=0;
@@ -152,10 +141,8 @@ public class SimulationModel {
         return new int[]{h, z};
     }
 
-    public void reset() {
+    public void reset(){
     // call initializeGrid, create a new Grid
         initializeGrid(this.rows, this.cols);
     }
-
-
 }
