@@ -46,7 +46,7 @@ public class Zombie extends LivingEntity{
 
         //move to closest human
         else{
-            moveToward(closestHuman, grid);
+            moveTowards(closestHuman, grid);
         }
 
     }
@@ -116,6 +116,69 @@ public class Zombie extends LivingEntity{
         if(newX>=0 && newX<rows && newY>=0 && newY<cols && grid[newX][newY]==null){
             setX(newX);
             setY(newY);
+        }
+    }
+    public void moveRandom(Entity[][] grid){
+        
+        int x=grid.length;
+        int y=grid[0].length;
+        int d=(int)(Math.random()*4);
+        int newX=getX();
+        int newY=getY();
+
+        if(d==0){
+            newX--;
+        } 
+        else if(d == 1){
+            newX++;
+        } 
+        else if(d == 2){
+            newY--;
+        } 
+        else if(d == 3){
+            newY++;
+        } 
+
+        if (newX>=0 && newX<x && newY>=0 && newY<y && grid[newX][newY]==null) {
+            setX(newX);
+            setY(newY);
+        }
+    }
+
+    private void moveTowards(Entity target, Entity[][] grid) {
+        int dx=target.getX()-this.getX();
+        int dy=target.getY()-this.getY();
+
+        int nextX=this.getX();
+        int nextY=this.getY();
+
+        if (Math.abs(dx)>Math.abs(dy)){
+
+            if(dx>0){
+                nextX+=speed;
+            }
+            else if(dx<0){
+                nextX-=speed;
+            } 
+        }
+        else{
+
+            if(dy>0){
+                nextY+=speed;
+            } 
+            else if(dy<0){
+                nextY -= speed;
+            }
+        }
+
+
+        if(nextX>=0 && nextX<grid.length && nextY>=0 && nextY<grid[0].length){
+            if (grid[nextX][nextY]==null) {
+                grid[this.getX()][this.getY()]=null;
+                this.setX(nextX);
+                this.setY(nextY);
+                grid[nextX][nextY]=this;
+            }   
         }
     }
 }
