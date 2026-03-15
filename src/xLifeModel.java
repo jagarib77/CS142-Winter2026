@@ -307,66 +307,17 @@ public class xLifeModel extends JPanel {
     // ----------------------- ZOMBIE PROCESS START ------------------------------
 
     // Search Humans
-    public int searchHuman(int x, int y) {
-        for (int i =0; i<humanList.size();i++){
-            if(x==humanList.get(i).getX() && y==humanList.get(i).getY()){
-                return i;
-            }
-        }
-        return -1;
-    }
-    private Point findFirstHumanNeighbour(int r, int c){
-        for (int i = r-1; i <= r+1; i++) {
-            for (int j = c-1; j <= c+1; j++) {
-                if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c) ) {
-                    if (searchHuman(i,j)!=-1){
-                        return new Point(i,j);
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    public void updateZombieAction() {
+        int originalSize = zombieList.size();
 
-    // Zombies tag first human it see, if none, move randomly
-    public void updateZombieAction(){
-        for (int i = 0; i < zombieList.size(); i++) {
+        for (int i = 0; i < originalSize; i++) {
             xZombie z = zombieList.get(i);
-            int r = z.getX();
-            int c = z.getY();
-
-            // Try tagging the first human in area around Zombie
-            Point humanPos = findFirstHumanNeighbour(r,c);
-
-            // Replace Human with Zombie at the human positon
-            if(humanPos!=null){
-                int hIndex = searchHuman(humanPos.x,humanPos.y);
-                if(hIndex!=-1){
-                    // remove the human
-                    humanList.remove(hIndex);
-
-                    // replace with zombie
-                    zombieList.add(new xZombie(humanPos.x,humanPos.y));
-
-                    // Update grid
-                    grid[humanPos.x][humanPos.y]='Z';
-                }
-                // Zombie does not move if it tagged
-                grid[r][c]='Z';
-                continue;
-            }
-            // No human found so Zombie move randomly
-
-            //remove old postion
-            grid[r][c]='-';
-            Point newPos = getNewPosition(z,r,c);
-            z.setX(newPos.x);
-            z.setY(newPos.y);
-            grid[newPos.x][newPos.y]='Z';
-
+            z.act(humanList, zombieList, grid, rows, cols, this);
         }
     }
+
     // ----------------------- ZOMBIE PROCESS END ------------------------------
+
 
     public void reset(String fileName) throws FileNotFoundException {
         zombieList.clear();
