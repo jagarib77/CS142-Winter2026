@@ -58,16 +58,6 @@ public class AntSim {
         setupWorld();
     }
 
-    /**
-     * Prints a short introduction to the console.
-     * Written by Kyle.
-     */
-    public static void printIntro() {
-        System.out.println("Welcome to the Ant Colony Simulator!");
-        System.out.println("This program creates a world with ant colonies and simulates ants'");
-        System.out.println("behaviors like foraging, fighting, and reproducing.");
-    }
-
     public WorldGrid getWorld() { return world; }
 
     public List<Ant> getAnts() { return antColonys; }
@@ -111,11 +101,32 @@ public class AntSim {
                 continue;
             }
 
+            // IF HUNGRY, EAT IF POSSIBLE
+            if (ant.isHungry()) {
+                ant.eat();
+            }
+
             ColonyAnt colonyAnt = (ColonyAnt) ant;
             Point home = colonyAnt.getHome();
-
-            // QUEEN
             if (ant instanceof QueenAnt q) {
+
+                // Runs if the Queen is hungry
+                if (ant.isHungry()) {
+                    if (ant.getPoint().equals(home)) {
+                        // If the Queen is at the Home, then she will retrieve food if possible.
+                        if (colonies.get(colonyAnt.getColonyId() - 1).retrieveFood()) {
+                            ant.setHeldItem(new Sugar());
+                        }
+                    } else {
+                        // If she is not at Home, then she will move towards home if possible,
+                        // else, she will move in a random Direction.
+                        if (!ant.move(ant.getPoint().moveToPoint(home))) {
+                            ant.move(Direction.randDir(rng));
+                        }
+                        continue;
+                    }
+                }
+
                 if (rng.nextInt(50) == 0) {
                     Ant spawned = q.spawnAnt();
                     if (spawned != null) {
@@ -123,13 +134,18 @@ public class AntSim {
                     }
                 }
 
-                // keep queen near home
+                Direction dir;
                 if (q.getPoint().getDistanceBetween(home) > 5) {
-                    Direction dir = q.getPoint().moveToPoint(home);
-                    if (!q.move(dir)) {
-                        q.move(Direction.randDir(rng));
-                    }
+                    // keep queen near home
+                    dir = q.getPoint().moveToPoint(home);
+                } else {
+                    dir = Direction.randDir(rng);
                 }
+
+                if (!q.move(dir)) {
+                    q.move(Direction.randDir(rng));
+                }
+
                 continue;
             }
 
@@ -137,6 +153,8 @@ public class AntSim {
             if (ant.getHeldItem() instanceof Sugar) {
                 if (ant.getPoint().equals(home)) {
                     ant.destroyHeld();
+                    // Adds the food to the food storage at Home.
+                    colonies.get(colonyAnt.getColonyId() - 1).addFood();
                 } else {
                     Direction dir = ant.getPoint().moveToPoint(home);
                     if (!ant.move(dir)) {
@@ -192,9 +210,18 @@ public class AntSim {
             }
 
             // WORKER ANT BEHAVIOR
+            // I worked on the digging behavior, but it seems that the Ants constantly are blocked
+            // by the Dirt. Maybe we should let the WorkerAnts dig even while holding Sugar?
+            // - Kyle
             Direction dir = ant.smell(world.getPheromones());
-            if (!ant.move(dir)) {
-                ant.move(Direction.randDir(rng));
+            // The Ant moves or digs to the Direction from the pheromones.
+            if (!ant.move(dir) && !world.dig((WorkerAnt) ant, ant.getPoint().add(dir))) {
+                // If the Ant cannot move or dig, a new Direction is chosen.
+                dir = Direction.randDir(rng);
+                // The Ant moves or digs to the new Direction.
+                if (!ant.move(dir)) {
+                    world.dig((WorkerAnt) ant, ant.getPoint().add(dir));
+                }
             }
 
             // EMIT PHEROMONE
@@ -297,7 +324,6 @@ public class AntSim {
      * @param args unused
      */
     public static void main(String[] args) {
-        printIntro();
         AntSim sim = new AntSim(49, 49);
         new AntSimGUI(sim);
     }
