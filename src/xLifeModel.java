@@ -1,3 +1,5 @@
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Point;
@@ -12,6 +14,12 @@ public class xLifeModel extends JPanel {
     private int cols;
     private int cellSize = 20;
     private int safeCount = 0;
+    private int humanPoint = 0;
+    private int zombiePoint = 0;
+    private int lastMove;
+    private int moves = 0;
+
+
     private ArrayList<xSoldier> soldierList = new ArrayList<>();
     private ArrayList<xZombie> zombieList = new ArrayList<>();
     private ArrayList<xHuman> humanList = new ArrayList<>();
@@ -19,10 +27,46 @@ public class xLifeModel extends JPanel {
     private ArrayList<Point> weaponList = new ArrayList<>();
 
     // for read from file we just take
-    public xLifeModel(String fileName) throws FileNotFoundException {
+    public xLifeModel(String fileName, int lastMove) throws FileNotFoundException {
+        humanPoint = 0;
+        zombiePoint = 0;
+        this.lastMove = lastMove;
         loadFile(fileName);
+
         this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
     }
+
+    public int countZombies(){
+        return zombieList.size();
+    }
+    public int countHumans(){
+        return humanList.size()+ soldierList.size();
+    }
+    public int getCols() {
+        return cols;
+    }
+    public int getRows() {
+        return rows;
+    }
+
+    public int getHumanPoint() {
+        return humanPoint;
+    }
+
+    public int getZombiePoint() {
+        return zombiePoint;
+    }
+    public void increaseHumanPoint(){
+        humanPoint++;
+    }
+    public void increaseZombiePoint(){
+        zombiePoint++;
+    }
+
+    public int getRemainMoves() {
+        return lastMove - moves;
+    }
+
     private void loadFile(String fileName) throws FileNotFoundException {
         Scanner input = new Scanner(new File(fileName));
         this.rows = input.nextInt();
@@ -159,6 +203,7 @@ public class xLifeModel extends JPanel {
                 soldierList.remove(target);
                 safeCount++;
                 i--;
+                increaseHumanPoint();
             }
         }
 
@@ -228,8 +273,8 @@ public class xLifeModel extends JPanel {
         int count = 0;
         int r = target.getX();
         int c = target.getY();
-        for (int i = r - 1; i <= r + 1; i++) {
-            for (int j = c - 1; j <= c + 1; j++) {
+        for (int i = r - 2; i <= r + 2; i++) {
+            for (int j = c - 2; j <= c + 2; j++) {
                 if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == r && j == c)) {
                     int pos = searchZombie(i,j);
                     if (pos != -1){
@@ -237,6 +282,7 @@ public class xLifeModel extends JPanel {
                         zombieList.remove(pos);
                         grid[i][j] = '-';
                         target.updateBullets();
+                        increaseHumanPoint();
                         return true;
                     }
                 }
@@ -284,7 +330,7 @@ public class xLifeModel extends JPanel {
         // Human and Soldier is in protect --> WIN
         // No Human on map --> gameover
         //flag
-
+        this.moves++;
 
     }
 
@@ -309,7 +355,6 @@ public class xLifeModel extends JPanel {
     // Search Humans
     public void updateZombieAction() {
         int originalSize = zombieList.size();
-
         for (int i = 0; i < originalSize; i++) {
             xZombie z = zombieList.get(i);
             z.act(humanList, zombieList, grid, rows, cols, this);
@@ -331,7 +376,11 @@ public class xLifeModel extends JPanel {
                 grid[r][c] = '-';
             }
         }
+        humanPoint = 0;
+        zombiePoint = 0;
+        moves = 0;
         loadFile(fileName);
+        this.setPreferredSize(new Dimension(cols * cellSize, rows * cellSize));
     }
 
     @Override
@@ -380,20 +429,22 @@ public class xLifeModel extends JPanel {
 
         }
 
-        /*
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 40));
-        FontMetrics fm = g.getFontMetrics();
-        String text = "Game Over";
-        int x = (getWidth() - fm.stringWidth(text)) / 2;
-        int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-        g.drawString(text, x, y);
-
-        //g.drawString("Game Over", 150, 200);
-
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(0,0,getWidth(),getHeight());
-        */
+        if(lastMove-moves<=0) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            FontMetrics fm = g.getFontMetrics();
+            String text = "Game Over!!!";
+            if (humanPoint >= zombiePoint){
+                //g.setColor(Color.WHITE);
+                text = "Victory!!!";
+            }
+            int x = (getWidth() - fm.stringWidth(text)) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g.drawString(text, x, y);
+            //g.drawString("Game Over", 150, 200);
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
 
 
     }
