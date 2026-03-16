@@ -60,14 +60,12 @@ public class WorldGrid {
     }
 
     /**
-     * TODO: Implement digging behavior.
      *
      * Intended logic (high-level outline):
      * - Check that the position is within bounds.
      * - Get the terrain at the position.
      * - If the terrain is Dirt:
      *   - Replace the terrain with a Tunnel (carve the space).
-     *   - create a Dirt object and give it to the ant (if inventory allows).
      *   - apply an energy cost to the ant for digging.
      * - If the terrain is not Dirt:
      *   - Do nothing and return false.
@@ -80,28 +78,16 @@ public class WorldGrid {
      * @param p position to dig
      * @return true if dirt was successfully dug and changed, false otherwise
      */
-    // I worked on the dig method, but I am unsure if my code works or if I have the right
-    // parameters, so I did not erase the instructions. Let me know or modify the code if something
-    // is wrong.
     // - Kyle
     public boolean dig(WorkerAnt a, Point p){
-        // Checks if the Point is within bounds.
-        if (!inBounds(p)) {
-            throw new IllegalArgumentException("Point is not within bounds.");
-        }
-
-        // Checks if the Terrain at the point is Dirt.
-        if (terrain[p.y][p.x] instanceof Dirt) {
+        // Checks if the Point is within bounds and the Terrain at the point is Dirt.
+        if (inBounds(p) && terrain[p.y][p.x] instanceof Dirt) {
             // Checks if the WorkerAnt is carrying nothing and has enough energy.
             if (a.getHeldItem() == null && a.getEnergy() >= 10) {
                 setTerrain(p, new Tunnel());
-                // Reduces the Worker Ant's energy by 5 (technically 10, because it also picks up
-                // the object, which costs 5 energy).
+                // Reduces the Worker Ant's energy by 5 from digging.
                 a.changeEnergy(-5);
                 a.move(a.getPoint().moveToPoint(p));
-
-                // Picks up the WorldObject at the Point (Dirt).
-                a.pickupObject(new Dirt());
                 return true;
             }
         }
