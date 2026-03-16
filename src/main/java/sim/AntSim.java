@@ -108,20 +108,20 @@ public class AntSim {
 
             ColonyAnt colonyAnt = (ColonyAnt) ant;
             Point home = colonyAnt.getHome();
-            if (ant instanceof QueenAnt q) {
 
+            if (ant instanceof QueenAnt q) {
                 // Runs if the Queen is hungry
-                if (ant.isHungry()) {
-                    if (ant.getPoint().equals(home)) {
+                if (q.isHungry()) {
+                    if (q.getPoint().equals(home)) {
                         // If the Queen is at the Home, then she will retrieve food if possible.
-                        if (colonies.get(colonyAnt.getColonyId() - 1).retrieveFood()) {
-                            ant.setHeldItem(new Sugar());
+                        if (colonies.get(q.getColonyId() - 1).retrieveFood()) {
+                            q.setHeldItem(new Sugar());
                         }
                     } else {
                         // If she is not at Home, then she will move towards home if possible,
                         // else, she will move in a random Direction.
-                        if (!ant.move(ant.getPoint().moveToPoint(home))) {
-                            ant.move(Direction.randDir(rng));
+                        if (!q.move(q.getPoint().moveToPoint(home))) {
+                            q.move(Direction.randDir(rng));
                         }
                         continue;
                     }
