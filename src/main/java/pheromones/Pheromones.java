@@ -33,7 +33,7 @@ public class Pheromones {
     public double[][][] getGrid () {
         return grid;
     }
-
+    
     public double get(PheromoneType type, Point p){
         return grid[type.type][p.x][p.y];
     }
