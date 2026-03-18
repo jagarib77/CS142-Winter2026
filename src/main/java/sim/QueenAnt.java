@@ -53,7 +53,7 @@ public class QueenAnt extends ColonyAnt {
 
         for (Direction d : Direction.allDirections()) {
             Point spawn = getPoint().add(d);
-            if (!world().canMoveTo(spawn)) continue;
+            if (!this.canMoveTo(spawn)) continue;
 
             if (spawnNewQueen){ // uses its own chance based logic
                 changeEnergy(-200);

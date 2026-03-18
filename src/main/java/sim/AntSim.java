@@ -213,23 +213,40 @@ public class AntSim {
             // I worked on the digging behavior, but it seems that the Ants constantly are blocked
             // by the Dirt. Maybe we should let the WorkerAnts dig even while holding Sugar?
             // - Kyle
-            Direction dir = ant.smell(world.getPheromones());
+  
             // The Ant moves or digs to the Direction from the pheromones.
-            if (!ant.move(dir) && !world.dig((WorkerAnt) ant, ant.getPoint().add(dir))) {
-                // If the Ant cannot move or dig, a new Direction is chosen.
-                dir = Direction.randDir(rng);
-                // The Ant moves or digs to the new Direction.
-                if (!ant.move(dir)) {
-                    world.dig((WorkerAnt) ant, ant.getPoint().add(dir));
+            //Kyle and Dmytro 
+            // I think this version is more about finding food/doing something based 
+            // on smell, and then if can't move reattempts again in random direction
+            // The dig function is incorporated in the worker ants general behaivor. 
+            // so previous refrences to the ant in this class includes the dig behaivor. 
+            if (ant instanceof WorkerAnt worker) {
+                Direction dir = worker.smell(world.getPheromones());
+                if (!worker.move(dir)) {
+                    // If the Ant cannot move, or dig and then move, a new Direction is chosen.
+                    dir = Direction.randDir(rng);
+                    // The Ant tries again to move, or dig and then move in the same step 
+                    // to the new Direction.
+                    worker.move(dir);  
                 }
             }
-
+            // Adds food pheromone when picks up food (not ideal situation)
+            // but when it leaves path due to holding food it makes ants follow it 
+            // if phermone is weak.  
+            // Just kind of observation I had when food is far from colony and their was
+            // little food before (at the begining) right next to the colony, they 
+            // will just sort of circle around in that area and not go down to the food on the other edge.
+            // Maybe wrong. Maybe it also due to food smell being high. Some reason
+            // it behaves this way. Guard ants are also behaving kind of weird
+            // or maybe it just by design (did not look into that code so yeah) 
             // EMIT PHEROMONE
             world.getPheromones().add(ant.createPheromone(), ant.getPoint(), 5);
+            
         }
 
         resolveAntAttacks();
-
+        
+        world.addSmellAtFood(100);  
         world.spreadPheromones(.05);
         world.decayPheromones(.99);
         world.getPheromones().capPheromones();

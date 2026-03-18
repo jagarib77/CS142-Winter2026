@@ -16,6 +16,7 @@ import util.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import terrain.Tunnel;
 
 /**
  * Abstract base class for all ants in the simulation.
@@ -138,7 +139,7 @@ public abstract class Ant {
         Point self = getPoint();
         Point next = self.add(dir);
 
-        if (world.canMoveTo(next)) {
+        if (this.canMoveTo(next)) { // if (world.getTerrain instanceof Dirt) world().dig()
             x += dir.dx;
             y += dir.dy;
             rememberLocation(next);
@@ -149,6 +150,20 @@ public abstract class Ant {
         return false;
     }
 
+    // Dmytro and Harrisson 
+    // Fixed version. The air bug. Also, ants Class canMoveTo version of WorldGrid one
+    public boolean canMoveTo(Point p) {
+        if (!world.inBounds(p)) return false;
+
+        Terrain t = world.getTerrainAt(p);
+
+        // tunnel is always walkable
+        if (t instanceof Tunnel) return true;
+        
+        // air and rock should be always not walkable. Dirt is not walkable by defualt
+        return false;
+    } 
+    
     /**
      * checks the pheromones at this ants location then updates currentAction variable
      * return something like a direction or modify a value like current action
@@ -163,7 +178,7 @@ public abstract class Ant {
 
         for (Direction d:Direction.allDirections()) {
             Point next = current.add(d);
-            if (!world().canMoveTo(next)) continue;
+            if (!this.canMoveTo(next)) continue;
 
             double food = pheromones.get(PheromoneType.FOOD, next);
             double danger = pheromones.get(PheromoneType.DANGER, next);
@@ -188,7 +203,7 @@ public abstract class Ant {
 
         for (Direction d:Direction.allDirections()) {
             Point next = current.add(d);
-            if (!world().canMoveTo(next)) continue;
+            if (!this.canMoveTo(next)) continue;
             if (lastLocations.contains(next)) continue;
             dirx.add(d);
         }
@@ -263,4 +278,10 @@ public abstract class Ant {
     public Direction pathFind(Point target){
         return getPoint().moveToPoint(target);
     }
+    
+    // Dmytro (was unimplamanted)
+    public void setHeldItem(Sugar sugar) {
+        heldItem = sugar; 
+    }
+        
 }
