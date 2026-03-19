@@ -2,7 +2,7 @@ package sim;// sim.Ant.java
 // Base class for all ants. Tracks position, energy, life state and an optional held item.
 // Provides shared actions like move, pickup, drop and eat.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler, Kyle Hamasaki, and Dmytro Shyliuk
 
 import editor.TerrainKind;
 import pheromones.PheromoneType;
@@ -139,7 +139,7 @@ public abstract class Ant {
         Point self = getPoint();
         Point next = self.add(dir);
 
-        if (this.canMoveTo(next)) { // if (world.getTerrain instanceof Dirt) world().dig()
+        if (this.canMoveTo(next)) { 
             x += dir.dx;
             y += dir.dy;
             rememberLocation(next);

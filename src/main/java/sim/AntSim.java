@@ -2,7 +2,7 @@ package sim;// sim.AntSim.java
 // Simulation driver that owns the world grid, RNG and list of ants.
 // Advances the simulation in discrete ticks and performs global updates.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk 
 
 import gui.AntSimGUI;
 import pheromones.PheromoneType;

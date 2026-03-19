@@ -1,7 +1,7 @@
 package sim;// sim.WorkerAnt.java
 // Colony ant role intended for foraging and nest expansion behaviors.
 // Group Project: sim.Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Dmytro Shyliuk 
 
 import util.Point;
 
@@ -42,7 +42,7 @@ public class WorkerAnt extends ColonyAnt {
         return pickupObject();
     }
     
-    // Dmytro and Harrisson 
+    // Dmytro 
     // Worker ant can move to a point that contains dirt and tunnel. Fixes the problem 
     // of worker ants being stuck when holding sugar; returning home. Or just in general 
     // traveling. 
@@ -64,7 +64,7 @@ public class WorkerAnt extends ColonyAnt {
      * @param dir direction to move
      * @return true if the move succeeded, false otherwise
      */
-    //Dmytro and Harrisson 
+    //Dmytro 
     //Overidden move function, that in addition calls the dig function to 
     //remove dirt to move to a location 
     public boolean move(Direction dir){

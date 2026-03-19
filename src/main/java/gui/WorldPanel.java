@@ -2,7 +2,7 @@ package gui;
 // gui.WorldPanel.java
 // Custom JPanel used to interact with AntSimGUI.java
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Dmytro Shyliuk 
 
 import editor.BrushMath;
 import editor.EditorController;
@@ -105,6 +105,7 @@ public class WorldPanel extends JPanel {
         drawBrushHighlight(g);
     }
 
+    //Harrison and Dmytro 
     private void drawWorld(Graphics g) {
         WorldGrid w = sim.getWorld();
         if (gui.getSeePheromones()) {
@@ -122,7 +123,8 @@ public class WorldPanel extends JPanel {
             drawBrushHighlight(g);
         }
     }
-
+    
+    //Dmytro and Harrison 
     private void drawPheromones (Graphics g, WorldGrid w, Pheromones p, int spec) {
         double [] [] [] grid = p.getGrid();
         double [] [] pherG = grid[spec];

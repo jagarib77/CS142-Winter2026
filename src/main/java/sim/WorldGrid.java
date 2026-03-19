@@ -3,7 +3,7 @@ package sim;// sim.WorldGrid.java
 // Provides methods for querying and modifying tiles, handling movement rules and managing
 // interactions.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk
 
 import pheromones.PheromoneType;
 import pheromones.Pheromones;
@@ -79,7 +79,7 @@ public class WorldGrid {
      * @param p position to dig
      * @return true if dirt was successfully dug and changed, false otherwise
      */
-    // - Kyle
+    // - Kyle and Dmytro
     // - Dmytro comment: dig function responsible for just removing the 
     // Dirt at the point, without moving the ant. Ant's move method does that.
     // The move method calls this method. 

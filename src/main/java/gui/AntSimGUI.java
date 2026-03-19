@@ -1,7 +1,7 @@
 package gui;// gui.AntSimGUI.java
 // Creates an interactive GUI and displays an animation of a world of ants.
 // Group Project: sim.Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Dmytro Shyliuk 
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,7 +72,8 @@ public class AntSimGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    
+    //Harrison and Dmytro 
     private JPanel buildSimControlPanel(){
         // buffer panel
         JPanel outerPanel = new JPanel(new BorderLayout());
