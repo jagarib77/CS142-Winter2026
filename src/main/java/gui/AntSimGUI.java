@@ -1,7 +1,7 @@
 package gui;// gui.AntSimGUI.java
 // Creates an interactive GUI and displays an animation of a world of ants.
 // Group Project: sim.Ant Colony Simulator
-// Authors: Harrison Butler and Dmytro Shyliuk 
+// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +27,7 @@ public class AntSimGUI extends JFrame {
     private final EditorState editorState;
     private final EditorController editorController;
     private final WorldPanel worldPanel;
+    private int brushRadius = 1;
 
     private boolean seePheromones = false;
     private boolean dangerPhermoneSwitch = false;
@@ -72,8 +73,8 @@ public class AntSimGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
-    //Harrison and Dmytro 
+
+    //Harrison and Dmytro
     private JPanel buildSimControlPanel(){
         // buffer panel
         JPanel outerPanel = new JPanel(new BorderLayout());
@@ -262,6 +263,11 @@ public class AntSimGUI extends JFrame {
         // lambda function - makes new runnable object then defines run()
         Runnable updateBrushDisplay = () -> {
             String text;
+            // Changes the brush's shadow only if the mode is not Colony.
+            if (editorState.getBrushMode() != BrushMode.COLONY) {
+                editorState.setBrushRadius(brushRadius);
+            }
+
             switch (editorState.getBrushMode()) {
                 case TERRAIN -> text = "Terrain: " + editorState.getTerrainKind();
                 case FOOD -> text = "Food: " + editorState.getFoodKind();
@@ -310,16 +316,21 @@ public class AntSimGUI extends JFrame {
 
         // colony buttons
         colonyButton.addActionListener(e -> {
-            editorState.setBrushRadius(0);
             editorState.setBrushMode(BrushMode.COLONY);
+            editorState.setBrushRadius(0);
             updateBrushDisplay.run();
             worldPanel.requestFocusInWindow();
         });
 
         // spinner listeners - whenever a change occurs -> update the editorState value
-        brushRadiusSpinner.addChangeListener(e ->
-                editorState.setBrushRadius((Integer)brushRadiusSpinner.getValue())
-        );
+        brushRadiusSpinner.addChangeListener(e -> {
+            brushRadius = (Integer) brushRadiusSpinner.getValue();
+
+            // Changes the brush's shadow only if the mode is not Colony.
+            if (editorState.getBrushMode() != BrushMode.COLONY) {
+                editorState.setBrushRadius(brushRadius);
+            }
+        });
 
         foodEnergySpinner.addChangeListener(e ->
                 editorState.setFoodEnergy((Integer)foodEnergySpinner.getValue())
