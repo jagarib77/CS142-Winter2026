@@ -3,8 +3,9 @@ package sim;// sim.WorldGrid.java
 // Provides methods for querying and modifying tiles, handling movement rules and managing
 // interactions.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler and Kyle Hamasaki
+// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk
 
+import pheromones.PheromoneType;
 import pheromones.Pheromones;
 import resources.Sugar;
 import resources.WorldObject;
@@ -78,16 +79,20 @@ public class WorldGrid {
      * @param p position to dig
      * @return true if dirt was successfully dug and changed, false otherwise
      */
-    // - Kyle
+    // - Kyle and Dmytro
+    // - Dmytro comment: dig function responsible for just removing the 
+    // Dirt at the point, without moving the ant. Ant's move method does that.
+    // The move method calls this method. 
+    // Less confusion, maybe like that. Just my opnion, feel free to change anything etc.
+    // Also, in this version ant can dig with item in hand 
     public boolean dig(WorkerAnt a, Point p){
         // Checks if the Point is within bounds and the Terrain at the point is Dirt.
         if (inBounds(p) && terrain[p.y][p.x] instanceof Dirt) {
-            // Checks if the WorkerAnt is carrying nothing and has enough energy.
+            // Checks if the WorkerAnt has enough energy. 
             if (a.getHeldItem() == null && a.getEnergy() >= 10) {
                 setTerrain(p, new Tunnel());
                 // Reduces the Worker Ant's energy by 5 from digging.
                 a.changeEnergy(-5);
-                a.move(a.getPoint().moveToPoint(p));
                 return true;
             }
         }
@@ -101,6 +106,18 @@ public class WorldGrid {
 
     public void spreadPheromones(double amount) {
         pheromones.spread(amount); // 1% loss each tick
+    }
+    
+    // Dmytro 
+    // Adds smell to food so ants can use their smell functionality to find food 
+    public void addSmellAtFood(double perLocationAmount) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (objects[i][j] instanceof Sugar) {
+                    pheromones.add(PheromoneType.FOOD, new Point(j, i), perLocationAmount);
+                }
+            }
+        }
     }
 
     public WorldObject getObjectAt(Point pos){
@@ -138,6 +155,8 @@ public class WorldGrid {
      * @param p destination position
      * @return true if the position is traversable, false otherwise
      */
+    
+    // Harrison and Dmytro, version that fixes ants moving on air. 
     public boolean canMoveTo(Point p) {
         if (!inBounds(p)) return false;
 
@@ -146,15 +165,7 @@ public class WorldGrid {
         // tunnel is always walkable
         if (t instanceof Tunnel) return true;
 
-        // air is only walkable if supported from below
-        if (t instanceof Air) {
-            Point below = p.add(Direction.SOUTH);
-            if (!inBounds(below)) return false;
-
-            Terrain belowTerrain = terrain[below.y][below.x];
-            return (belowTerrain != null) && (belowTerrain.isSolid());
-        }
-
+        // air and rock is always not walkable
         return false;
     }
 

@@ -1,7 +1,7 @@
 package pheromones;// pheromones.Pheromones.java
 // Stores and updates pheromone concentrations across the grid for multiple pheromone types.
 // Group Project: sim.Ant Colony Simulator
-// Authors: Harrison Butler
+// Authors: Harrison Butler and Dmytro Shyliuk 
 
 import util.Direction;
 import util.Point;
@@ -30,10 +30,11 @@ public class Pheromones {
         this.grid = new double[PheromoneType.values().length][width][height];
     }
 
+    //Dmytro 
     public double[][][] getGrid () {
         return grid;
     }
-
+    
     public double get(PheromoneType type, Point p){
         return grid[type.type][p.x][p.y];
     }
