@@ -17,6 +17,8 @@ public class xLifeModel extends JPanel {
     private ArrayList<xHuman> humanList = new ArrayList<>();
     private ArrayList<Point> safeZoneList = new ArrayList<>();
     private ArrayList<Point> weaponList = new ArrayList<>();
+    private boolean gameOver = false;
+    private boolean playerWin = false;
 
     // for read from file we just take
     public xLifeModel(String fileName) throws FileNotFoundException {
@@ -247,7 +249,24 @@ public class xLifeModel extends JPanel {
     // ----------------------- SOLDIER PROCESS END ------------------------------
 
     private void checkEndGame(){
+        // If nobody is left outside the safe zone
+        if (humanList.isEmpty() && soldierList.isEmpty()) {
+            if (zombieList.isEmpty()) {
+                // All zombies are gone, so player wins
+                playerWin = true;
+                gameOver = true;
+            } else {
+                // No humans/soldiers left, zombies still exist, so player loses
+                playerWin = false;
+                gameOver = true;
+            }
+        }
 
+        // Optional: if all zombies are gone, also count as a win
+        else if (zombieList.isEmpty()) {
+            playerWin = true;
+            gameOver = true;
+        }
     }
 
     // Using ANIMATION HERE
@@ -379,22 +398,26 @@ public class xLifeModel extends JPanel {
             }
 
         }
+        if (gameOver) {
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, getWidth(), getHeight());
 
-        /*
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 40));
-        FontMetrics fm = g.getFontMetrics();
-        String text = "Game Over";
-        int x = (getWidth() - fm.stringWidth(text)) / 2;
-        int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-        g.drawString(text, x, y);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            FontMetrics fm = g.getFontMetrics();
 
-        //g.drawString("Game Over", 150, 200);
+            String text;
+            if (playerWin) {
+                text = "You Win!";
+                g.setColor(Color.GREEN);
+            } else {
+                text = "Game Over";
+                g.setColor(Color.RED);
+            }
 
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(0,0,getWidth(),getHeight());
-        */
-
-
+            int textX = (getWidth() - fm.stringWidth(text)) / 2;
+            int textY = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g.drawString(text, textX, textY);
+        }
     }
+
 }
