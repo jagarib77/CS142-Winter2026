@@ -18,7 +18,7 @@ public class xSoldier extends xHuman {
     // 0. Constructor not inheritance from xEntity
     public xSoldier(int x, int y){
         super(x,y);
-        bullets = 1;
+        bullets = 2;
     }
 
     // 1. Color: BLUE

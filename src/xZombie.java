@@ -57,6 +57,7 @@ public class xZombie extends xHuman {
                 humanList.remove(hIndex);
                 zombieList.add(new xZombie(humanPos.x, humanPos.y));
                 grid[humanPos.x][humanPos.y] = 'Z';
+                model.increaseZombiePoint();
             }
             grid[r][c] = 'Z';
             return;
