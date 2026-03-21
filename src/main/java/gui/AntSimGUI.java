@@ -9,12 +9,19 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 import editor.BrushMode;
+import pheromones.PheromoneType;
+import resources.Colony;
+import resources.Sugar;
+import resources.WorldObject;
+import sim.*;
 import terrain.*;
 import editor.EditorController;
 import editor.EditorState;
-import sim.AntSim;
 
 /**
  * Swing GUI for visualizing the ant simulation.
@@ -241,6 +248,12 @@ public class AntSimGUI extends JFrame {
         JButton sugarButton = new JButton("Sugar");
         JButton colonyButton = new JButton("Colony");
 
+        JLabel outputFileErrorLabel = new JLabel();
+        JTextField inputFileName = new JTextField(1);
+        inputFileName.setPreferredSize(new Dimension(inputFileName.getPreferredSize().width, 30));
+        inputFileName.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        JButton outputFileButton = new JButton("Save Simulation");
+
         JLabel brushSizeLabel = new JLabel("Brush Radius:");
         JSpinner brushRadiusSpinner = new JSpinner(
                 new SpinnerNumberModel(editorState.getBrushRadius(), 0, 50, 2)
@@ -347,6 +360,133 @@ public class AntSimGUI extends JFrame {
             worldPanel.requestFocusInWindow();
         });
 
+        // button that generates a File based on the simulation's current state
+        outputFileButton.addActionListener(e ->{
+            String fileName = inputFileName.getText();
+
+            if (fileName.equalsIgnoreCase("exit")) {
+                outputFileErrorLabel.setText("Name Cannot Be \"Exit\"");
+                return;
+            }
+
+
+            File file = new File(fileName);
+            try {
+                // Used to write the output file.
+                PrintStream ps = new PrintStream(file);
+                WorldGrid world = sim.getWorld();
+                int width = world.getWidth();
+                int height = world.getHeight();
+
+                // The width and height of the world
+                ps.println(width);
+                ps.println(height);
+
+                // The WorldObjects of the world
+                for (int row = 0; row < height; row++) {
+                    for (int col = 0; col < width; col++) {
+                        util.Point current = new util.Point(col, row);
+                        try {
+                            WorldObject obj = world.getObjectAt(current);
+                            ps.print(obj.getSymbol() + " ");
+                            if (obj instanceof Sugar s) {
+                                ps.print(obj.energyValue() + " ");
+                                ps.print(s.getFoodCount() + " ");
+                            } else if (obj instanceof Colony c) {
+                                ps.print(c.getColonyId() + " ");
+                                ps.print(c.getHome().x + " " + c.getHome().y + " ");
+                            }
+                        } catch (Exception a) {
+                            ps.print(null + " ");
+                        }
+
+                    }
+                    ps.println();
+                }
+
+
+                // The Terrain of the world
+                for (int row = 0; row < height; row++) {
+                    for (int col = 0; col < width; col++) {
+                        util.Point current = new util.Point(col, row);
+                        try {
+                            ps.print(world.getTerrainAt(current).getSymbol() + " ");
+                        } catch (Exception a) {
+                            ps.print(null + " ");
+                        }
+                    }
+                    ps.println();
+                }
+
+                // The Pheromones of the world
+                for (PheromoneType type : PheromoneType.values()) {
+                    for (int row = 0; row < height; row++) {
+                        for (int col = 0; col < width; col++) {
+                            util.Point current = new util.Point(col, row);
+                            ps.print(world.getPheromones().get(type, current) + " ");
+                        }
+                        ps.println();
+                    }
+                }
+
+                // The number of Ants in the world
+                ps.println(sim.getAnts().size());
+
+                // The Ants of the world
+                for (int i = 0; i < sim.getAnts().size(); i++) {
+                    Ant ant = sim.getAnts().get(i);
+                    ps.print(ant.getSymbol() + " "); // symbol
+                    ps.print(ant.getEnergy() + " "); // current energy
+                    ps.print(ant.getMaxEnergy() + " "); // max energy
+                    ps.print(ant.getX() + " "); // current x position
+                    ps.print(ant.getY() + " "); // current y position
+                    ps.print(ant.isAlive() + " "); // boolean for whether the ant is alive
+
+                    WorldObject heldItem = ant.getHeldItem();
+                    if (heldItem instanceof Sugar s) {
+                        ps.print(s.getSymbol() + " ");
+                        ps.print(s.energyValue() + " "); // energy value
+                        ps.print(s.getFoodCount() + " "); // food count
+                    } else {
+                        ps.print(null + " ");
+                    }
+
+                    ps.print(ant.getLastLocations().size() + " "); // memory length
+                    for (int j = 0; j < ant.getLastLocations().size(); j++) {
+                        ps.print(ant.getLastLocations().get(j).x + " "); // location's x position
+                        ps.print(ant.getLastLocations().get(j).y + " "); // location's y position
+                    }
+
+                    // Runs if the Ant is a ColonyAnt.
+                    if (ant instanceof ColonyAnt c) {
+                        ps.print(c.getHome().x + " " + c.getHome().y + " "); // home's pos
+                        ps.print(c.getFoodStore().x + " " + c.getFoodStore().y + " "); // foodStore
+                        ps.print(c.getColonyId() + " "); // colony ID
+                    }
+                    ps.println();
+                }
+
+                // The next colonyID
+                ps.println(sim.getColonies().size());
+
+                // The ColonyStates of the world
+                for (int j = 0; j < sim.getColonies().size(); j++) {
+                    ColonyState colony = sim.getColonies().get(j);
+                    ps.print(colony.getColonyId() + " "); // colonyId
+                    ps.print(colony.getFoodCount() + " "); // current food count
+                    ps.print(colony.getHome().x + " " + colony.getHome().y + " "); // home's pos
+                    ps.println();
+                }
+
+                // Closes PrintStream
+                ps.close();
+
+                outputFileErrorLabel.setText("Simulation Saved");
+            } catch (FileNotFoundException a) {
+                outputFileErrorLabel.setText("Invalid File Name");
+            }
+        });
+
         // align all elements
         currentBrushLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         currentBrushField.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -363,6 +503,8 @@ public class AntSimGUI extends JFrame {
         foodCountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         foodCountSpinner.setAlignmentX(Component.LEFT_ALIGNMENT);
         editingToggle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        inputFileName.setAlignmentX(Component.LEFT_ALIGNMENT);
+        outputFileButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         leftPanel.add(currentBrushLabel);
         leftPanel.add(Box.createVerticalStrut(4));
@@ -410,6 +552,15 @@ public class AntSimGUI extends JFrame {
 
         leftPanel.add(Box.createVerticalStrut(12));
         leftPanel.add(editingToggle);
+
+        leftPanel.add(Box.createVerticalStrut(12));
+        leftPanel.add(new JLabel("Output File Name"));
+        leftPanel.add(Box.createVerticalStrut(4));
+        leftPanel.add(inputFileName);
+        leftPanel.add(Box.createVerticalStrut(4));
+        leftPanel.add(outputFileButton);
+        leftPanel.add(Box.createVerticalStrut(4));
+        leftPanel.add(outputFileErrorLabel);
 
         // handles any initialization errors
         updateBrushDisplay.run();
