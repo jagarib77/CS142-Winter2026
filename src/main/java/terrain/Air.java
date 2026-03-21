@@ -17,7 +17,7 @@ public class Air extends Terrain {
     public boolean isEdible() { return false; }
 
     @Override
-    public char getSymbol() { return ' '; }
+    public char getSymbol() { return '_'; }
 
     @Override
     public boolean isTraversable() { return false; }
