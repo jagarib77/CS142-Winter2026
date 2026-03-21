@@ -13,14 +13,18 @@ import java.util.Random;
 public class ColonyState {
     private final int colonyId;
     private final Point home;
-    private final List<Ant> ants;
-    private int foodCount = 10;
+    private int foodCount;
 
     public ColonyState(int colonyId, Point home) {
         if (home == null) throw new IllegalArgumentException("home is null");
+        this(colonyId, home, 10);
+    }
+
+    public ColonyState(int colonyId, Point home, int foodCount) {
+        if (home == null) throw new IllegalArgumentException("home is null");
         this.colonyId = colonyId;
         this.home = home;
-        this.ants = new ArrayList<>();
+        this.foodCount = foodCount;
     }
 
     public void addFood(){
@@ -43,9 +47,7 @@ public class ColonyState {
         return home;
     }
 
-    public List<Ant> getAnts() {
-        return ants;
-    }
+    public int getFoodCount() { return foodCount; }
 
     /**
      * Spawns 1 queen, 2 guards and 2 workers around the nest if possible.
@@ -90,7 +92,6 @@ public class ColonyState {
             spawned.add(w);
         }
 
-        ants.addAll(spawned);
         return spawned;
     }
 }
