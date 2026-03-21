@@ -46,6 +46,19 @@ public class WorldGrid {
         // pheromones is already null filled
     }
 
+    public WorldGrid(int width, int height, WorldObject[][] objects, Terrain[][] terrain,
+                     Pheromones pheromones) {
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Invalid grid size");
+        }
+
+        this.width = width;
+        this.height = height;
+        this.objects = objects;
+        this.terrain = terrain;
+        this.pheromones = pheromones;
+    }
+
     public int getWidth(){ return width; }
     public int getHeight(){ return height; }
     public Pheromones getPheromones(){ return pheromones; }
@@ -80,15 +93,15 @@ public class WorldGrid {
      * @return true if dirt was successfully dug and changed, false otherwise
      */
     // - Kyle and Dmytro
-    // - Dmytro comment: dig function responsible for just removing the 
+    // - Dmytro comment: dig function responsible for just removing the
     // Dirt at the point, without moving the ant. Ant's move method does that.
-    // The move method calls this method. 
+    // The move method calls this method.
     // Less confusion, maybe like that. Just my opnion, feel free to change anything etc.
-    // Also, in this version ant can dig with item in hand 
+    // Also, in this version ant can dig with item in hand
     public boolean dig(WorkerAnt a, Point p){
         // Checks if the Point is within bounds and the Terrain at the point is Dirt.
         if (inBounds(p) && terrain[p.y][p.x] instanceof Dirt) {
-            // Checks if the WorkerAnt has enough energy. 
+            // Checks if the WorkerAnt has enough energy.
             if (a.getHeldItem() == null && a.getEnergy() >= 10) {
                 setTerrain(p, new Tunnel());
                 // Reduces the Worker Ant's energy by 5 from digging.
@@ -107,9 +120,9 @@ public class WorldGrid {
     public void spreadPheromones(double amount) {
         pheromones.spread(amount); // 1% loss each tick
     }
-    
-    // Dmytro 
-    // Adds smell to food so ants can use their smell functionality to find food 
+
+    // Dmytro
+    // Adds smell to food so ants can use their smell functionality to find food
     public void addSmellAtFood(double perLocationAmount) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -155,8 +168,8 @@ public class WorldGrid {
      * @param p destination position
      * @return true if the position is traversable, false otherwise
      */
-    
-    // Harrison and Dmytro, version that fixes ants moving on air. 
+
+    // Harrison and Dmytro, version that fixes ants moving on air.
     public boolean canMoveTo(Point p) {
         if (!inBounds(p)) return false;
 
