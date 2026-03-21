@@ -2,21 +2,20 @@ package sim;// sim.AntSim.java
 // Simulation driver that owns the world grid, RNG and list of ants.
 // Advances the simulation in discrete ticks and performs global updates.
 // Group Project: Ant Colony Simulator
-// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk 
+// Authors: Harrison Butler, Kyle Hamasaki and Dmytro Shyliuk
 
 import gui.AntSimGUI;
 import pheromones.PheromoneType;
 import pheromones.Pheromones;
 import resources.Colony;
 import resources.Sugar;
+import resources.WorldObject;
 import terrain.*;
 import util.Direction;
 import util.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
+import java.io.File;
+import java.util.*;
 
 /**
  * Main simulation model for the ant colony project.
@@ -29,6 +28,8 @@ public class AntSim {
     private final List<ColonyState> colonies;
 
     private int nextColonyId = 1;
+
+    public static final Scanner console = new Scanner(System.in);
     /**
      * Creates a simulation with the given grid size and a default Random generator.
      *
@@ -58,11 +59,23 @@ public class AntSim {
         setupWorld();
     }
 
+    public AntSim(Random rng, WorldGrid world, List<Ant> antColonys,
+                  List<ColonyState> colonies, int nextColonyId) {
+        if (rng == null) throw new IllegalArgumentException("rng");
+
+        this.world = world;
+        this.rng = rng;
+        this.antColonys = antColonys;
+        this.colonies = colonies;
+        this.nextColonyId = nextColonyId;
+    }
+
     public WorldGrid getWorld() { return world; }
 
     public List<Ant> getAnts() { return antColonys; }
 
     public List<ColonyState> getColonies() { return colonies; }
+
 
     /**
      * Places a colony object on the map and spawns its starter ants.
@@ -213,40 +226,40 @@ public class AntSim {
             // I worked on the digging behavior, but it seems that the Ants constantly are blocked
             // by the Dirt. Maybe we should let the WorkerAnts dig even while holding Sugar?
             // - Kyle
-  
+
             // The Ant moves or digs to the Direction from the pheromones.
-            //Kyle and Dmytro 
-            // I think this version is more about finding food/doing something based 
+            //Kyle and Dmytro
+            // I think this version is more about finding food/doing something based
             // on smell, and then if can't move reattempts again in random direction
-            // The dig function is incorporated in the worker ants general behaivor. 
-            // so previous refrences to the ant in this class includes the dig behaivor. 
+            // The dig function is incorporated in the worker ants general behaivor.
+            // so previous refrences to the ant in this class includes the dig behaivor.
             if (ant instanceof WorkerAnt worker) {
                 Direction dir = worker.smell(world.getPheromones());
                 if (!worker.move(dir)) {
                     // If the Ant cannot move, or dig and then move, a new Direction is chosen.
                     dir = Direction.randDir(rng);
-                    // The Ant tries again to move, or dig and then move in the same step 
+                    // The Ant tries again to move, or dig and then move in the same step
                     // to the new Direction.
-                    worker.move(dir);  
+                    worker.move(dir);
                 }
             }
             // Adds food pheromone when picks up food (not ideal situation)
-            // but when it leaves path due to holding food it makes ants follow it 
-            // if phermone is weak.  
+            // but when it leaves path due to holding food it makes ants follow it
+            // if phermone is weak.
             // Just kind of observation I had when food is far from colony and their was
-            // little food before (at the begining) right next to the colony, they 
+            // little food before (at the begining) right next to the colony, they
             // will just sort of circle around in that area and not go down to the food on the other edge.
             // Maybe wrong. Maybe it also due to food smell being high. Some reason
             // it behaves this way. Guard ants are also behaving kind of weird
-            // or maybe it just by design (did not look into that code so yeah) 
+            // or maybe it just by design (did not look into that code so yeah)
             // EMIT PHEROMONE
             world.getPheromones().add(ant.createPheromone(), ant.getPoint(), 5);
-            
+
         }
 
         resolveAntAttacks();
-        
-        world.addSmellAtFood(100);  
+
+        world.addSmellAtFood(100);
         world.spreadPheromones(.05);
         world.decayPheromones(.99);
         world.getPheromones().capPheromones();
@@ -336,12 +349,202 @@ public class AntSim {
         }
     }
 
+
+
     /**
      * Program entry point. Creates the simulation and launches the GUI.
      * @param args unused
      */
     public static void main(String[] args) {
-        AntSim sim = new AntSim(49, 49);
-        new AntSimGUI(sim);
+        printIntro();
+        startProgram();
+    }
+
+    /**
+     * Prints an introduction about what the program is about.
+     */
+    public static void printIntro() {
+        System.out.println("Welcome to the Ant Simulation!");
+        System.out.println("This program simulates ant colonies digging tunnels, foraging for");
+        System.out.println("food, and fighting other colonies.");
+        System.out.println();
+    }
+
+    /**
+     * Asks the user whether they want to load a file or begin the program.
+     */
+    public static void startProgram() {
+        System.out.println("Do you want to load a file?");
+        System.out.print("Type \"y\" or \"n\": ");
+        String userInput = console.next();
+        System.out.println();
+
+        if (userInput.equalsIgnoreCase("y")) {
+            loadFile();
+        } else if (userInput.equalsIgnoreCase("n")) {
+            AntSim sim = new AntSim(49, 49);
+            new AntSimGUI(sim);
+        } else {
+            System.out.println("Invalid input");
+            System.out.println();
+            startProgram();
+        }
+    }
+
+    /**
+     * Prompts the user for a file and uses its content to create the simulation. The user can
+     * also go back to the beginning of the program by typing "Exit".
+     */
+    public static void loadFile() {
+        System.out.print("Input file's name, or input \"Exit\" to exit: ");
+        String userInput = console.next();
+        System.out.println();
+
+        if (userInput.equalsIgnoreCase("EXIT")) {
+            // If the user types "Exit", then the user will be asked if they want to load a file
+            // again.
+            startProgram();
+        } else {
+            try {
+                File file = new File(userInput);
+                Scanner input = new Scanner(file);
+
+                int width = input.nextInt();
+                int height = input.nextInt();
+                input.nextLine();
+
+                WorldObject[][] objects = new WorldObject[height][width];
+                Terrain[][] terrains = new Terrain[height][width];
+                Pheromones pheromones = new Pheromones(width, height);
+
+                // Loads the WorldObjects
+                for (int row = 0; row < height; row++) {
+                    String line = input.nextLine();
+                    Scanner lineScanner = new Scanner(line);
+                    for (int col = 0; col < width; col++) {
+                        String symbol = lineScanner.next();
+                        if (symbol.equals("S")) {
+                            int energyValue = lineScanner.nextInt();
+                            int foodCount = lineScanner.nextInt();
+                            objects[row][col] = new Sugar(energyValue, foodCount);
+                        } else if (symbol.equals("C")) {
+                            int colonyId = lineScanner.nextInt();
+                            Point home = new Point(lineScanner.nextInt(), lineScanner.nextInt());
+                            objects[row][col] = new Colony(colonyId, home);
+                        }
+                    }
+                }
+
+                // Loads the Terrain
+                for (int row = 0; row < height; row++) {
+                    String line = input.nextLine();
+                    Scanner lineScanner = new Scanner(line);
+                    for (int col = 0; col < width; col++) {
+                        String symbol = lineScanner.next();
+                        if (symbol.equals("_")) {
+                            terrains[row][col] = new Air();
+                        } else if (symbol.equals("#")) {
+                            terrains[row][col] = new Dirt();
+                        } else if (symbol.equals("R")) {
+                            terrains[row][col] = new Rock();
+                        } else if (symbol.equals(".")) {
+                            terrains[row][col] = new Tunnel();
+                        }
+                    }
+                }
+
+                // Loads the Pheromones
+                for (PheromoneType type : PheromoneType.values()) {
+                    for (int row = 0; row < height; row++) {
+                        String line = input.nextLine();
+                        Scanner lineScanner = new Scanner(line);
+                        for (int col = 0; col < width; col++) {
+                            pheromones.set(type, new Point(col, row), lineScanner.nextDouble());
+                        }
+                    }
+                }
+
+                // The WorldGrid
+                WorldGrid world = new WorldGrid(width, height, objects, terrains, pheromones);
+
+
+                List<Ant> antColonies = new ArrayList<>();
+                int numOfAnts = input.nextInt();
+                input.nextLine();
+
+                // Loads the Ants
+                for (int i = 0; i < numOfAnts; i++) {
+                    String line = input.nextLine();
+                    Scanner lineScanner = new Scanner(line);
+
+                    String antSymbol = lineScanner.next();
+                    int currentEnergy = lineScanner.nextInt();
+                    int maxEnergy = lineScanner.nextInt();
+                    Point pos = new Point(lineScanner.nextInt(), lineScanner.nextInt());
+                    boolean alive = lineScanner.nextBoolean();
+
+                    String itemSymbol = lineScanner.next();
+                    WorldObject heldItem;
+                    if (itemSymbol.equals("S")) {
+                        int energyValue = lineScanner.nextInt();
+                        int foodCount = lineScanner.nextInt();
+                        heldItem = new Sugar(energyValue, foodCount);
+                    } else {
+                        heldItem = null;
+                    }
+
+                    int memoryLength = lineScanner.nextInt();
+                    List<Point> lastLocations = new ArrayList<>();
+                    for (int j = 0; j < memoryLength; j++) {
+                        lastLocations.add(new Point(lineScanner.nextInt(), lineScanner.nextInt()));
+                    }
+
+                    Point home = new Point(lineScanner.nextInt(), lineScanner.nextInt());
+                    Point foodStore = new Point(lineScanner.nextInt(), lineScanner.nextInt());
+                    int colonyId = lineScanner.nextInt();
+
+                    ColonyAnt ant;
+                    Random rng = new Random();
+                    if (antSymbol.equals("G")) {
+                        ant = new GuardAnt(world, rng, pos, maxEnergy, currentEnergy, heldItem, alive,
+                                lastLocations, home, colonyId, foodStore);
+                    } else if (antSymbol.equals("Q")) {
+                        ant = new QueenAnt(world, rng, pos, maxEnergy, currentEnergy, heldItem, alive,
+                                lastLocations, home, colonyId, foodStore);
+                    } else if (antSymbol.equals("W")) {
+                        ant = new WorkerAnt(world, rng, pos, maxEnergy, currentEnergy, heldItem, alive,
+                                lastLocations, home, colonyId, foodStore);
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
+
+                    antColonies.add(ant);
+                }
+
+                int nextColonyId = input.nextInt() + 1;
+                input.nextLine();
+
+                // Loads the colonies
+                List<ColonyState> colonies = new ArrayList<>();
+                for (int j = 1; j < nextColonyId; j++) {
+                    String line = input.nextLine();
+                    Scanner lineScanner = new Scanner(line);
+
+                    int currentColonyId = lineScanner.nextInt();
+                    int foodCount = lineScanner.nextInt();
+                    Point home = new Point(lineScanner.nextInt(), lineScanner.nextInt());
+
+                    colonies.add(new ColonyState(currentColonyId, home, foodCount));
+                }
+
+                AntSim sim = new AntSim(new Random(), world, antColonies, colonies, nextColonyId);
+                new AntSimGUI(sim);
+            } catch (Exception e) {
+                // If the program cannot load the file, then it prompts the user for another file.
+                System.out.println("Cannot read file, try again");
+                System.out.println();
+                loadFile();
+            }
+        }
     }
 }
