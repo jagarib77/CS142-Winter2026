@@ -40,9 +40,7 @@ public abstract class Ant {
     private final List<Point> lastLocations;
     private static final int MEMORY_LENGTH = 10;
 
-    // Boolean for whether the ant is scavenging for food. An ant Scavenges for food when it is
-    // hungry, but finds no food at the food storage.
-    private boolean scavenging;
+
 
     /**
      * Creates an ant at a given starting position with a maximum energy capacity.
@@ -69,6 +67,37 @@ public abstract class Ant {
         rememberLocation(pos);
     }
 
+    /**
+     * Initializes an ant with a given starting position, maximum energy capacity, current energy,
+     * held item, whether the ant is alive, and its previous locations.
+     * Validates inputs.
+     *
+     * @param world world the ant lives in (non-null)
+     * @param rng random generator used for decisions (non-null)
+     * @param pos initial position (non-null)
+     * @param maxEnergy maximum energy capacity, must be > 0
+     * @param heldItem the WorldObject the nt is holding
+     * @param alive boolean for whether the ant is alive
+     * @param lastLocations list storing ant's last locations in the world
+     */
+    public Ant(WorldGrid world, Random rng, Point pos, int maxEnergy, int currentEnergy,
+               WorldObject heldItem, boolean alive, List<Point> lastLocations){
+        if (world == null) throw new IllegalArgumentException("world is null");
+        if (rng == null) throw new IllegalArgumentException("rng is null");
+        if (pos == null) throw new IllegalArgumentException("pos is null");
+        if (maxEnergy <= 0) throw new IllegalArgumentException("maxEnergy is <= 0");
+
+        this.world = world;
+        this.rng = rng;
+        this.maxEnergy = maxEnergy;
+        this.currentEnergy = currentEnergy;
+        this.x = pos.x;;
+        this.y = pos.y;
+        this.heldItem = heldItem;
+        this.alive = alive;
+        this.lastLocations = lastLocations;
+    }
+
     private void rememberLocation(Point p) {
         lastLocations.add(p);
         if (lastLocations.size()>MEMORY_LENGTH) lastLocations.removeFirst();
@@ -83,15 +112,12 @@ public abstract class Ant {
 
     public final boolean isAlive() { return alive; }
     public final int getEnergy() { return currentEnergy; }
+    public int getMaxEnergy() { return maxEnergy; }
     public char getSymbol() { return 'A'; }
     public WorldObject getHeldItem(){ return heldItem; }
-    // Returns whether the Ant is scavenging for food
-    public boolean isScavenging() {
-        return scavenging;
-    }
 
-    public void setScavenging(boolean scavenging) {
-        this.scavenging = scavenging;
+    public List<Point> getLastLocations() {
+        return lastLocations;
     }
 
     /**
@@ -139,7 +165,7 @@ public abstract class Ant {
         Point self = getPoint();
         Point next = self.add(dir);
 
-        if (this.canMoveTo(next)) { 
+        if (this.canMoveTo(next)) {
             x += dir.dx;
             y += dir.dy;
             rememberLocation(next);
@@ -150,7 +176,7 @@ public abstract class Ant {
         return false;
     }
 
-    // Dmytro and Harrisson 
+    // Dmytro and Harrisson
     // Fixed version. The air bug. Also, ants Class canMoveTo version of WorldGrid one
     public boolean canMoveTo(Point p) {
         if (!world.inBounds(p)) return false;
@@ -159,11 +185,11 @@ public abstract class Ant {
 
         // tunnel is always walkable
         if (t instanceof Tunnel) return true;
-        
+
         // air and rock should be always not walkable. Dirt is not walkable by defualt
         return false;
-    } 
-    
+    }
+
     /**
      * checks the pheromones at this ants location then updates currentAction variable
      * return something like a direction or modify a value like current action
@@ -264,8 +290,6 @@ public abstract class Ant {
         if (heldItem == null || !heldItem.isEdible()) return false;
         changeEnergy(heldItem.energyValue());
         heldItem = null;
-        // The Ant no longer scavenges for food once it eats.
-        scavenging = false;
         return true;
     }
 
@@ -278,10 +302,10 @@ public abstract class Ant {
     public Direction pathFind(Point target){
         return getPoint().moveToPoint(target);
     }
-    
+
     // Dmytro (was unimplamanted)
     public void setHeldItem(Sugar sugar) {
-        heldItem = sugar; 
+        heldItem = sugar;
     }
-        
+
 }
