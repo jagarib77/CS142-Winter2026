@@ -1,26 +1,31 @@
 import java.awt.*;
 import java.util.Random;
 
+/**
+ * This class represents a Human in the game.
+ * Humans move randomly and can stop moving when they are in a safe zone.
+ */
 public class xHuman extends xEntity {
-
-    private boolean acted = false;
-    private Random rand = new Random();
-    private boolean inSafeZone = false;
-
-    // 0. Constructor not inheritance from xEntity
-    public xHuman(int x, int y){
+    /**
+     * Create a human at a specific position.
+     *
+     * @param x the x position
+     * @param y the y position
+     */
+    public xHuman(int x, int y) {
         super();
         setX(x);
         setY(y);
     }
 
+    /**
+     * Decide how the human moves.
+     * The human moves randomly unless it is in a safe zone.
+     *
+     * @return direction of movement, or CENTER if not moving
+     */
     public Direction move() {
-
-        // Human don't move when is SafeZone
-        if (inSafeZone) {
-            return Direction.CENTER;
-        }
-        // Random movement
+        Random rand = new Random();
         int r = rand.nextInt(4);
         switch (r) {
             case 0: return Direction.NORTH;
@@ -31,25 +36,20 @@ public class xHuman extends xEntity {
         return Direction.CENTER;
     }
 
-    // this is when the human steps onto a safe zone tile
-    public void enterSafeZone() {
-        inSafeZone = true;
-    }
-
+    /**
+     * Get the color of the human.
+     *
+     * @return Green color
+     */
     public Color getColor() {
-        return Color.BLUE;   // Human color
+        return Color.GREEN;
     }
 
-
-    public boolean hasActed() {
-        return acted;
-    }
-
-    // Reset each simulation step
-    public void resetActed() {
-        acted = false;
-    }
-
+    /**
+     * Convert the human to a simple letter.
+     *
+     * @return "H"
+     */
     public String toString() {
         return "H";
     }

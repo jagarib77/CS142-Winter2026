@@ -7,49 +7,55 @@
 
 import java.awt.*;
 import java.util.Random;
-
-// For reusing all methods, states of xEntity, need to be extends xEntity
+/**
+ * This class represents a Soldier in the game.
+ * A soldier is a type of human that can use bullets.
+ * It moves like a human but has extra abilities.
+ */
+// For reusing all methods, states of xHuman, need to be extends xHuman
 public class xSoldier extends xHuman {
-	// State / Field of xSoldier
+    /** The current direction the soldier is moving */
     private Direction currDir;
+    /** Number of bullets the soldier has */
     private int bullets; // the maximum number of food
 
     // -----------------------OVERRIDE METHODS---------------------------------
-    // 0. Constructor not inheritance from xEntity
+    /**
+     * Create a soldier at a specific position.
+     *
+     * @param x the x position
+     * @param y the y position
+     */
     public xSoldier(int x, int y){
         super(x,y);
         bullets = 2;
     }
 
-    // 1. Color: BLUE
+    /**
+     * Get the color of the soldier.
+     *
+     * @return BLUE color
+     */
     public Color getColor() {
         return Color.BLUE;
     }
 
-
+    /**
+     * Use one bullet.
+     * This decreases the number of bullets by 1.
+     */
     public void updateBullets() {
         this.bullets -= 1;
     }
 
+    /**
+     * Get the number of bullets left.
+     *
+     * @return number of bullets
+     */
     public int getBullets() {
         return bullets;
     }
-    /*
-    // 2. Move random direction(N,E,S,W),
-    public Direction move() {
-        // Update currDir for 6 steps
-        Random rand = new Random();
-        int randomInt = rand.nextInt(4);
-        if(randomInt == 0){
-            currDir = Direction.NORTH;
-        } else if (randomInt == 1) {
-            currDir = Direction.EAST;
-        } else if (randomInt == 2) {
-            currDir = Direction.SOUTH;
-        } else {
-            currDir = Direction.WEST;
-        }
-        return currDir;
-    }*/
+
     // ----------------------- END OVERRIDE METHODS ---------------------------
 }
